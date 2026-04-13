@@ -12,6 +12,7 @@ public class Boss1StateManager : EnemyStateManager
     public Boss1SpinAttack                     spinAttack              = new Boss1SpinAttack();
     public Boss1PunchAttack                    punchAttack             = new Boss1PunchAttack();
     public Boss1IdleState                      idleState               = new Boss1IdleState();
+    public Boss1PipeAttack                     pipeAttack              = new Boss1PipeAttack();
     public Boss1JumpLeftMovement               jumpLeftState           = new Boss1JumpLeftMovement();
     public Boss1JumpRightMovement              jumpRightState          = new Boss1JumpRightMovement();
     public Boss1SpiralBurstAttack              spiralBurstAttack       = new Boss1SpiralBurstAttack();

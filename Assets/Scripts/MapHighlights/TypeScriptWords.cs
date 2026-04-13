@@ -15,6 +15,6 @@ public class TypeScriptWords : MonoBehaviour
     private IEnumerator NextLine()
     {
         yield return new WaitForSeconds(2f);
-        writer.ReplaceText("You have to...");
+        writer.ReplaceText("You have to.");
     }
 }
