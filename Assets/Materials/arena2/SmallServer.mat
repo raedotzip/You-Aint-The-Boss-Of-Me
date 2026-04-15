@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SmallServer
-  m_Shader: {fileID: -6465566751694194690, guid: 4b2ada60634dacd47bd068169cd2d0d5, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 656daebd7b3b928448765d9a8efda05e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
