@@ -192,7 +192,11 @@ public class Sword : MonoBehaviour
                 {
                     float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
                     float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
-                    BossManager.Instance.TakeDamageOnActive(damageAmount * multiplier);
+
+                    BossHitbox hitbox = hit.collider.GetComponent<BossHitbox>();
+                    float limbMultiplier = hitbox != null ? hitbox.damageMultiplier : 1f;
+
+                    BossManager.Instance.TakeDamageOnActive(damageAmount * multiplier * limbMultiplier);
 
                     if (swingTipDistance >= healSwingThreshold && playerHealth != null)
                         playerHealth.Heal(healAmount);
