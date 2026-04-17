@@ -1,14 +1,82 @@
-# Boss Rush VR Game
+# Boss Rush VR
 
-## Authors
-- Raegan Scheet
-- Asher Lahm
-- Kenny Kouete
+A fast-paced VR boss rush game built in Unity with SteamVR. Fight two bosses back-to-back as fast as possible — dodge projectiles, parry bullets with your sword, and take down each boss to save the world.
 
-## About
+**Course:** CSCE352 / EMAR440 — Exploring Virtual Reality  
+**Authors:** Raegan Scheet, Asher Lahm, Kenny Kouete
+**License:** Apache 2.0
 
-This repository contains the source code for our semester project for CSCE352/EMAR440: Exploring Virutal Reality. Boss Rush is a speed-running VR game where you try to fight two bosses back to back and see how fast you are able to beat the bosses. It is pretty awesome cool because you have a sword and dash and get to fight silly guys to save the world.
+---
 
 ## Trailer
 
 TBD
+
+---
+
+## Gameplay
+
+- **Sword combat** — Swing your motion-tracked sword to deal melee damage. Swing wider for more damage; flick attacks deal less.
+- **Bullet parrying** — Deflect incoming projectiles back at the boss with your sword blade.
+- **Dashing** — Press the right trigger to dash in your movement direction. Use it to dodge attacks and reposition.
+- **Life steal** — Land a full-arm wide swing and heal on hit.
+
+### Bosses
+
+| # | Name | Style |
+|---|------|-------|
+| 1 | Roe Jogan | Physical melee boss. Charges, punches, slams, and fires spiral projectile bursts. Tires out after several attacks. |
+| 2 | The Mainframe | Tech boss. Destroy the 5 mini computers to drop its force field, then attack the core with projectiles and obstacles. |
+
+---
+
+## Requirements
+
+- Unity 2022.x or later
+- SteamVR plugin (included under `Assets/Plugins/Core/SteamVR`)
+- A SteamVR-compatible VR headset (Valve Index, HTC Vive, Meta Quest via Air Link / Link, etc.)
+
+---
+
+## Getting Started
+
+1. Clone the repository
+2. Open the project in Unity
+3. Open `Assets/Scenes/AnimationTest.unity`
+4. Press **Play**
+5. Slice one of the menu boxes with your sword to start a boss fight
+6. Defeat both bosses to complete the run
+
+---
+
+## Project Structure
+
+```
+Assets/
+├── Scenes/
+│   └── AnimationTest.unity     ← Main gameplay scene
+├── Scripts/
+│   ├── Asher Animation Tests/  ← Boss state machines and all attack states
+│   ├── Combat/                 ← Sword, bullet manager, obstacle manager
+│   ├── Enemies/                ← BossManager, hitboxes, base state classes
+│   ├── Menu/                   ← MenuController, MenuBox
+│   └── Player/                 ← Movement, dash, health, HUD
+├── ScriptableObjects/          ← AttackData, BulletData, ObstacleData assets
+└── Prefabs/                    ← VFX and obstacle prefabs
+```
+
+---
+
+## Documentation
+
+Full documentation lives in the [`docs/`](docs/) folder (also on the wiki):
+
+| Page | Description |
+|------|-------------|
+| [Architecture Overview](docs/architecture-overview.md) | Scene structure, game flow, singleton pattern |
+| [Managers](docs/managers.md) | BossManager, MenuController, HUDManager, BulletManager, ObstacleManager |
+| [Boss System](docs/boss-system.md) | State machine pattern, AI behavior, attack states |
+| [Adding a Boss](docs/adding-a-boss.md) | Step-by-step guide to creating a new boss |
+| [Combat System](docs/combat-system.md) | Sword mechanics, parrying, menu box interaction |
+| [Bullets & Obstacles](docs/bullets-and-obstacles.md) | Bullet struct, visual pool, movement types, warning phase, adding new bullets/obstacles |
+| [Player System](docs/player-system.md) | VR locomotion, dash, health, HUD |
