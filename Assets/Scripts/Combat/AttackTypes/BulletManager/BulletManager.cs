@@ -6,7 +6,6 @@ public class BulletManager : MonoBehaviour
     public static BulletManager Instance;
     private Transform player;
     private PlayerHealth playerHealth;
-    private Boss1StateManager boss;
     [SerializeField] private float playerHitRadius = 0.5f;
     [SerializeField] private float bossHitRadius   = 1.5f;
     [SerializeField] private float parriedBossDamage = 5f;
@@ -35,9 +34,7 @@ public class BulletManager : MonoBehaviour
             playerHealth = p.GetComponent<PlayerHealth>();
         }
 
-        var b = GameObject.FindWithTag("Boss");
-        if (b != null)
-            boss = b.GetComponent<Boss1StateManager>();
+        // Boss damage is now routed through BossManager so any boss can receive parry damage
     }
 
     void Awake()
@@ -89,15 +86,19 @@ public class BulletManager : MonoBehaviour
                 }
 
                 // Boss collision — only for parried bullets
-                if (b.isParried && boss != null)
+                if (b.isParried && BossManager.Instance != null)
                 {
-                    float dist = Vector3.Distance(b.position, boss.transform.position);
-                    if (dist <= b.collisionRadius + bossHitRadius)
+                    EnemyStateManager activeBoss = BossManager.Instance.GetActiveBoss();
+                    if (activeBoss != null)
                     {
-                        boss.TakeDamage(parriedBossDamage);
-                        b.pendingDestroy = true;
-                        bullets[i] = b;
-                        continue;
+                        float dist = Vector3.Distance(b.position, activeBoss.transform.position);
+                        if (dist <= b.collisionRadius + bossHitRadius)
+                        {
+                            BossManager.Instance.TakeDamageOnActive(parriedBossDamage);
+                            b.pendingDestroy = true;
+                            bullets[i] = b;
+                            continue;
+                        }
                     }
                 }
             }

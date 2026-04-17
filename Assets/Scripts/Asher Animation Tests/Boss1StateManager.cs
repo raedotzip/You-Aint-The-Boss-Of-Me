@@ -103,12 +103,6 @@ public class Boss1StateManager : EnemyStateManager
         health = maxHealth;
         animator = GetComponent<Animator>();
 
-        if (bossHealthBar != null)
-            bossHealthBar.UpdateHealthPercentage(health, maxHealth);
-
-        if(HUDManager.Instance != null)
-            HUDManager.Instance.ShowBossBar(true);
-
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
 

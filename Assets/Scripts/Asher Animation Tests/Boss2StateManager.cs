@@ -87,9 +87,6 @@ public class Boss2StateManager : EnemyStateManager
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
 
-        if (HUDManager.Instance != null)
-            HUDManager.Instance.ShowBossBar(false);
-
         if (forceField != null)
             forceField.SetActive(true);
     }
