@@ -61,6 +61,7 @@ public class Sword : MonoBehaviour
     private float boundingSphereRadius;
 
     private Dictionary<Rigidbody, float> cooldowns = new Dictionary<Rigidbody, float>();
+    private Dictionary<int, float> _miniComputerCooldowns = new Dictionary<int, float>();
 
     void Awake()
     {
@@ -117,6 +118,7 @@ public class Sword : MonoBehaviour
     void FixedUpdate()
     {
         SweepBladeMelee();
+        ScanMiniComputersAlongBlade();
 
         // Always check for bullet contact — sword doesn't need to be swinging to parry
         ParryBullets();
@@ -154,6 +156,22 @@ public class Sword : MonoBehaviour
 
             foreach (var hit in hits)
             {
+                // Mini computers may have no Rigidbody — handle them before the rb guard
+                Boss2MiniComputer miniComputer = hit.collider.GetComponentInParent<Boss2MiniComputer>();
+                if (miniComputer != null)
+                {
+                    int id = miniComputer.GetInstanceID();
+                    if (!_miniComputerCooldowns.TryGetValue(id, out float lastHit) || Time.time - lastHit >= hitCooldown)
+                    {
+                        _miniComputerCooldowns[id] = Time.time;
+                        float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
+                        float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
+                        miniComputer.TakeDamage(damageAmount * multiplier);
+                        StartCoroutine(HitStop());
+                    }
+                    continue;
+                }
+
                 Rigidbody rb = hit.rigidbody;
                 if (rb == null) continue;
                 if (!CanHit(rb)) continue;
@@ -187,6 +205,35 @@ public class Sword : MonoBehaviour
                     rb.velocity = reflectDir;
                 }
 
+                StartCoroutine(HitStop());
+            }
+        }
+    }
+
+    void ScanMiniComputersAlongBlade()
+    {
+        if (bladeBase == null || bladeTip == null) return;
+
+        float scanRadius = 0.25f;
+
+        for (int i = 0; i <= 4; i++)
+        {
+            float t = i / 4f;
+            Vector3 point = Vector3.Lerp(bladeBase.position, bladeTip.position, t);
+
+            Collider[] overlaps = Physics.OverlapSphere(point, scanRadius, ~0, QueryTriggerInteraction.Collide);
+            foreach (var col in overlaps)
+            {
+                Boss2MiniComputer mc = col.GetComponentInParent<Boss2MiniComputer>();
+                if (mc == null) continue;
+
+                int id = mc.GetInstanceID();
+                if (_miniComputerCooldowns.TryGetValue(id, out float last) && Time.time - last < hitCooldown) continue;
+
+                _miniComputerCooldowns[id] = Time.time;
+                float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
+                float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
+                mc.TakeDamage(damageAmount * multiplier);
                 StartCoroutine(HitStop());
             }
         }
