@@ -35,9 +35,15 @@ public class MenuController : MonoBehaviour
         SetMenuVisible(showMenu);
 
         if (showMenu)
+        {
             TeleportPlayer(menuSpawnPoint);
+            HUDManager.Instance?.ShowHUD(false);
+        }
         else
+        {
             TeleportPlayer(BossSpawnPoint(BossManager.Instance.StartingBoss));
+            HUDManager.Instance?.ShowHUD(true);
+        }
     }
 
     // Wire this to MenuBox.onSliced via the Inspector (use int parameter 1 or 2)
@@ -45,6 +51,7 @@ public class MenuController : MonoBehaviour
     {
         SetMenuVisible(false);
         TeleportPlayer(BossSpawnPoint(bossIndex));
+        HUDManager.Instance?.ShowHUD(true);
         BossManager.Instance?.SetActiveBoss(bossIndex);
     }
 
@@ -65,6 +72,7 @@ public class MenuController : MonoBehaviour
     public void ReturnToMenu()
     {
         BossManager.Instance?.SetActiveBoss(0);
+        HUDManager.Instance?.ShowHUD(false);
         SetMenuVisible(true);
         TeleportPlayer(menuSpawnPoint);
 

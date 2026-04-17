@@ -28,6 +28,10 @@ public class BossManager : MonoBehaviour
     [Header("Starting Boss (0 = none, 1 = Boss1, 2 = Boss2)")]
     public int startingBoss = 0;
 
+    [Header("Boss Names")]
+    public string boss1Name = "Roe Jogan";
+    public string boss2Name = "The Mainframe";
+
     [Header("HUD")]
     [Tooltip("Show the health bar immediately when Boss 1 becomes active")]
     public bool boss1ShowsBarImmediately = true;
@@ -77,11 +81,11 @@ public class BossManager : MonoBehaviour
 
         if (bossIndex == 1 && boss1 != null)
         {
-            // Give Boss1 a reference to the shared HUD bar before enabling it
             if (HUDManager.Instance != null)
             {
                 boss1.bossHealthBar = HUDManager.Instance.bossBar;
                 boss1.bossHealthBar?.UpdateHealthPercentage(boss1.health, boss1.maxHealth);
+                HUDManager.Instance.SetBossName(boss1Name);
             }
 
             SetBossActive(boss1, true);
@@ -92,10 +96,11 @@ public class BossManager : MonoBehaviour
 
         if (bossIndex == 2 && boss2 != null)
         {
-            // Give Boss2 a reference to the shared HUD bar — bar stays hidden until
-            // mini computers are destroyed (Boss2.ActivateMainComputer shows it)
             if (HUDManager.Instance != null)
+            {
                 boss2.bossHealthBar = HUDManager.Instance.bossBar;
+                HUDManager.Instance.SetBossName(boss2Name);
+            }
 
             SetBossActive(boss2, true);
 
