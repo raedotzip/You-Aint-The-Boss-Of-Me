@@ -3,7 +3,7 @@
 A fast-paced VR boss rush game built in Unity with SteamVR. Fight two bosses back-to-back as fast as possible — dodge projectiles, parry bullets with your sword, and take down each boss to save the world.
 
 **Course:** CSCE352 / EMAR440 — Exploring Virtual Reality  
-**Authors:** Raegan Scheet, Asher Lahm, Kenny Kouete
+**Authors:** Raegan Scheet, Asher Lahm, Kenny Kouete  
 **License:** Apache 2.0
 
 ---
@@ -46,24 +46,6 @@ TBD
 4. Press **Play**
 5. Slice one of the menu boxes with your sword to start a boss fight
 6. Defeat both bosses to complete the run
-
----
-
-## Project Structure
-
-```
-Assets/
-├── Scenes/
-│   └── AnimationTest.unity     ← Main gameplay scene
-├── Scripts/
-│   ├── Asher Animation Tests/  ← Boss state machines and all attack states
-│   ├── Combat/                 ← Sword, bullet manager, obstacle manager
-│   ├── Enemies/                ← BossManager, hitboxes, base state classes
-│   ├── Menu/                   ← MenuController, MenuBox
-│   └── Player/                 ← Movement, dash, health, HUD
-├── ScriptableObjects/          ← AttackData, BulletData, ObstacleData assets
-└── Prefabs/                    ← VFX and obstacle prefabs
-```
 
 ---
 
