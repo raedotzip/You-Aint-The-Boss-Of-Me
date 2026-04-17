@@ -32,7 +32,7 @@ TBD
 
 ## Requirements
 
-- Unity 2022.x or later
+- Unity 2022.3.62f2
 - SteamVR plugin (included under `Assets/Plugins/Core/SteamVR`)
 - A SteamVR-compatible VR headset (Valve Index, HTC Vive, Meta Quest via Air Link / Link, etc.)
 
