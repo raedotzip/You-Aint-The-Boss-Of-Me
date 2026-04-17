@@ -195,8 +195,7 @@ public class Boss2StateManager : EnemyStateManager
 
         if (health <= 0f)
         {
-            Debug.Log("[Boss2] Main computer destroyed!");
-            // Add death logic here
+            MenuController.Instance?.AdvanceToNextBoss(2);
         }
     }
 

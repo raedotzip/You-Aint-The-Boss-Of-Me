@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using Valve.VR;
 
 // Single-scene architecture — no scene loads.
 // Call StartBoss(1) / StartBoss(2) from MenuBox.onSliced to teleport the player
@@ -22,6 +24,10 @@ public class MenuController : MonoBehaviour
     [Header("Player")]
     [Tooltip("Root GameObject that has the CharacterController")]
     public GameObject player;
+
+    [Header("Fade")]
+    [Tooltip("Duration in seconds for the fade-to-black and fade-in during teleport")]
+    public float fadeDuration = 0.4f;
 
     void Awake()
     {
@@ -49,10 +55,7 @@ public class MenuController : MonoBehaviour
     // Wire this to MenuBox.onSliced via the Inspector (use int parameter 1 or 2)
     public void StartBoss(int bossIndex)
     {
-        SetMenuVisible(false);
-        TeleportPlayer(BossSpawnPoint(bossIndex));
-        HUDManager.Instance?.ShowHUD(true);
-        BossManager.Instance?.SetActiveBoss(bossIndex);
+        StartCoroutine(FadeAndStartBoss(bossIndex));
     }
 
     // Parameterless helpers used by the Editor setup tool for UnityEvent wiring
@@ -71,17 +74,49 @@ public class MenuController : MonoBehaviour
     // Call this when a boss is defeated to bring the player back to the menu
     public void ReturnToMenu()
     {
+        StartCoroutine(FadeAndReturnToMenu());
+    }
+
+    // Called after Boss 1 is defeated — fade out, teleport to Boss 2, fade in
+    public void AdvanceToNextBoss(int completedBossIndex)
+    {
+        int nextBoss = completedBossIndex + 1;
+        if (nextBoss <= 2)
+            StartCoroutine(FadeAndStartBoss(nextBoss));
+        else
+            ReturnToMenu();
+    }
+
+    // -----------------------------------------------
+    IEnumerator FadeAndStartBoss(int bossIndex)
+    {
+        SteamVR_Fade.View(Color.black, fadeDuration);
+        yield return new WaitForSeconds(fadeDuration);
+
+        SetMenuVisible(false);
+        TeleportPlayer(BossSpawnPoint(bossIndex));
+        HUDManager.Instance?.ShowHUD(true);
+        BossManager.Instance?.SetActiveBoss(bossIndex);
+
+        SteamVR_Fade.View(Color.clear, fadeDuration);
+    }
+
+    IEnumerator FadeAndReturnToMenu()
+    {
+        SteamVR_Fade.View(Color.black, fadeDuration);
+        yield return new WaitForSeconds(fadeDuration);
+
         BossManager.Instance?.SetActiveBoss(0);
         HUDManager.Instance?.ShowHUD(false);
         SetMenuVisible(true);
         TeleportPlayer(menuSpawnPoint);
 
-        // Re-enable slicing on all boxes
         foreach (var box in menuBoxes)
             if (box != null) box.GetComponent<MenuBox>()?.ResetSlice();
+
+        SteamVR_Fade.View(Color.clear, fadeDuration);
     }
 
-    // -----------------------------------------------
     void SetMenuVisible(bool visible)
     {
         if (menuSphere != null) menuSphere.SetActive(visible);
@@ -99,23 +134,16 @@ public class MenuController : MonoBehaviour
     void TeleportPlayer(Transform target)
     {
         if (player == null || target == null) return;
-    
+
         var cc = player.GetComponent<CharacterController>();
         var movement = player.GetComponent<PlayerMovement>();
-    
-        // 1. Disable CC to allow manual position override
+
         if (cc != null) cc.enabled = false;
-    
-        // 2. Reset movement variables (Gravity/Dash)
         if (movement != null) movement.SyncTeleport();
-    
-        // 3. Move the player to the target
+
         player.transform.SetPositionAndRotation(target.position, target.rotation);
-    
-        // 4. IMPORTANT: Force physics engine to see the new position BEFORE enabling CC
         Physics.SyncTransforms();
-    
-        // 5. Re-enable CC
+
         if (cc != null) cc.enabled = true;
     }
 }

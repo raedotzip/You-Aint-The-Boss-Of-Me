@@ -147,8 +147,7 @@ public class Boss1StateManager : EnemyStateManager
 
         if (health <= 0f)
         {
-            Debug.Log("Boss defeated!");
-            // Add any death logic here
+            MenuController.Instance?.AdvanceToNextBoss(1);
         }
     }
 

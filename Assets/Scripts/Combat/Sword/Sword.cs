@@ -119,6 +119,7 @@ public class Sword : MonoBehaviour
     {
         SweepBladeMelee();
         ScanMiniComputersAlongBlade();
+        ScanMenuBoxesAlongBlade();
 
         // Always check for bullet contact — sword doesn't need to be swinging to parry
         ParryBullets();
@@ -239,6 +240,31 @@ public class Sword : MonoBehaviour
                 float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
                 mc.TakeDamage(damageAmount * multiplier);
                 StartCoroutine(HitStop());
+            }
+        }
+    }
+
+    // Overlap scan so menu boxes are detected even if menuLayer isn't assigned
+    void ScanMenuBoxesAlongBlade()
+    {
+        if (bladeBase == null || bladeTip == null) return;
+
+        for (int i = 0; i <= 4; i++)
+        {
+            float t = i / 4f;
+            Vector3 point = Vector3.Lerp(bladeBase.position, bladeTip.position, t);
+
+            Collider[] overlaps = Physics.OverlapSphere(point, sphereRadius * 4f, ~0, QueryTriggerInteraction.Collide);
+            foreach (var col in overlaps)
+            {
+                MenuBox mb = col.GetComponentInParent<MenuBox>();
+                if (mb == null) continue;
+
+                Rigidbody rb = col.attachedRigidbody;
+                if (rb == null || !CanHit(rb)) continue;
+
+                cooldowns[rb] = Time.time;
+                mb.OnSliced();
             }
         }
     }
