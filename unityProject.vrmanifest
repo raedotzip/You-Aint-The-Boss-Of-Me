@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.coolgame.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "D:\\kkouete\\VRGame\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\21784145\\Documents\\GitHub\\VRGame\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "CoolGame [Testing]"

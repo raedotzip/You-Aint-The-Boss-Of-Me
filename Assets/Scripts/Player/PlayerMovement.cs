@@ -1,95 +1,138 @@
 using UnityEngine;
 using Valve.VR;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
     // ===============================
     // MOVEMENT
     // ===============================
     [Header("Movement")]
-    public SteamVR_Action_Vector2    moveAction;
-    public SteamVR_Input_Sources     inputSource = SteamVR_Input_Sources.LeftHand;
-    public float                     moveSpeed   = 2f;
-    public Transform                 head;
+    public SteamVR_Action_Vector2 moveAction;
+    public SteamVR_Input_Sources inputSource = SteamVR_Input_Sources.Any; // Changed to Any for better compatibility
+    public float moveSpeed = 2f;
+    public Transform head;
 
     // ===============================
     // DASH
     // ===============================
     [Header("Dash")]
-    [Tooltip("Bind this to the left trigger (e.g. SteamVR default 'GrabPinch' action).")]
-    public SteamVR_Action_Boolean    triggerAction;
+    [Tooltip("Recommended: /actions/default/in/InteractUI or GrabPinch")]
+    public SteamVR_Action_Boolean triggerAction;
 
-    [Tooltip("Total distance covered by one dash.")]
     public float dashDistance = 4f;
-
-    [Tooltip("How long the dash lasts in seconds.")]
     public float dashDuration = 0.15f;
-
-    [Tooltip("Seconds before the player can dash again.")]
     public float dashCooldown = 1f;
 
-    private bool    _isDashing     = false;
-    private float   _dashTimer     = 0f;
-    private float   _cooldownTimer = 0f;
-    private Vector3 _dashDir       = Vector3.zero;
+    private bool _isDashing = false;
+    private float _dashTimer = 0f;
+    private float _cooldownTimer = 0f;
+    private Vector3 _dashDir = Vector3.zero;
 
+    // ===============================
+    // PHYSICS
+    // ===============================
     private CharacterController cc;
+    private float verticalVelocity = 0f;
+    private float gravity = -9.81f;
+    private float stickToGroundForce = -2f;
 
     void Awake()
     {
         cc = GetComponent<CharacterController>();
+        if (head == null) head = Camera.main.transform;
     }
 
     void Update()
     {
         float dt = Time.deltaTime;
 
+        // Handle Cooldown
         if (_cooldownTimer > 0f)
             _cooldownTimer -= dt;
 
-        // ---- Active dash: keep moving in locked direction ----
+        // Handle Gravity
+        ApplyGravity();
+
+        // 1. Check for Dash Input
+        // Note: Using GetStateDown. Ensure your SteamVR Input Binding is set to "Boolean" for this action.
+        if (triggerAction != null && triggerAction.GetStateDown(inputSource) && _cooldownTimer <= 0f && !_isDashing)
+        {
+            StartDash();
+        }
+
+        // 2. Execute Movement Logic
         if (_isDashing)
         {
-            _dashTimer -= dt;
-            cc.Move(_dashDir * (dashDistance / dashDuration) * dt);
-
-            if (_dashTimer <= 0f)
-                _isDashing = false;
-
-            return; // no other input during dash
+            UpdateDash(dt);
         }
-
-        // ---- Trigger pressed: start dash ----
-        if (triggerAction != null && triggerAction.GetStateDown(inputSource) && _cooldownTimer <= 0f)
+        else
         {
-            Vector2 stick = moveAction.GetAxis(inputSource);
-
-            Vector3 fwd = head.forward; fwd.y = 0f; fwd.Normalize();
-            Vector3 rgt = head.right;   rgt.y = 0f; rgt.Normalize();
-
-            // Dash in stick direction, or straight forward if stick is neutral
-            Vector3 dir = stick.magnitude > 0.1f
-                ? (fwd * stick.y + rgt * stick.x).normalized
-                : fwd;
-
-            if (dir.sqrMagnitude > 0.001f)
-            {
-                _dashDir       = dir;
-                _dashTimer     = dashDuration;
-                _cooldownTimer = dashCooldown;
-                _isDashing     = true;
-            }
-
-            return;
+            UpdateNormalMovement(dt);
         }
+    }
 
-        // ---- Normal movement ----
+    private void ApplyGravity()
+    {
+        if (cc.isGrounded && verticalVelocity < 0)
+        {
+            verticalVelocity = stickToGroundForce;
+        }
+        else
+        {
+            verticalVelocity += gravity * Time.deltaTime;
+        }
+        verticalVelocity = Mathf.Max(verticalVelocity, -20f);
+    }
+
+    private void StartDash()
+    {
+        Vector2 stick = moveAction.GetAxis(inputSource);
+        
+        // Get Forward/Right based on Head Orientation
+        Vector3 fwd = head.forward; fwd.y = 0f; fwd.Normalize();
+        Vector3 rgt = head.right;   rgt.y = 0f; rgt.Normalize();
+
+        // If stick is moved, dash in stick direction. Otherwise, dash where you are looking.
+        Vector3 dir = stick.sqrMagnitude > 0.05f
+            ? (fwd * stick.y + rgt * stick.x).normalized
+            : fwd;
+
+        if (dir.sqrMagnitude > 0.001f)
+        {
+            _dashDir = dir;
+            _dashTimer = dashDuration;
+            _cooldownTimer = dashCooldown;
+            _isDashing = true;
+        }
+    }
+
+    private void UpdateDash(float dt)
+    {
+        _dashTimer -= dt;
+
+        // Calculate velocity: Distance / Time
+        float speed = dashDistance / dashDuration;
+        Vector3 move = (_dashDir * speed) + (Vector3.up * verticalVelocity);
+        
+        cc.Move(move * dt);
+
+        if (_dashTimer <= 0f)
+        {
+            _isDashing = false;
+        }
+    }
+
+    private void UpdateNormalMovement(float dt)
+    {
         Vector2 input = moveAction.GetAxis(inputSource);
-        if (input.magnitude > 0.1f)
-        {
-            Vector3 fwd = head.forward; fwd.y = 0f; fwd.Normalize();
-            Vector3 rgt = head.right;   rgt.y = 0f; rgt.Normalize();
-            cc.Move((fwd * input.y + rgt * input.x) * moveSpeed * dt);
-        }
+        
+        Vector3 fwd = head.forward; fwd.y = 0f; fwd.Normalize();
+        Vector3 rgt = head.right;   rgt.y = 0f; rgt.Normalize();
+
+        Vector3 horizontal = (fwd * input.y + rgt * input.x) * moveSpeed;
+        Vector3 vertical = Vector3.up * verticalVelocity;
+
+        cc.Move((horizontal + vertical) * dt);
     }
 }

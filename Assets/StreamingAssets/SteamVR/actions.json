@@ -41,6 +41,10 @@
       "type": "vector2"
     },
     {
+      "name": "/actions/default/in/Dash",
+      "type": "boolean"
+    },
+    {
       "name": "/actions/default/out/Haptic",
       "type": "vibration"
     },
@@ -77,7 +81,7 @@
   "action_sets": [
     {
       "name": "/actions/default",
-      "usage": "single"
+      "usage": "leftright"
     },
     {
       "name": "/actions/platformer",
@@ -148,8 +152,9 @@
   ],
   "localization": [
     {
-      "language_tag": "Move",
-      "/actions/default/in/Move": "/actions/default/in/Move"
+      "language_tag": "Dash",
+      "/actions/default/in/Move": "/actions/default/in/Move",
+      "/actions/default/in/Dash": "/actions/default/in/Dash"
     }
   ]
 }
