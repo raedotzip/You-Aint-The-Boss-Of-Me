@@ -83,6 +83,10 @@ public class Boss2StateManager : EnemyStateManager
         _miniComputersRemaining = miniComputersTotal;
         health    = maxHealth;
         animator  = GetComponent<Animator>();
+        rb        = GetComponent<Rigidbody>();
+
+        if (rb != null)
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
 
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
