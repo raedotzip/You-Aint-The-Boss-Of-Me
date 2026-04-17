@@ -10,7 +10,7 @@ public class Boss1ChargeAttack : EnemyBaseState
     // ===============================
     // CHARGE SETTINGS
     // ===============================
-    private float chargeSpeed    = 10f;
+    private float chargeSpeed    = 30f;
     private float chargeStopDist = 2f;
     private float chargeDuration = 3f;
 
