@@ -2,7 +2,7 @@
 
 A fast-paced VR boss rush game built in Unity with SteamVR. Fight two bosses back-to-back as fast as possible — dodge projectiles, parry bullets with your sword, and take down each boss to save the world.
 
-**Course:** University of Nebraska Lincoln - CSCE352 / EMAR440 — Exploring Virtual Reality  
+**Course:** University of Nebraska-Lincoln — CSCE352 / EMAR440 — Exploring Virtual Reality  
 **Authors:** Raegan Scheet, Asher Lahm, Kenny Kouete  
 **License:** Apache 2.0
 
