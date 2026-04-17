@@ -15,4 +15,4 @@ MonoBehaviour:
   shockwavePrefab: {fileID: 0}
   laserWallPrefab: {fileID: 0}
   crushingBlockPrefab: {fileID: 0}
-  wallPrefab: {fileID: 0}
+  wallPrefab: {fileID: 6910907443063825860, guid: 6c00b3c99e81d5b418b869c4d8646c79, type: 3}

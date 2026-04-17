@@ -3,12 +3,12 @@ using UnityEngine;
 // Rapid aimed bursts of bullets — punishes players who stand still
 public class Boss2DataStrikeAttack : EnemyBaseState
 {
-    private int   burstCount         = 4;
-    private int   bulletsPerBurst    = 6;
-    private float spreadAngle        = 10f;
-    private float pauseBetweenBursts = 0.6f;
-    private float inBurstFireRate    = 0.05f;
-    private float bulletSpeed        = 14f;
+    private int   burstCount         = 5;
+    private int   bulletsPerBurst    = 7;
+    private float spreadAngle        = 14f;
+    private float pauseBetweenBursts = 0.5f;
+    private float inBurstFireRate    = 0.04f;
+    private float bulletSpeed        = 6f;
     private float bulletDamage       = 12f;
     private float bulletLifetime     = 3f;
 
@@ -22,12 +22,12 @@ public class Boss2DataStrikeAttack : EnemyBaseState
 
     public override void EnterState(EnemyStateManager state)
     {
-        _burstsCompleted = 0;
+        _burstsCompleted  = 0;
         _bulletsThisBurst = 0;
-        _burstTimer = inBurstFireRate;
-        _pauseTimer = 0f;
-        _done = false;
-        _inBurst = true;
+        _burstTimer       = inBurstFireRate;
+        _pauseTimer       = 0f;
+        _done             = false;
+        _inBurst          = true;
         SnapshotAim(state);
     }
 
@@ -46,9 +46,9 @@ public class Boss2DataStrikeAttack : EnemyBaseState
 
                 if (_bulletsThisBurst >= bulletsPerBurst)
                 {
-                    _inBurst = false;
+                    _inBurst          = false;
                     _bulletsThisBurst = 0;
-                    _pauseTimer = 0f;
+                    _pauseTimer       = 0f;
                     _burstsCompleted++;
 
                     if (_burstsCompleted >= burstCount)
@@ -74,8 +74,8 @@ public class Boss2DataStrikeAttack : EnemyBaseState
 
     private void SnapshotAim(EnemyStateManager state)
     {
+        // Aim directly at player in 3D so bullets travel at player height
         Vector3 toPlayer = state.player.position - state.transform.position;
-        toPlayer.y = 0f;
         _aimSnapshot = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : state.transform.forward;
     }
 
@@ -84,11 +84,10 @@ public class Boss2DataStrikeAttack : EnemyBaseState
         float step        = bulletsPerBurst > 1 ? spreadAngle / (bulletsPerBurst - 1) : 0f;
         float angleOffset = -spreadAngle * 0.5f + step * _bulletsThisBurst;
         Vector3 dir       = Quaternion.AngleAxis(angleOffset, Vector3.up) * _aimSnapshot;
-        dir.y             = -0.05f;
         dir               = dir.normalized;
 
         Vector3 spawnPos = state.transform.position;
-        spawnPos.y = Random.Range(0.5f, 1.2f);
+        spawnPos.y = state.player.position.y + 1.0f;
 
         Bullet b = new Bullet
         {

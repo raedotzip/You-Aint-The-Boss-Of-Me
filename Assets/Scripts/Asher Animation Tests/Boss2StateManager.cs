@@ -10,6 +10,8 @@ public class Boss2StateManager : EnemyStateManager
     public Boss2VirusSwarmAttack  virusSwarmAttack  = new Boss2VirusSwarmAttack();
     public Boss2EMPWaveAttack     empWaveAttack     = new Boss2EMPWaveAttack();
     public Boss2DataStrikeAttack  dataStrikeAttack  = new Boss2DataStrikeAttack();
+    public Boss2SpiralAttack           spiralAttack           = new Boss2SpiralAttack();
+    public Boss2ObstacleBarrageAttack  obstacleBarrageAttack  = new Boss2ObstacleBarrageAttack();
 
     private Boss2TiredState       tiredState        = new Boss2TiredState();
 
@@ -24,6 +26,9 @@ public class Boss2StateManager : EnemyStateManager
 
     [Tooltip("The force field GameObject sitting around the main computer — disabled on activation")]
     public GameObject forceField;
+
+    [Tooltip("Prefab spawned by the Obstacle Barrage attack — needs a Boss2Obstacle component and Box Collider")]
+    public GameObject obstaclePrefab;
 
     private int  _miniComputersRemaining;
     private bool _isActive       = false;
@@ -40,28 +45,34 @@ public class Boss2StateManager : EnemyStateManager
     // ATTACK WEIGHTS — Close
     // ===============================
     [Header("Close Range Attack Weights")]
-    [Range(0, 10)] public int closeWeight_LaserBeam  = 3;
+    [Range(0, 10)] public int closeWeight_LaserBeam  = 2;
     [Range(0, 10)] public int closeWeight_VirusSwarm = 2;
     [Range(0, 10)] public int closeWeight_EMPWave    = 3;
     [Range(0, 10)] public int closeWeight_DataStrike = 4;
+    [Range(0, 10)] public int closeWeight_Spiral          = 3;
+    [Range(0, 10)] public int closeWeight_ObstacleBarrage = 2;
 
     // ===============================
     // ATTACK WEIGHTS — Mid
     // ===============================
     [Header("Mid Range Attack Weights")]
-    [Range(0, 10)] public int midWeight_LaserBeam  = 3;
-    [Range(0, 10)] public int midWeight_VirusSwarm = 3;
-    [Range(0, 10)] public int midWeight_EMPWave    = 3;
-    [Range(0, 10)] public int midWeight_DataStrike = 2;
+    [Range(0, 10)] public int midWeight_LaserBeam         = 3;
+    [Range(0, 10)] public int midWeight_VirusSwarm        = 3;
+    [Range(0, 10)] public int midWeight_EMPWave           = 3;
+    [Range(0, 10)] public int midWeight_DataStrike        = 2;
+    [Range(0, 10)] public int midWeight_Spiral            = 3;
+    [Range(0, 10)] public int midWeight_ObstacleBarrage   = 3;
 
     // ===============================
     // ATTACK WEIGHTS — Far
     // ===============================
     [Header("Far Range Attack Weights")]
-    [Range(0, 10)] public int farWeight_LaserBeam  = 2;
-    [Range(0, 10)] public int farWeight_VirusSwarm = 4;
-    [Range(0, 10)] public int farWeight_EMPWave    = 2;
-    [Range(0, 10)] public int farWeight_DataStrike = 4;
+    [Range(0, 10)] public int farWeight_LaserBeam         = 3;
+    [Range(0, 10)] public int farWeight_VirusSwarm        = 3;
+    [Range(0, 10)] public int farWeight_EMPWave           = 2;
+    [Range(0, 10)] public int farWeight_DataStrike        = 3;
+    [Range(0, 10)] public int farWeight_Spiral            = 2;
+    [Range(0, 10)] public int farWeight_ObstacleBarrage   = 4;
 
     // ===============================
     // TIRED SETTINGS
@@ -110,7 +121,7 @@ public class Boss2StateManager : EnemyStateManager
         int destroyed = miniComputersTotal - _miniComputersRemaining;
         Debug.Log($"[Boss2] Mini computer destroyed ({destroyed}/{miniComputersTotal}).");
 
-        if (_forceFieldUp && destroyed >= miniComputersToActivate)
+        if (_forceFieldUp && _miniComputersRemaining <= 0)
             ActivateMainComputer();
     }
 
@@ -176,27 +187,33 @@ public class Boss2StateManager : EnemyStateManager
         if (dist <= closeRange)
             return PickWeighted(new (EnemyBaseState, int)[]
             {
-                (laserBeamAttack,  closeWeight_LaserBeam),
-                (virusSwarmAttack, closeWeight_VirusSwarm),
-                (empWaveAttack,    closeWeight_EMPWave),
-                (dataStrikeAttack, closeWeight_DataStrike),
+                (laserBeamAttack,       closeWeight_LaserBeam),
+                (virusSwarmAttack,      closeWeight_VirusSwarm),
+                (empWaveAttack,         closeWeight_EMPWave),
+                (dataStrikeAttack,      closeWeight_DataStrike),
+                (spiralAttack,          closeWeight_Spiral),
+                (obstacleBarrageAttack, closeWeight_ObstacleBarrage),
             });
 
         if (dist >= farRange)
             return PickWeighted(new (EnemyBaseState, int)[]
             {
-                (laserBeamAttack,  farWeight_LaserBeam),
-                (virusSwarmAttack, farWeight_VirusSwarm),
-                (empWaveAttack,    farWeight_EMPWave),
-                (dataStrikeAttack, farWeight_DataStrike),
+                (laserBeamAttack,       farWeight_LaserBeam),
+                (virusSwarmAttack,      farWeight_VirusSwarm),
+                (empWaveAttack,         farWeight_EMPWave),
+                (dataStrikeAttack,      farWeight_DataStrike),
+                (spiralAttack,          farWeight_Spiral),
+                (obstacleBarrageAttack, farWeight_ObstacleBarrage),
             });
 
         return PickWeighted(new (EnemyBaseState, int)[]
         {
-            (laserBeamAttack,  midWeight_LaserBeam),
-            (virusSwarmAttack, midWeight_VirusSwarm),
-            (empWaveAttack,    midWeight_EMPWave),
-            (dataStrikeAttack, midWeight_DataStrike),
+            (laserBeamAttack,       midWeight_LaserBeam),
+            (virusSwarmAttack,      midWeight_VirusSwarm),
+            (empWaveAttack,         midWeight_EMPWave),
+            (dataStrikeAttack,      midWeight_DataStrike),
+            (spiralAttack,          midWeight_Spiral),
+            (obstacleBarrageAttack, midWeight_ObstacleBarrage),
         });
     }
 

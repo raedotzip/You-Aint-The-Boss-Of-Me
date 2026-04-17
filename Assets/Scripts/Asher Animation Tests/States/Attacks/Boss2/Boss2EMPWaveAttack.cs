@@ -3,12 +3,12 @@ using UnityEngine;
 // Expanding rings of bullets with a rotating gap — player must dodge or stand in the gap
 public class Boss2EMPWaveAttack : EnemyBaseState
 {
-    private int   ringCount        = 3;
-    private float timeBetweenRings = 1.5f;
-    private int   bulletsPerRing   = 18;
-    private float gapSizeDegrees   = 60f;
-    private float gapRotatePerRing = 120f;
-    private float bulletSpeed      = 7f;
+    private int   ringCount        = 5;
+    private float timeBetweenRings = 1.1f;
+    private int   bulletsPerRing   = 22;
+    private float gapSizeDegrees   = 50f;
+    private float gapRotatePerRing = 90f;
+    private float bulletSpeed      = 4f;
     private float bulletDamage     = 12f;
     private float bulletLifetime   = 3f;
 
@@ -20,7 +20,7 @@ public class Boss2EMPWaveAttack : EnemyBaseState
     public override void EnterState(EnemyStateManager state)
     {
         _ringsFired = 0;
-        _timer      = timeBetweenRings; // fire first ring immediately
+        _timer      = timeBetweenRings;
         _done       = false;
 
         Vector3 toPlayer = state.player.position - state.transform.position;
@@ -55,9 +55,10 @@ public class Boss2EMPWaveAttack : EnemyBaseState
 
     private void FireRing(EnemyStateManager state)
     {
-        float angleStep  = 360f / bulletsPerRing;
-        float halfGap    = gapSizeDegrees * 0.5f;
+        float angleStep   = 360f / bulletsPerRing;
+        float halfGap     = gapSizeDegrees * 0.5f;
         Vector3 spawnBase = state.transform.position;
+        float targetY     = state.player.position.y;
 
         for (int i = 0; i < bulletsPerRing; i++)
         {
@@ -68,7 +69,7 @@ public class Boss2EMPWaveAttack : EnemyBaseState
             Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
 
             Vector3 spawnPos = spawnBase + dir * 0.8f;
-            spawnPos.y = Random.Range(0.3f, 0.9f);
+            spawnPos.y = targetY + 1.0f + Random.Range(-0.12f, 0.12f);
 
             Bullet b = new Bullet
             {
