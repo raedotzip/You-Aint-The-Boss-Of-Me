@@ -18,8 +18,16 @@ public class Boss2StateManager : EnemyStateManager
     // ===============================
     [Header("Phase Gate")]
     public int miniComputersTotal = 5;
-    private int _miniComputersRemaining;
-    private bool _isActive = false;
+
+    [Tooltip("Destroy this many mini computers to drop the force field and start the main computer")]
+    public int miniComputersToActivate = 1;
+
+    [Tooltip("The force field GameObject sitting around the main computer — disabled on activation")]
+    public GameObject forceField;
+
+    private int  _miniComputersRemaining;
+    private bool _isActive       = false;
+    private bool _forceFieldUp   = true;
 
     // ===============================
     // RANGE SETTINGS
@@ -82,7 +90,8 @@ public class Boss2StateManager : EnemyStateManager
         if (HUDManager.Instance != null)
             HUDManager.Instance.ShowBossBar(false);
 
-        // State machine starts locked — activated by OnMiniComputerDestroyed
+        if (forceField != null)
+            forceField.SetActive(true);
     }
 
     public override void Update()
@@ -97,16 +106,20 @@ public class Boss2StateManager : EnemyStateManager
     public void OnMiniComputerDestroyed(Boss2MiniComputer mini)
     {
         _miniComputersRemaining--;
-        Debug.Log($"[Boss2] Mini computer destroyed. {_miniComputersRemaining} remaining.");
+        int destroyed = miniComputersTotal - _miniComputersRemaining;
+        Debug.Log($"[Boss2] Mini computer destroyed ({destroyed}/{miniComputersTotal}).");
 
-        if (_miniComputersRemaining <= 0)
+        if (_forceFieldUp && destroyed >= miniComputersToActivate)
             ActivateMainComputer();
     }
 
     private void ActivateMainComputer()
     {
-        _isActive = true;
-        Debug.Log("[Boss2] All mini computers destroyed — main computer activated!");
+        _isActive     = true;
+        _forceFieldUp = false;
+
+        if (forceField != null)
+            forceField.SetActive(false);
 
         if (bossHealthBar != null)
             bossHealthBar.UpdateHealthPercentage(health, maxHealth);
@@ -122,7 +135,7 @@ public class Boss2StateManager : EnemyStateManager
     // ===============================
     public void TakeDamage(float amount)
     {
-        if (!_isActive) return;
+        if (_forceFieldUp) return;
 
         health = Mathf.Max(0f, health - amount);
 
