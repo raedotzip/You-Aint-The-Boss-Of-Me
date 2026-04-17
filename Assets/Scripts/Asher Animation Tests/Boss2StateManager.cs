@@ -30,6 +30,10 @@ public class Boss2StateManager : EnemyStateManager
     [Tooltip("Prefab spawned by the Obstacle Barrage attack — needs a Boss2Obstacle component and Box Collider")]
     public GameObject obstaclePrefab;
 
+    [Header("Bullet Spawn Points")]
+    [Tooltip("Empty GameObjects bullets can fire from — falls back to boss position if empty")]
+    public Transform[] bulletSpawnPoints;
+
     private int  _miniComputersRemaining;
     private bool _isActive       = false;
     private bool _forceFieldUp   = true;
@@ -89,6 +93,13 @@ public class Boss2StateManager : EnemyStateManager
     [HideInInspector] public float maxHealth     = 100f;
     public HealthBarUI bossHealthBar;
 
+    [Header("Sword Hit Detection")]
+    public float hitRadius    = 0.6f;
+    public float minSwordSpeed = 0.8f;
+
+    private Sword  _sword;
+    private float  _hitCooldown;
+
     public override void Start()
     {
         _miniComputersRemaining = miniComputersTotal;
@@ -104,12 +115,40 @@ public class Boss2StateManager : EnemyStateManager
 
         if (forceField != null)
             forceField.SetActive(true);
+
+        _sword = FindObjectOfType<Sword>();
     }
 
     public override void Update()
     {
         if (!_isActive) return;
         currentState.UpdateState(this);
+    }
+
+    void FixedUpdate()
+    {
+        if (_forceFieldUp || _sword == null) return;
+        if (_hitCooldown > 0f) { _hitCooldown -= Time.fixedDeltaTime; return; }
+
+        Transform bladeBase = _sword.bladeBase;
+        Transform bladeTip  = _sword.bladeTip;
+        if (bladeBase == null || bladeTip == null) return;
+
+        float dist = DistanceToSegment(transform.position, bladeBase.position, bladeTip.position);
+        if (dist < hitRadius && _sword.Velocity.magnitude > minSwordSpeed)
+        {
+            float swingT     = Mathf.InverseLerp(_sword.minSwingDistance, _sword.maxSwingDistance, dist);
+            float multiplier = Mathf.Lerp(_sword.minDamageMultiplier, _sword.maxDamageMultiplier, swingT);
+            TakeDamage(_sword.damageAmount * multiplier);
+            _hitCooldown = 0.3f;
+        }
+    }
+
+    static float DistanceToSegment(Vector3 point, Vector3 a, Vector3 b)
+    {
+        Vector3 ab = b - a;
+        float t = Mathf.Clamp01(Vector3.Dot(point - a, ab) / ab.sqrMagnitude);
+        return Vector3.Distance(point, a + t * ab);
     }
 
     // ===============================
@@ -159,6 +198,16 @@ public class Boss2StateManager : EnemyStateManager
             Debug.Log("[Boss2] Main computer destroyed!");
             // Add death logic here
         }
+    }
+
+    // ===============================
+    // SPAWN POINTS
+    // ===============================
+    public Vector3 GetRandomSpawnPoint()
+    {
+        if (bulletSpawnPoints != null && bulletSpawnPoints.Length > 0)
+            return bulletSpawnPoints[Random.Range(0, bulletSpawnPoints.Length)].position;
+        return transform.position;
     }
 
     // ===============================

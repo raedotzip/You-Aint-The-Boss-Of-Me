@@ -56,7 +56,7 @@ public class Boss2VirusSwarmAttack : EnemyBaseState
                 0f) * dir;
         }
 
-        Vector3 spawnPos = state.transform.position;
+        Vector3 spawnPos = ((Boss2StateManager)state).GetRandomSpawnPoint();
         spawnPos.y = state.player.position.y + 1.0f + Random.Range(-0.15f, 0.15f);
 
         BulletMovementType movement = (index % 3 == 0) ? BulletMovementType.Sine : BulletMovementType.Straight;

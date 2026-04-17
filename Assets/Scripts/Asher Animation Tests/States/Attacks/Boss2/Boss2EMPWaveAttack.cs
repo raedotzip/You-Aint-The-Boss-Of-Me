@@ -57,7 +57,7 @@ public class Boss2EMPWaveAttack : EnemyBaseState
     {
         float angleStep   = 360f / bulletsPerRing;
         float halfGap     = gapSizeDegrees * 0.5f;
-        Vector3 spawnBase = state.transform.position;
+        Vector3 spawnBase = ((Boss2StateManager)state).GetRandomSpawnPoint();
         float targetY     = state.player.position.y;
 
         for (int i = 0; i < bulletsPerRing; i++)

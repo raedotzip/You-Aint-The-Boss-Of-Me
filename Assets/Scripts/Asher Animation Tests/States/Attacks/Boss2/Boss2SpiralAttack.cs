@@ -56,7 +56,7 @@ public class Boss2SpiralAttack : EnemyBaseState
     private void FireArms(EnemyStateManager state)
     {
         float targetY     = state.player.position.y;
-        Vector3 spawnBase = state.transform.position;
+        Vector3 spawnBase = ((Boss2StateManager)state).GetRandomSpawnPoint();
 
         for (int arm = 0; arm < arms; arm++)
         {

@@ -73,7 +73,7 @@ public class Boss2LaserBeamAttack : EnemyBaseState
         float rad     = _angle * Mathf.Deg2Rad;
         Vector3 hDir  = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
         float targetY = state.player.position.y;
-        Vector3 spawnBase = state.transform.position;
+        Vector3 spawnBase = ((Boss2StateManager)state).GetRandomSpawnPoint();
 
         for (int i = 0; i < bulletsPerSalvo; i++)
         {

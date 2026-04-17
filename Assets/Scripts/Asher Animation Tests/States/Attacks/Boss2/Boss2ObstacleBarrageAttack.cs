@@ -118,7 +118,7 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
             Random.Range(-12f, 12f),
             0f) * dir;
 
-        Vector3 spawnPos = state.transform.position;
+        Vector3 spawnPos = ((Boss2StateManager)state).GetRandomSpawnPoint();
         spawnPos.y = state.player.position.y + 1.0f;
 
         Bullet b = new Bullet

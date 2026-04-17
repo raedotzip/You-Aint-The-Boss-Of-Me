@@ -86,7 +86,7 @@ public class Boss2DataStrikeAttack : EnemyBaseState
         Vector3 dir       = Quaternion.AngleAxis(angleOffset, Vector3.up) * _aimSnapshot;
         dir               = dir.normalized;
 
-        Vector3 spawnPos = state.transform.position;
+        Vector3 spawnPos = ((Boss2StateManager)state).GetRandomSpawnPoint();
         spawnPos.y = state.player.position.y + 1.0f;
 
         Bullet b = new Bullet
