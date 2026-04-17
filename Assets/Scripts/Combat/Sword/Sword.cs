@@ -12,6 +12,7 @@ public class Sword : MonoBehaviour
     [Header("Melee Detection")]
     public float sphereRadius = 0.025f;
     public LayerMask meleeParryLayer;
+    public LayerMask menuLayer;
     public float hitCooldown = 0.2f;
     public float damageAmount = 10f; // <-- Damage to boss
 
@@ -147,7 +148,7 @@ public class Sword : MonoBehaviour
                 sphereRadius,
                 movement.normalized,
                 distance,
-                meleeParryLayer,
+                meleeParryLayer | menuLayer,
                 QueryTriggerInteraction.Ignore
             );
 
@@ -159,23 +160,32 @@ public class Sword : MonoBehaviour
 
                 cooldowns[rb] = Time.time;
 
-                // =================================================
-                // Damage Boss if hit
-                // =================================================
-                Boss1StateManager boss = hit.collider.GetComponentInParent<Boss1StateManager>();
-                if (boss != null)
+                // Menu box slice — select the option and skip boss/physics logic
+                MenuBox menuBox = hit.collider.GetComponentInParent<MenuBox>();
+                if (menuBox != null)
                 {
-                    float swingT = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
+                    menuBox.OnSliced();
+                    continue;
+                }
+
+                // Boss damage routed through BossManager (works for any boss)
+                EnemyStateManager hitBoss = hit.collider.GetComponentInParent<EnemyStateManager>();
+                if (hitBoss != null && BossManager.Instance != null)
+                {
+                    float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
                     float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
-                    boss.TakeDamage(damageAmount * multiplier);
+                    BossManager.Instance.TakeDamageOnActive(damageAmount * multiplier);
 
                     if (swingTipDistance >= healSwingThreshold && playerHealth != null)
                         playerHealth.Heal(healAmount);
                 }
 
-                // Optional: reflect rigidbody for physics-based hits
-                Vector3 reflectDir = Vector3.Reflect(rb.velocity, hit.normal);
-                rb.velocity = reflectDir;
+                // Physics reflect — skip kinematic Rigidbodies (menu boxes, static props)
+                if (!rb.isKinematic)
+                {
+                    Vector3 reflectDir = Vector3.Reflect(rb.velocity, hit.normal);
+                    rb.velocity = reflectDir;
+                }
 
                 StartCoroutine(HitStop());
             }

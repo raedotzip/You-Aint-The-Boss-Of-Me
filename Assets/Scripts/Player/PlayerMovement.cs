@@ -13,8 +13,8 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 2f;
     public Transform head;
 
-    [Tooltip("Which layers should stop the player? (Usually Everything except Player)")]
-    public LayerMask collisionLayers = ~0; // Default to everything
+    [Tooltip("Layers that block movement (include MapWall + Ground)")]
+    public LayerMask collisionLayers = ~0;
 
     // ===============================
     // DASH
@@ -25,7 +25,6 @@ public class PlayerMovement : MonoBehaviour
     public float dashDuration = 0.15f;
     public float dashCooldown = 1f;
 
-    [Tooltip("How far below the dash path to check for ground")]
     public float ledgeCheckDepth = 3f;
 
     private bool _isDashing = false;
@@ -39,19 +38,21 @@ public class PlayerMovement : MonoBehaviour
     // ===============================
     private CharacterController cc;
     private float verticalVelocity = 0f;
+
     private readonly float gravity = -9.81f;
     private readonly float stickToGroundForce = -2f;
+
+    // Custom ground detection
+    private bool isGrounded;
 
     void Awake()
     {
         cc = GetComponent<CharacterController>();
         if (head == null) head = Camera.main.transform;
-        
-        // Ensure actions are assigned
+
         if (moveAction == null) moveAction = SteamVR_Actions.default_Move;
         if (triggerAction == null) triggerAction = SteamVR_Actions.default_Dash;
 
-        // Clean up: Auto-detect objects without colliders
         ValidateSceneColliders();
     }
 
@@ -64,32 +65,58 @@ public class PlayerMovement : MonoBehaviour
 
         ApplyGravity();
 
-        // Right Hand trigger for Dash
-        if (triggerAction != null && triggerAction.GetStateDown(SteamVR_Input_Sources.RightHand) && _cooldownTimer <= 0f && !_isDashing)
+        if (triggerAction != null &&
+            triggerAction.GetStateDown(SteamVR_Input_Sources.RightHand) &&
+            _cooldownTimer <= 0f &&
+            !_isDashing)
+        {
             StartDash();
+        }
 
         if (_isDashing)
             UpdateDash(dt);
         else
             UpdateNormalMovement(dt);
-            
-        // Critical for VR: Ensures physics knows where the CC moved this frame
+
         Physics.SyncTransforms();
     }
 
     private void ApplyGravity()
     {
-        if (cc.isGrounded && verticalVelocity < 0)
+        // Use the CC's built-in flag as a secondary check
+        bool ccGrounded = cc.isGrounded;
+
+        Vector3 origin = transform.position + cc.center;
+        float radius = cc.radius * 0.9f; // Slightly smaller to avoid wall friction
+        float castDistance = (cc.height / 2f) + 0.1f; // Small buffer
+
+        isGrounded = Physics.SphereCast(
+            origin,
+            radius,
+            Vector3.down,
+            out RaycastHit hit,
+            castDistance,
+            collisionLayers
+        );
+
+        // Combine both checks
+        if ((isGrounded || ccGrounded) && verticalVelocity < 0)
+        {
             verticalVelocity = stickToGroundForce;
+        }
         else
+        {
             verticalVelocity += gravity * Time.deltaTime;
-        
-        verticalVelocity = Mathf.Max(verticalVelocity, -20f);
+        }
     }
 
+    // ===============================
+    // DASH START
+    // ===============================
     private void StartDash()
     {
         Vector2 stick = moveAction.GetAxis(inputSource);
+
         Vector3 fwd = head.forward; fwd.y = 0f; fwd.Normalize();
         Vector3 rgt = head.right;   rgt.y = 0f; rgt.Normalize();
 
@@ -100,9 +127,8 @@ public class PlayerMovement : MonoBehaviour
         if (dir.sqrMagnitude <= 0.001f) return;
 
         float safeDistance = GetSafeDashDistance(dir);
-        
-        // If the distance is too small, we are likely touching a wall already
-        if (safeDistance < 0.1f) return;
+
+        if (safeDistance < 0.05f) return;
 
         _dashDir = dir;
         _effectiveDashDistance = safeDistance;
@@ -111,67 +137,106 @@ public class PlayerMovement : MonoBehaviour
         _isDashing = true;
     }
 
+    // ===============================
+    // SAFE DASH DISTANCE (WALL SAFE)
+    // ===============================
     private float GetSafeDashDistance(Vector3 dir)
     {
         Vector3 origin = transform.position + cc.center;
-        
-        // SphereCast checks for walls using the CharacterController's actual width
-        // We use collisionLayers to ignore the player's own layer
-        bool hitWall = Physics.SphereCast(origin, cc.radius, dir, out RaycastHit wallHit, dashDistance, collisionLayers);
 
-        if (hitWall)
+        // Detect walls
+        if (Physics.SphereCast(origin, cc.radius, dir, out RaycastHit hit, dashDistance, collisionLayers))
         {
-            // Stop slightly before the wall to prevent clipping
-            return Mathf.Max(0f, wallHit.distance - 0.1f);
+            // Stop just before wall
+            return Mathf.Max(0f, hit.distance - 0.05f);
         }
 
-        // Ledge Detection logic
-        const float stepSize = 0.5f;
-        int steps = Mathf.CeilToInt(dashDistance / stepSize);
-        float lastSafe = 0f;
+        // Ledge safety
+        float step = 0.5f;
+        float safe = 0f;
 
-        for (int i = 1; i <= steps; i++)
+        for (float d = step; d <= dashDistance; d += step)
         {
-            float d = Mathf.Min(i * stepSize, dashDistance);
-            Vector3 checkPos = transform.position + dir * d;
-            if (Physics.Raycast(checkPos + Vector3.up, Vector3.down, ledgeCheckDepth + 1f, collisionLayers))
-                lastSafe = d;
+            Vector3 pos = transform.position + dir * d;
+
+            if (Physics.Raycast(pos + Vector3.up, Vector3.down, ledgeCheckDepth + 1f, collisionLayers))
+                safe = d;
             else
                 break;
         }
 
-        return lastSafe;
+        return safe;
     }
 
+    // ===============================
+    // DASH UPDATE (ANTI-TUNNEL)
+    // ===============================
     private void UpdateDash(float dt)
     {
         _dashTimer -= dt;
+
         float speed = _effectiveDashDistance / dashDuration;
-        
-        // CharacterController.Move automatically handles sliding against Mesh Colliders
-        cc.Move((_dashDir * speed + Vector3.up * verticalVelocity) * dt);
+        Vector3 totalMove = (_dashDir * speed + Vector3.up * verticalVelocity) * dt;
+
+        // Break into steps to prevent clipping through walls
+        int steps = 4;
+        Vector3 stepMove = totalMove / steps;
+
+        for (int i = 0; i < steps; i++)
+        {
+            CollisionFlags flags = cc.Move(stepMove);
+
+            // Stop dash if we hit a wall
+            if ((flags & CollisionFlags.Sides) != 0)
+            {
+                _isDashing = false;
+                break;
+            }
+        }
 
         if (_dashTimer <= 0f)
             _isDashing = false;
     }
 
+    // ===============================
+    // NORMAL MOVEMENT (SAFE)
+    // ===============================
     private void UpdateNormalMovement(float dt)
     {
         Vector2 input = moveAction.GetAxis(inputSource);
+
         Vector3 fwd = head.forward; fwd.y = 0f; fwd.Normalize();
         Vector3 rgt = head.right;   rgt.y = 0f; rgt.Normalize();
 
-        Vector3 horizontal = (fwd * input.y + rgt * input.x) * moveSpeed;
-        cc.Move((horizontal + Vector3.up * verticalVelocity) * dt);
+        Vector3 move = (fwd * input.y + rgt * input.x) * moveSpeed;
+        move += Vector3.up * verticalVelocity;
+
+        // Substep movement for stability
+        int steps = 2;
+        Vector3 stepMove = move * dt / steps;
+
+        for (int i = 0; i < steps; i++)
+        {
+            cc.Move(stepMove);
+        }
     }
 
+    public void SyncTeleport()
+    {
+        verticalVelocity = 0f; // Reset gravity
+        _isDashing = false;    // Stop any active dashes
+    }
+
+    // ===============================
+    // DEBUG HELPER
+    // ===============================
     private void ValidateSceneColliders()
     {
         foreach (MeshRenderer mr in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
         {
             if (mr.gameObject.isStatic && mr.GetComponent<Collider>() == null)
             {
-                Debug.LogWarning($"[Physics Fix] {mr.gameObject.name} is static but has no Collider. You will walk through it!", mr.gameObject);
+                Debug.LogWarning($"[Physics Fix] {mr.gameObject.name} has no Collider!", mr.gameObject);
             }
         }
     }

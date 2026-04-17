@@ -36,6 +36,8 @@ public class BossManager : MonoBehaviour
 
     private int _activeBossIndex = 0;
 
+    public int StartingBoss => startingBoss;
+
     // ===============================
     // UNITY
     // ===============================
