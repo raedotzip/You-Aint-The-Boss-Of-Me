@@ -176,7 +176,24 @@ public class PlayerMovement : MonoBehaviour
         _dashTimer -= dt;
 
         float speed = _effectiveDashDistance / dashDuration;
-        Vector3 totalMove = (_dashDir * speed + Vector3.up * verticalVelocity) * dt;
+
+        // Sample the floor ahead of the player to detect upcoming slopes
+        float castDist = (cc.height / 2f) + 0.3f;
+        Vector3 sampleOrigin = transform.position + cc.center + _dashDir * (cc.radius + 0.2f);
+        Vector3 moveDir;
+
+        if (Physics.SphereCast(sampleOrigin, cc.radius * 0.8f, Vector3.down, out RaycastHit groundHit, castDist, collisionLayers))
+        {
+            // Project flat dash direction onto the slope so we follow the terrain
+            moveDir = Vector3.ProjectOnPlane(_dashDir, groundHit.normal).normalized;
+        }
+        else
+        {
+            // Airborne: keep horizontal dash + gravity
+            moveDir = _dashDir + Vector3.up * (verticalVelocity / speed);
+        }
+
+        Vector3 totalMove = moveDir * speed * dt;
 
         // Break into steps to prevent clipping through walls
         int steps = 4;
