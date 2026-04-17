@@ -4724,6 +4724,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5dbc88a724705a049b3d6786ffdbd11c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4461885075831488399, guid: 5dbc88a724705a049b3d6786ffdbd11c, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -5266,6 +5270,7 @@ MonoBehaviour:
   boss1SpawnPoint: {fileID: 1119737523}
   boss2SpawnPoint: {fileID: 812957522}
   player: {fileID: 1221207821}
+  fadeDuration: 0.4
 --- !u!114 &883378788
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9028,7 +9033,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
-  startingBoss: 2
+  startingBoss: 1
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss1ShowsBarImmediately: 1
