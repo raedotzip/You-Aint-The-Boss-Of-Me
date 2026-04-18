@@ -46,7 +46,7 @@ If the hit collider has a `BossHitbox` component, its `damageMultiplier` is also
 final damage = damageAmount × swingMultiplier × limbMultiplier
 ```
 
-See the [Boss System](boss-system.md#limb-hitboxes) page for setup instructions.
+See the [Boss System](Boss-System#limb-hitboxes) page for setup instructions.
 
 ### Bullet Parrying
 
@@ -109,10 +109,10 @@ Set in `AttackData.movementType`:
 
 | Type | Behavior |
 |------|---------|
-| `Linear` | Straight line at constant speed |
+| `Straight` | Straight line at constant speed |
 | `Sine` | Weaves side-to-side |
 | `Spiral` | Curves in a spiral |
-| `Homing` | Gradually steers toward the player |
+| `Arc` | Falls under gravity |
 
 ### AttackData ScriptableObject
 

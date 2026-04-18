@@ -108,37 +108,44 @@ Boss 1 has over 20 states. Attack selection is range-based with weighted randomi
 
 **Boundary check:** The boss checks if it's within 28m of the arena center before selecting movement states. If out of bounds, it picks an attack rather than moving further away.
 
+**Lava pit avoidance:** A BoxCollider-based exclusion zone prevents the boss from jumping into the lava pit. All three jump states clamp their landing position to the near edge of the pit. Configure `lavaPitCenter` (an empty GameObject with a BoxCollider) and `pitSafetyMargin` in the Inspector.
+
 ---
 
 ## Boss 2 — The Mainframe
 
 **File:** `Assets/Scripts/Asher Animation Tests/Boss2StateManager.cs`
 
-### Phase Gate: Mini Computers
+### Phase Gate: 3-Stage System
 
-Boss 2 starts with a force field up. The force field makes it immune to all damage (`if (_forceFieldUp) return;` in `TakeDamage`). To drop the force field, the player must destroy the 5 mini computers positioned around the arena.
+Boss 2 uses a three-stage fight:
 
-- Each `Boss2MiniComputer` can be damaged by the sword
-- When a mini computer is destroyed, it calls `Boss2StateManager.OnMiniComputerDestroyed()`
-- When the first mini computer is destroyed, `ActivateMainComputer()` is called — this disables the force field and shows the boss health bar
+1. **Destroy the mini computers** — 5 mini computers ring the arena. Each takes sword hits. When all are destroyed, the force field drops and a vulnerability window opens.
+2. **Vulnerability window** — The boss is hittable and does **not** attack. Deal 1/3 of its max health before the repair phase triggers.
+3. **Repair phase** — Mini computers auto-revive, the force field re-expands, and the player is pushed outside the boundary. Repeat twice more.
+4. **Final window** — On the third vulnerability window, dealing the last third of health kills the boss.
+
+Health is clamped per-stage so a single hit cannot skip a stage.
 
 ### Stats
 
 | Stat | Default |
 |------|---------|
 | Health | 100 |
+| Mini computers | 5 |
+| Stages | 3 |
 | Attacks before tired | 4 |
 
 ### Attack States
 
 | Attack | Description |
 |--------|-------------|
-| Laser Beam | Slow-tracking laser sweep |
-| Virus Swarm | Multiple fast projectiles in a spread |
-| EMP Wave | Expanding ring obstacle |
-| Data Strike | Targeted high-damage shot |
-| Spiral | Rotating projectile spiral |
-| Obstacle Barrage | Multiple overlapping obstacle spawns |
+| Laser Beam | Sweeping bullet barrage (130°/s, 200° range, 2 passes) |
+| Virus Swarm | 12 bullets with alternating spread/sine movement |
+| EMP Wave | 5 expanding bullet rings with rotating 90° gap |
+| Data Strike | 5 aimed bursts × 7 bullets, 14° spread |
+| Spiral | Two interleaved spiral arms, 200°/s rotation, 4.5s duration |
+| Obstacle Barrage | 4 staggered physical obstacles + tracking bullet harassment |
 
 ---
 
@@ -178,7 +185,7 @@ At the end of every attack, the state calls `boss.TransitionToNextState()`. This
 3. Implement `EnterState`, `UpdateState`, `OnBossHurt`
 4. Store a reference to an `AttackData` ScriptableObject for bullet/obstacle stats
 5. At the end of the attack, call `boss.TransitionToNextState()`
-6. Register the state in the boss's StateManager (see [Adding a Boss](adding-a-boss.md))
+6. Register the state in the boss's StateManager (see [Adding a Boss](Adding-a-Boss))
 
 ---
 

@@ -91,7 +91,7 @@ When health reaches 0, `OnDeath()` is called. Currently a placeholder — add re
 
 Singleton that controls all UI visibility. During the menu, the entire HUD is hidden. During boss fights, it's shown with the appropriate boss name and health bar.
 
-See the [Managers](managers.md#hudmanager) page for full details.
+See the [Managers](Managers#hudmanager) page for full details.
 
 ### HealthBarUI
 

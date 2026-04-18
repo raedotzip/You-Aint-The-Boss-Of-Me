@@ -41,17 +41,17 @@ Menu  →  Boss 1  →  Boss 2  →  Menu
 ## Documentation Pages
 
 ### Getting Oriented
-- [Architecture Overview](architecture-overview.md) — Scene structure, game flow diagram, singleton managers, folder layout, ScriptableObjects, pooling
+- [Architecture Overview](Architecture-Overview) — Scene structure, game flow diagram, singleton managers, folder layout, ScriptableObjects, pooling
 
 ### Systems
-- [Managers](managers.md) — BossManager, MenuController, HUDManager, BulletManager, ObstacleManager — what each one does and how to call it
-- [Boss System](boss-system.md) — State machine pattern, Boss 1 AI and attack table, Boss 2 phase gate, limb hitboxes
-- [Bullets & Obstacles](bullets-and-obstacles.md) — Full deep-dive: the Bullet struct, BulletManager update loop, movement types, the visual pool, warning phase, obstacle shapes, how to add new bullets and obstacles
-- [Combat System](combat-system.md) — Sword hit detection, swing damage scaling, parrying, life steal, hit stop, menu box interaction
-- [Player System](player-system.md) — VR locomotion, dash mechanic (wall detection, ledge detection, slope handling), health, HUD, teleport sequence
+- [Managers](Managers) — BossManager, MenuController, HUDManager, BulletManager, ObstacleManager — what each one does and how to call it
+- [Boss System](Boss-System) — State machine pattern, Boss 1 AI and attack table, Boss 2 phase gate, limb hitboxes
+- [Bullets & Obstacles](Bullets-and-Obstacles) — Full deep-dive: the Bullet struct, BulletManager update loop, movement types, the visual pool, warning phase, obstacle shapes, how to add new bullets and obstacles
+- [Combat System](Combat-System) — Sword hit detection, swing damage scaling, parrying, life steal, hit stop, menu box interaction
+- [Player System](Player-System) — VR locomotion, dash mechanic (wall detection, ledge detection, slope handling), health, HUD, teleport sequence
 
 ### Guides
-- [Adding a Boss](adding-a-boss.md) — Complete step-by-step: StateManager, attack states, ScriptableObjects, scene setup, BossManager wiring, MenuController wiring, checklist
+- [Adding a Boss](Adding-a-Boss) — Complete step-by-step: StateManager, attack states, ScriptableObjects, scene setup, BossManager wiring, MenuController wiring, checklist
 
 ---
 
@@ -84,16 +84,16 @@ Menu  →  Boss 1  →  Boss 2  →  Menu
 Set `BossManager.startingBoss` to `1` or `2` in the Inspector.
 
 **I want to add a new attack to Boss 1**  
-Create a new class in `Scripts/Asher Animation Tests/States/Attacks/Boss1/` that inherits `EnemyBaseState`. Register it in `Boss1StateManager` and add it to the weighted random selection in `TransitionToNextState()`. See [Boss System](boss-system.md) for the full pattern.
+Create a new class in `Scripts/Asher Animation Tests/States/Attacks/Boss1/` that inherits `EnemyBaseState`. Register it in `Boss1StateManager` and add it to the weighted random selection in `TransitionToNextState()`. See [Boss System](Boss-System) for the full pattern.
 
 **I want to add a new boss**  
-Follow the [Adding a Boss](adding-a-boss.md) guide. It covers every file you need to create or touch, in order, with a checklist at the end.
+Follow the [Adding a Boss](Adding-a-Boss) guide. It covers every file you need to create or touch, in order, with a checklist at the end.
 
 **I want to add a new bullet type**  
-Create an `AttackData` ScriptableObject, set the fields, make a visual prefab, and call `boss.FireBullet(dir, attackData)` from your attack state. See [Bullets & Obstacles](bullets-and-obstacles.md) for details on movement types and the visual pool.
+Create an `AttackData` ScriptableObject, set the fields, make a visual prefab, and call `boss.FireBullet(dir, attackData)` from your attack state. See [Bullets & Obstacles](Bullets-and-Obstacles) for details on movement types and the visual pool.
 
 **I want to add a new obstacle**  
-Build an `Obstacle` struct with your shape, timing, and prefab, then call `ObstacleManager.Instance.SpawnObstacle(obstacle)`. See [Bullets & Obstacles](bullets-and-obstacles.md) for the full field reference and warning-phase behavior.
+Build an `Obstacle` struct with your shape, timing, and prefab, then call `ObstacleManager.Instance.SpawnObstacle(obstacle)`. See [Bullets & Obstacles](Bullets-and-Obstacles) for the full field reference and warning-phase behavior.
 
 **I want to change the screen fade duration**  
 Adjust `fadeDuration` on `MenuController` in the Inspector. Default is 0.4 seconds.

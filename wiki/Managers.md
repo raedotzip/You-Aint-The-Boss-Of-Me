@@ -124,12 +124,14 @@ Controls all player-visible UI. Hides everything during the menu and shows it du
 | `bossBarContainer` | Parent GameObject of the boss bar — toggled for visibility |
 | `bossNameText` | TextMeshPro text showing the boss name |
 | `hudRoot` | Root of the entire HUD — hidden while in the menu |
+| `timerText` | TextMeshPro text at the top of the HUD showing elapsed run time |
 
 ### Key Methods
 
-**`ShowHUD(bool show)`** — Toggles the entire HUD on/off.  
+**`ShowHUD(bool show)`** — Toggles the entire HUD on/off. Starting a boss fight also starts the run timer.  
 **`ShowBossBar(bool show)`** — Toggles just the boss health bar.  
-**`SetBossName(string name)`** — Updates the boss name text.
+**`SetBossName(string name)`** — Updates the boss name text.  
+**`StopTimer()`** — Stops the run timer and saves the best time to `PlayerPrefs`.
 
 `BossManager` calls `SetBossName` and `ShowBossBar` whenever a boss is activated.
 
