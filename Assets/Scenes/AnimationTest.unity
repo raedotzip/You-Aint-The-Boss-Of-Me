@@ -678,7 +678,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &78313861 stripped
@@ -1729,7 +1730,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 1
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &202972556 stripped
@@ -6954,7 +6956,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &1083922894 stripped
@@ -8884,7 +8887,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &1412676428 stripped
@@ -9555,7 +9559,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &1504144131 stripped
@@ -15728,7 +15733,6 @@ MonoBehaviour:
   obstacleData: {fileID: 11400000, guid: bb1279a2a2b516847a10fbb44cef4cc5, type: 2}
   bulletData: {fileID: 11400000, guid: c7aba5acfa4bbbf4bb9d0fd0ecdfce94, type: 2}
   miniComputersTotal: 5
-  miniComputersToActivate: 1
   forceField: {fileID: 1647076750}
   obstaclePrefab: {fileID: 0}
   bulletSpawnPoints:
@@ -15737,6 +15741,7 @@ MonoBehaviour:
   - {fileID: 389473873}
   - {fileID: 1497083950}
   - {fileID: 737875461}
+  forceFieldPushRadius: 8
   closeRange: 8
   farRange: 18
   closeWeight_LaserBeam: 3

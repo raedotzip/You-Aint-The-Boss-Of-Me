@@ -19,10 +19,11 @@ public class Boss2MiniComputer : MonoBehaviour
     [Tooltip("Minimum sword speed to deal damage")]
     public float minSwordSpeed = 0.8f;
 
-    private float _currentHealth;
-    private bool  _dead = false;
-    private Sword _sword;
-    private float _hitCooldown = 0f;
+    private float      _currentHealth;
+    private bool       _dead = false;
+    private Sword      _sword;
+    private float      _hitCooldown = 0f;
+    private GameObject _activeDestroyEffect;
 
     void Awake()
     {
@@ -74,6 +75,12 @@ public class Boss2MiniComputer : MonoBehaviour
 
     public void Revive()
     {
+        if (_activeDestroyEffect != null)
+        {
+            Destroy(_activeDestroyEffect);
+            _activeDestroyEffect = null;
+        }
+
         _currentHealth = maxHealth;
         _dead          = false;
         _hitCooldown   = 0f;
@@ -88,7 +95,7 @@ public class Boss2MiniComputer : MonoBehaviour
         _dead = true;
 
         if (destroyEffect != null)
-            Instantiate(destroyEffect, transform.position, Quaternion.identity);
+            _activeDestroyEffect = Instantiate(destroyEffect, transform.position, Quaternion.identity);
 
         if (boss2 != null)
             boss2.OnMiniComputerDestroyed(this);
