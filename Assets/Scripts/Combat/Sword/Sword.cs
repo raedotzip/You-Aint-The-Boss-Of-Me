@@ -12,6 +12,7 @@ public class Sword : MonoBehaviour
     [Header("Melee Detection")]
     public float sphereRadius = 0.025f;
     public LayerMask meleeParryLayer;
+    public LayerMask menuLayer;
     public float hitCooldown = 0.2f;
     public float damageAmount = 10f; // <-- Damage to boss
 
@@ -60,6 +61,7 @@ public class Sword : MonoBehaviour
     private float boundingSphereRadius;
 
     private Dictionary<Rigidbody, float> cooldowns = new Dictionary<Rigidbody, float>();
+    private Dictionary<int, float> _miniComputerCooldowns = new Dictionary<int, float>();
 
     void Awake()
     {
@@ -116,6 +118,8 @@ public class Sword : MonoBehaviour
     void FixedUpdate()
     {
         SweepBladeMelee();
+        ScanMiniComputersAlongBlade();
+        ScanMenuBoxesAlongBlade();
 
         // Always check for bullet contact — sword doesn't need to be swinging to parry
         ParryBullets();
@@ -147,37 +151,120 @@ public class Sword : MonoBehaviour
                 sphereRadius,
                 movement.normalized,
                 distance,
-                meleeParryLayer,
+                meleeParryLayer | menuLayer,
                 QueryTriggerInteraction.Ignore
             );
 
             foreach (var hit in hits)
             {
+                // Mini computers may have no Rigidbody — handle them before the rb guard
+                Boss2MiniComputer miniComputer = hit.collider.GetComponentInParent<Boss2MiniComputer>();
+                if (miniComputer != null)
+                {
+                    int id = miniComputer.GetInstanceID();
+                    if (!_miniComputerCooldowns.TryGetValue(id, out float lastHit) || Time.time - lastHit >= hitCooldown)
+                    {
+                        _miniComputerCooldowns[id] = Time.time;
+                        float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
+                        float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
+                        miniComputer.TakeDamage(damageAmount * multiplier);
+                        StartCoroutine(HitStop());
+                    }
+                    continue;
+                }
+
                 Rigidbody rb = hit.rigidbody;
                 if (rb == null) continue;
                 if (!CanHit(rb)) continue;
 
                 cooldowns[rb] = Time.time;
 
-                // =================================================
-                // Damage Boss if hit
-                // =================================================
-                Boss1StateManager boss = hit.collider.GetComponentInParent<Boss1StateManager>();
-                if (boss != null)
+                // Menu box slice — select the option and skip boss/physics logic
+                MenuBox menuBox = hit.collider.GetComponentInParent<MenuBox>();
+                if (menuBox != null)
                 {
-                    float swingT = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
+                    menuBox.OnSliced();
+                    continue;
+                }
+
+                // Boss damage routed through BossManager (works for any boss)
+                EnemyStateManager hitBoss = hit.collider.GetComponentInParent<EnemyStateManager>();
+                if (hitBoss != null && BossManager.Instance != null)
+                {
+                    float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
                     float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
-                    boss.TakeDamage(damageAmount * multiplier);
+
+                    BossHitbox hitbox = hit.collider.GetComponent<BossHitbox>();
+                    float limbMultiplier = hitbox != null ? hitbox.damageMultiplier : 1f;
+
+                    BossManager.Instance.TakeDamageOnActive(damageAmount * multiplier * limbMultiplier);
 
                     if (swingTipDistance >= healSwingThreshold && playerHealth != null)
                         playerHealth.Heal(healAmount);
                 }
 
-                // Optional: reflect rigidbody for physics-based hits
-                Vector3 reflectDir = Vector3.Reflect(rb.velocity, hit.normal);
-                rb.velocity = reflectDir;
+                // Physics reflect — skip kinematic Rigidbodies (menu boxes, static props)
+                if (!rb.isKinematic)
+                {
+                    Vector3 reflectDir = Vector3.Reflect(rb.velocity, hit.normal);
+                    rb.velocity = reflectDir;
+                }
 
                 StartCoroutine(HitStop());
+            }
+        }
+    }
+
+    void ScanMiniComputersAlongBlade()
+    {
+        if (bladeBase == null || bladeTip == null) return;
+
+        float scanRadius = 0.25f;
+
+        for (int i = 0; i <= 4; i++)
+        {
+            float t = i / 4f;
+            Vector3 point = Vector3.Lerp(bladeBase.position, bladeTip.position, t);
+
+            Collider[] overlaps = Physics.OverlapSphere(point, scanRadius, ~0, QueryTriggerInteraction.Collide);
+            foreach (var col in overlaps)
+            {
+                Boss2MiniComputer mc = col.GetComponentInParent<Boss2MiniComputer>();
+                if (mc == null) continue;
+
+                int id = mc.GetInstanceID();
+                if (_miniComputerCooldowns.TryGetValue(id, out float last) && Time.time - last < hitCooldown) continue;
+
+                _miniComputerCooldowns[id] = Time.time;
+                float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
+                float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
+                mc.TakeDamage(damageAmount * multiplier);
+                StartCoroutine(HitStop());
+            }
+        }
+    }
+
+    // Overlap scan so menu boxes are detected even if menuLayer isn't assigned
+    void ScanMenuBoxesAlongBlade()
+    {
+        if (bladeBase == null || bladeTip == null) return;
+
+        for (int i = 0; i <= 4; i++)
+        {
+            float t = i / 4f;
+            Vector3 point = Vector3.Lerp(bladeBase.position, bladeTip.position, t);
+
+            Collider[] overlaps = Physics.OverlapSphere(point, sphereRadius * 4f, ~0, QueryTriggerInteraction.Collide);
+            foreach (var col in overlaps)
+            {
+                MenuBox mb = col.GetComponentInParent<MenuBox>();
+                if (mb == null) continue;
+
+                Rigidbody rb = col.attachedRigidbody;
+                if (rb == null || !CanHit(rb)) continue;
+
+                cooldowns[rb] = Time.time;
+                mb.OnSliced();
             }
         }
     }

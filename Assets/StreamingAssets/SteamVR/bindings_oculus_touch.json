@@ -1,4 +1,5 @@
 {
+  "app_key": "application.generated.unity.coolgame.exe",
   "bindings": {
     "/actions/buggy": {
       "chords": [],
@@ -174,20 +175,7 @@
           "parameters": {},
           "inputs": {
             "click": {
-              "output": "/actions/default/in/interactui"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/trigger",
-          "mode": "button",
-          "parameters": {
-            "click_activate_threshold": "0.8",
-            "click_deactivate_threshold": "0.7"
-          },
-          "inputs": {
-            "click": {
-              "output": "/actions/default/in/grabpinch"
+              "output": "/actions/default/in/dash"
             }
           }
         },
@@ -223,6 +211,26 @@
               "output": "/actions/default/in/squeeze"
             }
           }
+        },
+        {
+          "path": "/user/hand/left/input/joystick",
+          "mode": "joystick",
+          "parameters": {},
+          "inputs": {
+            "position": {
+              "output": "/actions/default/in/move"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/joystick",
+          "mode": "joystick",
+          "parameters": {},
+          "inputs": {
+            "position": {
+              "output": "/actions/default/in/move"
+            }
+          }
         }
       ],
       "skeleton": [
@@ -235,6 +243,13 @@
           "path": "/user/hand/right/input/skeleton/right"
         }
       ]
+    },
+    "/actions/mixedreality": {
+      "chords": [],
+      "poses": [],
+      "haptics": [],
+      "sources": [],
+      "skeleton": []
     },
     "/actions/platformer": {
       "chords": [],
@@ -273,5 +288,5 @@
   },
   "controller_type": "oculus_touch",
   "description": "",
-  "name": "oculus_touch"
+  "name": "My CoolGame [Testing] configuration for Oculus Touch Controller"
 }

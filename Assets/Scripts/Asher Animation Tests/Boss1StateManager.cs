@@ -41,6 +41,17 @@ public class Boss1StateManager : EnemyStateManager
     public float sideJumpDistance                = 6f;
 
     // ===============================
+    // LAVA PIT
+    // ===============================
+    [Header("Lava Pit")]
+    [Tooltip("Empty GameObject with a BoxCollider sized to the pit — rotate/scale it to match")]
+    public Transform lavaPitCenter;
+    [Tooltip("Extra buffer inside the pit edge — boss lands this far short of the rim")]
+    public float pitSafetyMargin = 1.5f;
+
+    private BoxCollider _pitCollider;
+
+    // ===============================
     // ATTACK WEIGHTS
     // ===============================
     // Close: boss is in your face — big melee, fast pressure
@@ -103,14 +114,11 @@ public class Boss1StateManager : EnemyStateManager
         health = maxHealth;
         animator = GetComponent<Animator>();
 
-        if (bossHealthBar != null)
-            bossHealthBar.UpdateHealthPercentage(health, maxHealth);
-
-        if(HUDManager.Instance != null)
-            HUDManager.Instance.ShowBossBar(true);
-
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
+
+        if (lavaPitCenter != null)
+            _pitCollider = lavaPitCenter.GetComponent<BoxCollider>();
 
         ObstacleManager.Instance.PrewarmObstaclePools(obstacleData);
 
@@ -153,8 +161,7 @@ public class Boss1StateManager : EnemyStateManager
 
         if (health <= 0f)
         {
-            Debug.Log("Boss defeated!");
-            // Add any death logic here
+            MenuController.Instance?.AdvanceToNextBoss(1);
         }
     }
 
@@ -196,8 +203,8 @@ public class Boss1StateManager : EnemyStateManager
             Vector3 toPlayer = (player.position - transform.position).normalized;
             Vector3 right    = Vector3.Cross(Vector3.up, toPlayer).normalized;
 
-            bool canJumpRight = IsPositionInBounds(transform.position + right * sideJumpDistance);
-            bool canJumpLeft  = IsPositionInBounds(transform.position - right * sideJumpDistance);
+            bool canJumpRight = IsPositionSafe(transform.position + right * sideJumpDistance);
+            bool canJumpLeft  = IsPositionSafe(transform.position - right * sideJumpDistance);
 
             if (canJumpRight && canJumpLeft)
             {
@@ -219,10 +226,74 @@ public class Boss1StateManager : EnemyStateManager
         return jumpBackState;
     }
 
-    // Check if a position is within the map boundary
+    // Check if a position is within the map boundary and not in the lava pit
+    public bool IsPositionSafe(Vector3 pos)
+    {
+        Vector2 flat = new Vector2(pos.x, pos.z);
+        if (flat.magnitude > mapBoundsRadius) return false;
+
+        if (_pitCollider != null && IsInPit(pos, 0f))
+            return false;
+
+        return true;
+    }
+
+    // Returns true if world-pos is inside the BoxCollider expanded by extraMargin
+    private bool IsInPit(Vector3 worldPos, float extraMargin)
+    {
+        if (_pitCollider == null) return false;
+        Vector3 local    = lavaPitCenter.InverseTransformPoint(worldPos);
+        Vector3 halfSize = _pitCollider.size * 0.5f;
+        Vector3 center   = _pitCollider.center;
+        return Mathf.Abs(local.x - center.x) < halfSize.x + extraMargin &&
+               Mathf.Abs(local.z - center.z) < halfSize.z + extraMargin;
+    }
+
+    // Returns a safe landing position — clamps to map bounds and pulls back from the
+    // rectangular lava pit so the boss lands just short of the near rim.
+    public Vector3 ClampLandingPosition(Vector3 proposed, Vector3 jumpFrom)
+    {
+        proposed.y = 0f;
+
+        // Clamp to map boundary
+        Vector2 flat = new Vector2(proposed.x, proposed.z);
+        if (flat.magnitude > mapBoundsRadius)
+        {
+            flat       = flat.normalized * mapBoundsRadius;
+            proposed.x = flat.x;
+            proposed.z = flat.y;
+        }
+
+        // Pull back from rectangular lava pit
+        if (_pitCollider != null && IsInPit(proposed, pitSafetyMargin))
+        {
+            Vector3 center   = _pitCollider.center;
+            Vector3 halfSize = _pitCollider.size * 0.5f;
+            float   hw       = halfSize.x + pitSafetyMargin;
+            float   hd       = halfSize.z + pitSafetyMargin;
+
+            // Work in pit-local space; snap to the face nearest to jumpFrom
+            Vector3 localFrom     = lavaPitCenter.InverseTransformPoint(jumpFrom);
+            Vector3 localProposed = lavaPitCenter.InverseTransformPoint(proposed);
+
+            float overlapX = hw - Mathf.Abs(localFrom.x - center.x);
+            float overlapZ = hd - Mathf.Abs(localFrom.z - center.z);
+
+            if (overlapX < overlapZ)
+                localProposed.x = center.x + Mathf.Sign(localFrom.x - center.x) * hw;
+            else
+                localProposed.z = center.z + Mathf.Sign(localFrom.z - center.z) * hd;
+
+            proposed   = lavaPitCenter.TransformPoint(localProposed);
+            proposed.y = 0f;
+        }
+
+        return proposed;
+    }
+
+    // Legacy name kept so existing callers still compile
     public bool IsPositionInBounds(Vector3 pos)
     {
-        // Flat distance from map center — assumes circular arena
         Vector2 flat = new Vector2(pos.x, pos.z);
         return flat.magnitude <= mapBoundsRadius;
     }
