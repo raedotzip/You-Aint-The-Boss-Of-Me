@@ -72,6 +72,14 @@ public class Boss2DataStrikeAttack : EnemyBaseState
 
     public override float OnBossHurt(EnemyStateManager state) => 0f;
 
+    static Vector3 TiltTowardPlayer(Vector3 dir, Vector3 spawnPos, Vector3 playerPos)
+    {
+        float hDist = new Vector3(playerPos.x - spawnPos.x, 0f, playerPos.z - spawnPos.z).magnitude;
+        if (hDist > 0.01f)
+            dir.y = (playerPos.y - spawnPos.y) / hDist;
+        return dir.normalized;
+    }
+
     private void SnapshotAim(EnemyStateManager state)
     {
         // Aim directly at player in 3D so bullets travel at player height
@@ -86,23 +94,26 @@ public class Boss2DataStrikeAttack : EnemyBaseState
         Vector3 dir       = Quaternion.AngleAxis(angleOffset, Vector3.up) * _aimSnapshot;
         dir               = dir.normalized;
 
-        Vector3 spawnPos = ((Boss2StateManager)state).GetRandomSpawnPoint();
-        spawnPos.y = state.player.position.y + 1.0f;
-
-        Bullet b = new Bullet
+        foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
-            position        = spawnPos,
-            direction       = dir,
-            speed           = bulletSpeed,
-            damage          = bulletDamage,
-            maxLifetime     = bulletLifetime,
-            collisionRadius = 0.3f,
-            canBeParried    = true,
-            destroyOnParry  = true,
-            movementType    = BulletMovementType.Straight,
-            visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-        };
+            Vector3 spawnPos = sp.position;
+            Vector3 spawnDir = TiltTowardPlayer(dir, spawnPos, state.player.position);
 
-        BulletManager.Instance.SpawnBullet(b);
+            Bullet b = new Bullet
+            {
+                position        = spawnPos,
+                direction       = spawnDir,
+                speed           = bulletSpeed,
+                damage          = bulletDamage,
+                maxLifetime     = bulletLifetime,
+                collisionRadius = 0.3f,
+                canBeParried    = true,
+                destroyOnParry  = true,
+                movementType    = BulletMovementType.Straight,
+                visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+            };
+
+            BulletManager.Instance.SpawnBullet(b);
+        }
     }
 }

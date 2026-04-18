@@ -108,7 +108,6 @@ public class Boss2MiniComputer : MonoBehaviour
         _currentHealth = maxHealth;
         _dead          = false;
         _hitCooldown   = 0f;
-        gameObject.SetActive(true);
 
         if (reviveEffect != null)
             Instantiate(reviveEffect, transform.position, Quaternion.identity);
@@ -123,8 +122,6 @@ public class Boss2MiniComputer : MonoBehaviour
 
         if (boss2 != null)
             boss2.OnMiniComputerDestroyed(this);
-
-        gameObject.SetActive(false);
     }
 
     static float DistanceToSegment(Vector3 point, Vector3 a, Vector3 b)

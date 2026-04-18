@@ -53,35 +53,43 @@ public class Boss2SpiralAttack : EnemyBaseState
 
     public override float OnBossHurt(EnemyStateManager state) => 0f;
 
+    static Vector3 TiltTowardPlayer(Vector3 dir, Vector3 spawnPos, Vector3 playerPos)
+    {
+        float hDist = new Vector3(playerPos.x - spawnPos.x, 0f, playerPos.z - spawnPos.z).magnitude;
+        if (hDist > 0.01f)
+            dir.y = (playerPos.y - spawnPos.y) / hDist;
+        return dir.normalized;
+    }
+
     private void FireArms(EnemyStateManager state)
     {
-        float targetY     = state.player.position.y;
-        Vector3 spawnBase = ((Boss2StateManager)state).GetRandomSpawnPoint();
-
-        for (int arm = 0; arm < arms; arm++)
+        foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
-            float angle = _angle + arm * (360f / arms);
-            float rad   = angle * Mathf.Deg2Rad;
-            Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
-
-            Vector3 spawnPos = spawnBase;
-            spawnPos.y = targetY + 1.0f;
-
-            Bullet b = new Bullet
+            for (int arm = 0; arm < arms; arm++)
             {
-                position        = spawnPos,
-                direction       = dir.normalized,
-                speed           = bulletSpeed,
-                damage          = bulletDamage,
-                maxLifetime     = bulletLifetime,
-                collisionRadius = 0.3f,
-                canBeParried    = true,
-                destroyOnParry  = false,
-                movementType    = BulletMovementType.Straight,
-                visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-            };
+                float angle = _angle + arm * (360f / arms);
+                float rad   = angle * Mathf.Deg2Rad;
+                Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
 
-            BulletManager.Instance.SpawnBullet(b);
+                Vector3 spawnPos = sp.position;
+                dir = TiltTowardPlayer(dir, spawnPos, state.player.position);
+
+                Bullet b = new Bullet
+                {
+                    position        = spawnPos,
+                    direction       = dir,
+                    speed           = bulletSpeed,
+                    damage          = bulletDamage,
+                    maxLifetime     = bulletLifetime,
+                    collisionRadius = 0.3f,
+                    canBeParried    = true,
+                    destroyOnParry  = false,
+                    movementType    = BulletMovementType.Straight,
+                    visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                };
+
+                BulletManager.Instance.SpawnBullet(b);
+            }
         }
     }
 }

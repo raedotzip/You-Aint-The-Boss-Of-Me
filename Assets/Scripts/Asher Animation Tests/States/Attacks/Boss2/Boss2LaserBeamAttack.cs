@@ -68,22 +68,23 @@ public class Boss2LaserBeamAttack : EnemyBaseState
 
     public override float OnBossHurt(EnemyStateManager state) => 0f;
 
+    static Vector3 TiltTowardPlayer(Vector3 dir, Vector3 spawnPos, Vector3 playerPos)
+    {
+        float hDist = new Vector3(playerPos.x - spawnPos.x, 0f, playerPos.z - spawnPos.z).magnitude;
+        if (hDist > 0.01f)
+            dir.y = (playerPos.y - spawnPos.y) / hDist;
+        return dir.normalized;
+    }
+
     private void FireSalvo(EnemyStateManager state)
     {
-        float rad     = _angle * Mathf.Deg2Rad;
-        Vector3 hDir  = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
-        float targetY = state.player.position.y;
-        Vector3 spawnBase = ((Boss2StateManager)state).GetRandomSpawnPoint();
+        float rad    = _angle * Mathf.Deg2Rad;
+        Vector3 hDir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
 
-        for (int i = 0; i < bulletsPerSalvo; i++)
+        foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
-            float yOffset = Mathf.Lerp(-0.25f, 0.25f, bulletsPerSalvo > 1 ? i / (float)(bulletsPerSalvo - 1) : 0.5f);
-            Vector3 spawnPos = spawnBase;
-            spawnPos.y = targetY + 1.0f + yOffset;
-
-            Vector3 dir = hDir;
-            dir.y = yOffset * 0.4f;
-            dir   = dir.normalized;
+            Vector3 spawnPos = sp.position;
+            Vector3 dir      = TiltTowardPlayer(hDir, spawnPos, state.player.position);
 
             Bullet b = new Bullet
             {

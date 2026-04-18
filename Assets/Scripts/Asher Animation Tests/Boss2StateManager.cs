@@ -180,6 +180,12 @@ public class Boss2StateManager : EnemyStateManager
         int destroyed = miniComputersTotal - _miniComputersRemaining;
         Debug.Log($"[Boss2] Mini computer destroyed ({destroyed}/{miniComputersTotal}). Stage {_stage}.");
 
+        if (!_isActive)
+        {
+            _isActive = true;
+            SwitchState(idleState);
+        }
+
         if (_forceFieldUp && _miniComputersRemaining <= 0)
             StartVulnerabilityPhase();
     }
@@ -217,6 +223,9 @@ public class Boss2StateManager : EnemyStateManager
 
         foreach (var mini in _miniComputerRefs)
             if (mini != null) mini.Revive();
+
+        _isActive = true;
+        SwitchState(idleState);
 
         Debug.Log($"[Boss2] Repair phase — stage now {_stage}. Destroy the mini computers again.");
     }
@@ -288,6 +297,13 @@ public class Boss2StateManager : EnemyStateManager
         if (bulletSpawnPoints != null && bulletSpawnPoints.Length > 0)
             return bulletSpawnPoints[Random.Range(0, bulletSpawnPoints.Length)].position;
         return transform.position;
+    }
+
+    public Transform[] GetAllSpawnPoints()
+    {
+        if (bulletSpawnPoints != null && bulletSpawnPoints.Length > 0)
+            return bulletSpawnPoints;
+        return new Transform[] { transform };
     }
 
     // ===============================
