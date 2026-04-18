@@ -19,11 +19,18 @@ public class Boss2MiniComputer : MonoBehaviour
     [Tooltip("Minimum sword speed to deal damage")]
     public float minSwordSpeed = 0.8f;
 
+    [Header("Look At Player")]
+    [Tooltip("Drag the topRackSpin bone/transform here — it will rotate to face the player")]
+    public Transform topRackSpin;
+    [Tooltip("How quickly the rack turns to face the player (higher = snappier)")]
+    public float lookAtSpeed = 3f;
+
     private float      _currentHealth;
     private bool       _dead = false;
     private Sword      _sword;
     private float      _hitCooldown = 0f;
     private GameObject _activeDestroyEffect;
+    private Transform  _player;
 
     void Awake()
     {
@@ -34,6 +41,9 @@ public class Boss2MiniComputer : MonoBehaviour
     {
         _sword = FindObjectOfType<Sword>();
 
+        var playerObj = GameObject.FindWithTag("Player");
+        if (playerObj != null) _player = playerObj.transform;
+
         if (boss2 != null)
             boss2.RegisterMiniComputer(this);
 
@@ -41,6 +51,20 @@ public class Boss2MiniComputer : MonoBehaviour
         Debug.Log($"[MiniComputer] '{gameObject.name}' start pos={transform.position:F2}  colliders={cols.Length}");
         foreach (var c in cols)
             Debug.Log($"  collider: {c.GetType().Name}  enabled={c.enabled}  trigger={c.isTrigger}  bounds={c.bounds.size:F2}");
+    }
+
+    void Update()
+    {
+        if (_dead || topRackSpin == null || _player == null) return;
+
+        // Rotate only on the Y axis so the rack spins horizontally toward the player
+        Vector3 toPlayer = _player.position - topRackSpin.position;
+        toPlayer.y = 0f;
+        if (toPlayer.sqrMagnitude > 0.001f)
+        {
+            Quaternion target = Quaternion.LookRotation(toPlayer);
+            topRackSpin.rotation = Quaternion.Slerp(topRackSpin.rotation, target, lookAtSpeed * Time.deltaTime);
+        }
     }
 
     void FixedUpdate()
