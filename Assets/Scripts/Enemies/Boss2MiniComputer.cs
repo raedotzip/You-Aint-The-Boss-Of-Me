@@ -10,6 +10,9 @@ public class Boss2MiniComputer : MonoBehaviour
     [Tooltip("Optional particle effect spawned at death position")]
     public GameObject destroyEffect;
 
+    [Tooltip("Optional particle effect spawned when revived")]
+    public GameObject reviveEffect;
+
     [Tooltip("How close the sword blade must be to count as a hit (meters)")]
     public float hitRadius = 0.4f;
 
@@ -17,7 +20,7 @@ public class Boss2MiniComputer : MonoBehaviour
     public float minSwordSpeed = 0.8f;
 
     private float _currentHealth;
-    private bool _dead = false;
+    private bool  _dead = false;
     private Sword _sword;
     private float _hitCooldown = 0f;
 
@@ -30,7 +33,9 @@ public class Boss2MiniComputer : MonoBehaviour
     {
         _sword = FindObjectOfType<Sword>();
 
-        // Diagnostic — printed once so we can see this object exists and where it is
+        if (boss2 != null)
+            boss2.RegisterMiniComputer(this);
+
         var cols = GetComponentsInChildren<Collider>(true);
         Debug.Log($"[MiniComputer] '{gameObject.name}' start pos={transform.position:F2}  colliders={cols.Length}");
         foreach (var c in cols)
@@ -47,7 +52,6 @@ public class Boss2MiniComputer : MonoBehaviour
         Transform bladeTip  = _sword.bladeTip;
         if (bladeBase == null || bladeTip == null) return;
 
-        // Closest point on blade segment to this object's centre
         float dist = DistanceToSegment(transform.position, bladeBase.position, bladeTip.position);
 
         if (dist < hitRadius && _sword.Velocity.magnitude > minSwordSpeed)
@@ -68,6 +72,17 @@ public class Boss2MiniComputer : MonoBehaviour
             Die();
     }
 
+    public void Revive()
+    {
+        _currentHealth = maxHealth;
+        _dead          = false;
+        _hitCooldown   = 0f;
+        gameObject.SetActive(true);
+
+        if (reviveEffect != null)
+            Instantiate(reviveEffect, transform.position, Quaternion.identity);
+    }
+
     void Die()
     {
         _dead = true;
@@ -78,7 +93,7 @@ public class Boss2MiniComputer : MonoBehaviour
         if (boss2 != null)
             boss2.OnMiniComputerDestroyed(this);
 
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     static float DistanceToSegment(Vector3 point, Vector3 a, Vector3 b)
