@@ -36,9 +36,9 @@ public class Boss1JumpBackMovement : EnemyBaseState
             Debug.LogWarning("JumpBack fallback direction used — boss and player too close");
         }
 
-        targetPosition  = startPosition + awayDir * jumpDistance;
-        targetPosition.y = 0f;
-        elapsedTime     = 0f;
+        targetPosition   = startPosition + awayDir * jumpDistance;
+        targetPosition   = ((Boss1StateManager)state).ClampLandingPosition(targetPosition, startPosition);
+        elapsedTime      = 0f;
         hasTransitioned = false;
         state.animator.SetTrigger("Jumping");
 
