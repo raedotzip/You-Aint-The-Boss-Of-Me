@@ -20,6 +20,8 @@ public class MenuController : MonoBehaviour
     public Transform boss1SpawnPoint;
     [Tooltip("Where the player spawns for Boss 2")]
     public Transform boss2SpawnPoint;
+    [Tooltip("Where the player spawns for Boss 3")]
+    public Transform boss3SpawnPoint;
 
     [Header("Player")]
     [Tooltip("Root GameObject that has the CharacterController")]
@@ -61,6 +63,7 @@ public class MenuController : MonoBehaviour
     // Parameterless helpers used by the Editor setup tool for UnityEvent wiring
     public void StartBoss1() => StartBoss(1);
     public void StartBoss2() => StartBoss(2);
+    public void StartBoss3() => StartBoss(3);
 
     public void QuitGame()
     {
@@ -81,7 +84,7 @@ public class MenuController : MonoBehaviour
     public void AdvanceToNextBoss(int completedBossIndex)
     {
         int nextBoss = completedBossIndex + 1;
-        if (nextBoss <= 2)
+        if (nextBoss <= 3)
             StartCoroutine(FadeAndStartBoss(nextBoss));
         else
             ReturnToMenu();
@@ -128,6 +131,7 @@ public class MenuController : MonoBehaviour
     {
         if (index == 1) return boss1SpawnPoint;
         if (index == 2) return boss2SpawnPoint;
+        if (index == 3) return boss3SpawnPoint;
         return menuSpawnPoint;
     }
 
