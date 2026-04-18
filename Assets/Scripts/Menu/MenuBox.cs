@@ -28,14 +28,17 @@ public class MenuBox : MonoBehaviour
     [Header("Action (wire in Inspector)")]
     public UnityEvent onSliced = new UnityEvent();
 
-    private Sword   _sword;
-    private bool    _isHovered;
-    private bool    _sliced;
-    private Color   _currentColor;
-    private Vector3 _baseScale;
+    private Sword    _sword;
+    private bool     _isHovered;
+    private bool     _sliced;
+    private Color    _currentColor;
+    private Vector3  _baseScale;
+    private Material _matInstance;   // per-renderer instance so we don't share state
+    private bool     _isURP;         // true → use _BaseColor, false → use _Color
 
-    private static readonly int ColorID    = Shader.PropertyToID("_Color");
-    private static readonly int EmissionID = Shader.PropertyToID("_EmissionColor");
+    private static readonly int ColorID     = Shader.PropertyToID("_Color");
+    private static readonly int BaseColorID = Shader.PropertyToID("_BaseColor");
+    private static readonly int EmissionID  = Shader.PropertyToID("_EmissionColor");
 
     void Awake()
     {
@@ -54,6 +57,7 @@ public class MenuBox : MonoBehaviour
         if (boxRenderer == null)
             boxRenderer = GetComponentInChildren<Renderer>();
 
+        EnsureMaterial();
         ApplyColor(normalColor, 0f);
         BuildLabel();
     }
@@ -148,13 +152,45 @@ public class MenuBox : MonoBehaviour
         SetBlock(target);
     }
 
-    void SetBlock(Color c)
+    void EnsureMaterial()
     {
         if (boxRenderer == null) return;
-        var block = new MaterialPropertyBlock();
-        boxRenderer.GetPropertyBlock(block);
-        block.SetColor(ColorID,    c);
-        block.SetColor(EmissionID, c * 0.6f);
-        boxRenderer.SetPropertyBlock(block);
+
+        // If the renderer has no material or the error/pink shader, create one automatically
+        Material shared = boxRenderer.sharedMaterial;
+        bool isBroken   = shared == null
+                       || shared.shader == null
+                       || shared.shader.name.StartsWith("Hidden/")
+                       || shared.shader.name.Contains("Error");
+
+        if (isBroken)
+        {
+            // Try URP first, then Built-in Standard
+            Shader s = Shader.Find("Universal Render Pipeline/Lit")
+                    ?? Shader.Find("Standard");
+            shared = s != null ? new Material(s) : new Material(Shader.Find("Diffuse"));
+            boxRenderer.sharedMaterial = shared;
+        }
+
+        // Create a per-instance material so property changes don't affect other boxes
+        _matInstance = boxRenderer.material;   // auto-instantiates
+        _isURP       = _matInstance.HasProperty(BaseColorID);
+
+        // Enable the emission keyword so _EmissionColor is rendered
+        _matInstance.EnableKeyword("_EMISSION");
+        _matInstance.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+    }
+
+    void SetBlock(Color c)
+    {
+        if (_matInstance == null) return;
+
+        if (_isURP)
+            _matInstance.SetColor(BaseColorID, c);
+        else
+            _matInstance.SetColor(ColorID, c);
+
+        if (_matInstance.HasProperty(EmissionID))
+            _matInstance.SetColor(EmissionID, c * 0.6f);
     }
 }
