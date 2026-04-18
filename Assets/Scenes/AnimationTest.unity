@@ -288,6 +288,7 @@ MonoBehaviour:
   bossBarContainer: {fileID: 952059218}
   bossNameText: {fileID: 959962861}
   hudRoot: {fileID: 2037185644}
+  timerText: {fileID: 0}
 --- !u!1 &48871823 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5251744554987952991, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -2094,7 +2095,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -11459,7 +11460,7 @@ GameObject:
   - component: {fileID: 1647076753}
   - component: {fileID: 1647076752}
   - component: {fileID: 1647076751}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Boss2ForceField
   m_TagString: Untagged
   m_Icon: {fileID: 0}

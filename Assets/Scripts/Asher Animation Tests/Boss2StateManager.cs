@@ -195,6 +195,7 @@ public class Boss2StateManager : EnemyStateManager
 
         if (health <= 0f)
         {
+            HUDManager.Instance?.StopTimer();
             MenuController.Instance?.AdvanceToNextBoss(2);
         }
     }
