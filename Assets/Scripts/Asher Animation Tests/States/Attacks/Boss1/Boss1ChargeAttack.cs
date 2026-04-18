@@ -145,10 +145,20 @@ public class Boss1ChargeAttack : EnemyBaseState
             return;
         }
 
+        // Slam early rather than charging through a wall or into the lava pit
+        Boss1StateManager boss1 = (Boss1StateManager)state;
+        float step = chargeSpeed * Time.deltaTime;
+        if (boss1.WouldHitWall(state.transform.position, chargeDir, step) ||
+            !boss1.IsPositionSafe(state.transform.position + chargeDir * step))
+        {
+            DoSlam(state);
+            return;
+        }
+
         if (state.rb != null)
-            state.rb.MovePosition(state.transform.position + chargeDir * chargeSpeed * Time.deltaTime);
+            state.rb.MovePosition(state.transform.position + chargeDir * step);
         else
-            state.transform.position += chargeDir * chargeSpeed * Time.deltaTime;
+            state.transform.position += chargeDir * step;
 
         // Fire trail bullets while charging
         if (trailTimer >= trailFireRate)

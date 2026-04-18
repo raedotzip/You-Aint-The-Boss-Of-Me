@@ -21,8 +21,8 @@ public class Boss1JumpLeftMovement : EnemyBaseState
 
         // Left = negative right relative to boss→player direction
         Vector3 left     = -Vector3.Cross(Vector3.up, toPlayer).normalized;
-        targetPosition   = startPosition + left * jumpDistance;
-        targetPosition.y = 0f;
+        targetPosition = startPosition + left * jumpDistance;
+        targetPosition = ((Boss1StateManager)state).ClampLandingPosition(targetPosition, startPosition);
 
         elapsedTime     = 0f;
         hasTransitioned = false;

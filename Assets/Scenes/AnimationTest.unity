@@ -288,6 +288,7 @@ MonoBehaviour:
   bossBarContainer: {fileID: 952059218}
   bossNameText: {fileID: 959962861}
   hudRoot: {fileID: 2037185644}
+  timerText: {fileID: 0}
 --- !u!1 &48871823 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5251744554987952991, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -677,7 +678,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &78313861 stripped
@@ -1728,7 +1730,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 1
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &202972556 stripped
@@ -2094,7 +2097,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -2758,8 +2761,16 @@ MonoBehaviour:
   retreatRange: 6
   retreatChance: 0.37
   sideJumpChance: 0.37
-  mapBoundsRadius: 28
   sideJumpDistance: 6
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  bossRadius: 0.6
+  bossCheckHeight: 1
+  wallSafetyMargin: 0.5
+  fallThreshold: -3
+  lavaPitCenter: {fileID: 1519189452}
+  pitSafetyMargin: 1.5
   closeWeight_Punch: 3
   closeWeight_JumpSlam: 3
   closeWeight_Spin: 2
@@ -4724,6 +4735,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5dbc88a724705a049b3d6786ffdbd11c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4461885075831488399, guid: 5dbc88a724705a049b3d6786ffdbd11c, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -6636,7 +6651,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4838878539073628411, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -6646,6 +6662,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5471030500579814732, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 449859186}
+    - targetCorrespondingSourceObject: {fileID: 838974720865997422, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1856132141}
   m_SourcePrefab: {fileID: 100100000, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
 --- !u!4 &1070997892 stripped
 Transform:
@@ -6943,7 +6962,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &1083922894 stripped
@@ -8873,7 +8893,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &1412676428 stripped
@@ -9029,7 +9050,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
-  startingBoss: 2
+  startingBoss: 1
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss1ShowsBarImmediately: 1
@@ -9544,7 +9565,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 10
   boss2: {fileID: 1875370447}
-  destroyEffect: {fileID: 0}
+  destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
+  reviveEffect: {fileID: 0}
   hitRadius: 0.4
   minSwordSpeed: 0.8
 --- !u!4 &1504144131 stripped
@@ -10743,6 +10765,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8341595250129989173, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1848365491}
+    - targetCorrespondingSourceObject: {fileID: -8341595250129989173, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1848365492}
     - targetCorrespondingSourceObject: {fileID: -1434205460419837379, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       insertIndex: -1
       addedObject: {fileID: 388660628}
@@ -10885,6 +10910,11 @@ PrefabInstance:
 --- !u!4 &1519189451 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
+  m_PrefabInstance: {fileID: 1519189450}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1519189452 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3082485088224207460, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
   m_PrefabInstance: {fileID: 1519189450}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1527011396 stripped
@@ -11239,7 +11269,7 @@ Transform:
   m_GameObject: {fileID: 1584718711}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -87.730804, y: -6.186559, z: 0.6367619}
+  m_LocalPosition: {x: -87.730804, y: -6.161, z: 0.6367619}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -11451,7 +11481,7 @@ GameObject:
   - component: {fileID: 1647076753}
   - component: {fileID: 1647076752}
   - component: {fileID: 1647076751}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Boss2ForceField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14537,6 +14567,72 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2045894193835759827, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
+--- !u!65 &1848365492
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848365487}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.2564077, y: 0.000000011990778, z: 0.048634853}
+  m_Center: {x: 0.03156976, y: -0.0018139968, z: 0}
+--- !u!1 &1856132136 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 838974720865997422, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+  m_PrefabInstance: {fileID: 1070997891}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1856132141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1856132136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab68ce6587aab0146b8dabefbd806791, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
+  m_ClickSpeed: 0.3
+  m_MoveDeadzone: 0.6
+  m_RepeatDelay: 0.5
+  m_RepeatRate: 0.1
+  m_TrackedDeviceDragThresholdMultiplier: 1.4
+  m_TrackedScrollDeltaMultiplier: 5
+  m_BypassUIToolkitEvents: 0
+  m_ActiveInputMode: 0
+  m_MaxTrackedDeviceRaycastDistance: 1000
+  m_EnableXRInput: 1
+  m_EnableMouseInput: 1
+  m_EnableTouchInput: 1
+  m_PointAction: {fileID: 0}
+  m_LeftClickAction: {fileID: 0}
+  m_MiddleClickAction: {fileID: 0}
+  m_RightClickAction: {fileID: 0}
+  m_ScrollWheelAction: {fileID: 0}
+  m_NavigateAction: {fileID: 0}
+  m_SubmitAction: {fileID: 0}
+  m_CancelAction: {fileID: 0}
+  m_EnableBuiltinActionsAsFallback: 1
+  m_EnableGamepadInput: 1
+  m_EnableJoystickInput: 1
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
 --- !u!1 &1856283862 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2735786570799625153, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -15643,7 +15739,6 @@ MonoBehaviour:
   obstacleData: {fileID: 11400000, guid: bb1279a2a2b516847a10fbb44cef4cc5, type: 2}
   bulletData: {fileID: 11400000, guid: c7aba5acfa4bbbf4bb9d0fd0ecdfce94, type: 2}
   miniComputersTotal: 5
-  miniComputersToActivate: 1
   forceField: {fileID: 1647076750}
   obstaclePrefab: {fileID: 0}
   bulletSpawnPoints:
@@ -15652,6 +15747,7 @@ MonoBehaviour:
   - {fileID: 389473873}
   - {fileID: 1497083950}
   - {fileID: 737875461}
+  forceFieldPushRadius: 8
   closeRange: 8
   farRange: 18
   closeWeight_LaserBeam: 3

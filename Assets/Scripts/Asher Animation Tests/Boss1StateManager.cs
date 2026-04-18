@@ -34,11 +34,36 @@ public class Boss1StateManager : EnemyStateManager
     // RETREAT SETTINGS
     // ===============================
     [Header("Retreat Settings")]
-    public float retreatRange                    = 5f;   // tighter — boss commits more
-    [Range(0f, 1f)] public float retreatChance   = 0.25f; // less frequent retreating
-    [Range(0f, 1f)] public float sideJumpChance  = 0.55f; // mostly jumps sideways to reposition
-    public float mapBoundsRadius                 = 28f;
+    public float retreatRange                    = 5f;
+    [Range(0f, 1f)] public float retreatChance   = 0.25f;
+    [Range(0f, 1f)] public float sideJumpChance  = 0.55f;
     public float sideJumpDistance                = 6f;
+
+    // ===============================
+    // WALL / BOUNDS DETECTION
+    // ===============================
+    [Header("Wall Detection")]
+    [Tooltip("Layer(s) that count as walls the boss cannot pass through")]
+    public LayerMask wallLayer;
+    [Tooltip("Radius of the sphere used for wall overlap and cast checks")]
+    public float bossRadius          = 0.6f;
+    [Tooltip("Height offset above the boss origin for wall casts (avoids floor hits)")]
+    public float bossCheckHeight     = 1.0f;
+    [Tooltip("Extra gap kept between the boss and a detected wall")]
+    public float wallSafetyMargin    = 0.5f;
+    [Tooltip("Y level below which the boss is considered to have fallen off the map")]
+    public float fallThreshold       = -3f;
+
+    // ===============================
+    // LAVA PIT
+    // ===============================
+    [Header("Lava Pit")]
+    [Tooltip("Empty GameObject with a BoxCollider sized to the pit — rotate/scale it to match")]
+    public Transform lavaPitCenter;
+    [Tooltip("Extra buffer inside the pit edge — boss lands this far short of the rim")]
+    public float pitSafetyMargin = 1.5f;
+
+    private BoxCollider _pitCollider;
 
     // ===============================
     // ATTACK WEIGHTS
@@ -98,6 +123,8 @@ public class Boss1StateManager : EnemyStateManager
     [HideInInspector] public float maxHealth     = 100f;
     public HealthBarUI bossHealthBar;
 
+    private Vector3 _lastSafePosition;
+
     public override void Start()
     {
         health = maxHealth;
@@ -105,6 +132,11 @@ public class Boss1StateManager : EnemyStateManager
 
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
+
+        if (lavaPitCenter != null)
+            _pitCollider = lavaPitCenter.GetComponent<BoxCollider>();
+
+        _lastSafePosition = transform.position;
 
         ObstacleManager.Instance.PrewarmObstaclePools(obstacleData);
 
@@ -125,6 +157,33 @@ public class Boss1StateManager : EnemyStateManager
         }
 
         currentState.UpdateState(this);
+
+        // Hard safety net — teleport back if the boss somehow leaves the map
+        EnforceBounds();
+    }
+
+    // Snaps boss back to last safe position if it falls off the map
+    public void EnforceBounds()
+    {
+        Vector3 pos = transform.position;
+
+        if (pos.y < fallThreshold)
+        {
+            transform.position = _lastSafePosition;
+            return;
+        }
+
+        // Track the last safe above-floor position for recovery
+        if (pos.y >= 0f && !IsInPit(pos, 0f))
+            _lastSafePosition = pos;
+    }
+
+    // Returns true if a sphere cast from pos in dir would hit a wall within distance
+    public bool WouldHitWall(Vector3 pos, Vector3 dir, float distance)
+    {
+        Vector3 origin = pos + Vector3.up * bossCheckHeight;
+        return Physics.SphereCast(origin, bossRadius, dir, out _, distance,
+                                  wallLayer, QueryTriggerInteraction.Ignore);
     }
 
     // override protected void OnCollisionEnter(Collision collision)
@@ -189,8 +248,8 @@ public class Boss1StateManager : EnemyStateManager
             Vector3 toPlayer = (player.position - transform.position).normalized;
             Vector3 right    = Vector3.Cross(Vector3.up, toPlayer).normalized;
 
-            bool canJumpRight = IsPositionInBounds(transform.position + right * sideJumpDistance);
-            bool canJumpLeft  = IsPositionInBounds(transform.position - right * sideJumpDistance);
+            bool canJumpRight = IsPositionSafe(transform.position + right * sideJumpDistance);
+            bool canJumpLeft  = IsPositionSafe(transform.position - right * sideJumpDistance);
 
             if (canJumpRight && canJumpLeft)
             {
@@ -209,16 +268,93 @@ public class Boss1StateManager : EnemyStateManager
             // Neither side clear — fall through to jump back
         }
 
+        // Verify jump back is also safe; if not, stay in place with a ranged attack
+        Vector3 backDir  = -(player.position - transform.position).normalized;
+        backDir.y = 0f;
+        if (!IsPositionSafe(transform.position + backDir * sideJumpDistance))
+            return spiralBurstAttack;
+
         return jumpBackState;
     }
 
-    // Check if a position is within the map boundary
-    public bool IsPositionInBounds(Vector3 pos)
+    // Returns true if pos is not inside a wall and not inside the lava pit
+    public bool IsPositionSafe(Vector3 pos)
     {
-        // Flat distance from map center — assumes circular arena
-        Vector2 flat = new Vector2(pos.x, pos.z);
-        return flat.magnitude <= mapBoundsRadius;
+        if (_pitCollider != null && IsInPit(pos, 0f))
+            return false;
+
+        // CheckSphere detects overlap with wall geometry at the boss body height
+        Vector3 checkPos = pos + Vector3.up * bossCheckHeight;
+        if (Physics.CheckSphere(checkPos, bossRadius, wallLayer, QueryTriggerInteraction.Ignore))
+            return false;
+
+        return true;
     }
+
+    // Returns true if world-pos is inside the BoxCollider expanded by extraMargin
+    private bool IsInPit(Vector3 worldPos, float extraMargin)
+    {
+        if (_pitCollider == null) return false;
+        Vector3 local    = lavaPitCenter.InverseTransformPoint(worldPos);
+        Vector3 halfSize = _pitCollider.size * 0.5f;
+        Vector3 center   = _pitCollider.center;
+        return Mathf.Abs(local.x - center.x) < halfSize.x + extraMargin &&
+               Mathf.Abs(local.z - center.z) < halfSize.z + extraMargin;
+    }
+
+    // Returns a safe landing position — stops at any wall along the jump path
+    // and pulls back from the lava pit.
+    public Vector3 ClampLandingPosition(Vector3 proposed, Vector3 jumpFrom)
+    {
+        proposed.y = 0f;
+        jumpFrom.y = 0f;
+
+        Vector3 dir  = proposed - jumpFrom;
+        float   dist = dir.magnitude;
+
+        if (dist > 0.01f)
+        {
+            Vector3 normDir = dir / dist;
+            Vector3 origin  = jumpFrom + Vector3.up * bossCheckHeight;
+
+            // Stop just before any wall between jump start and intended landing
+            if (Physics.SphereCast(origin, bossRadius, normDir, out RaycastHit hit,
+                                   dist, wallLayer, QueryTriggerInteraction.Ignore))
+            {
+                float safeDist = Mathf.Max(0f, hit.distance - bossRadius - wallSafetyMargin);
+                proposed       = jumpFrom + normDir * safeDist;
+                proposed.y     = 0f;
+            }
+        }
+
+        // Pull back from rectangular lava pit
+        if (_pitCollider != null && IsInPit(proposed, pitSafetyMargin))
+        {
+            Vector3 center   = _pitCollider.center;
+            Vector3 halfSize = _pitCollider.size * 0.5f;
+            float   hw       = halfSize.x + pitSafetyMargin;
+            float   hd       = halfSize.z + pitSafetyMargin;
+
+            Vector3 localFrom     = lavaPitCenter.InverseTransformPoint(jumpFrom);
+            Vector3 localProposed = lavaPitCenter.InverseTransformPoint(proposed);
+
+            float overlapX = hw - Mathf.Abs(localFrom.x - center.x);
+            float overlapZ = hd - Mathf.Abs(localFrom.z - center.z);
+
+            if (overlapX < overlapZ)
+                localProposed.x = center.x + Mathf.Sign(localFrom.x - center.x) * hw;
+            else
+                localProposed.z = center.z + Mathf.Sign(localFrom.z - center.z) * hd;
+
+            proposed   = lavaPitCenter.TransformPoint(localProposed);
+            proposed.y = 0f;
+        }
+
+        return proposed;
+    }
+
+    // Legacy — kept so any remaining callers still compile
+    public bool IsPositionInBounds(Vector3 pos) => IsPositionSafe(pos);
 
     // ===============================
     // ATTACK SELECTION

@@ -21,8 +21,8 @@ public class Boss1JumpRightMovement : EnemyBaseState
 
         // Right = positive cross product of up and forward
         Vector3 right    = Vector3.Cross(Vector3.up, toPlayer).normalized;
-        targetPosition   = startPosition + right * jumpDistance;
-        targetPosition.y = 0f;
+        targetPosition = startPosition + right * jumpDistance;
+        targetPosition = ((Boss1StateManager)state).ClampLandingPosition(targetPosition, startPosition);
 
         elapsedTime     = 0f;
         hasTransitioned = false;

@@ -1,0 +1,46 @@
+name: Sync Wiki
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wiki/**'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Clone wiki repository
+        run: |
+          git clone \
+            https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git \
+            wiki-repo
+
+      - name: Copy wiki pages
+        run: |
+          cp wiki/*.md      wiki-repo/
+          cp wiki/meta/*.md wiki-repo/
+
+      - name: Inject commit SHA into footer
+        run: |
+          SHORT="${GITHUB_SHA:0:7}"
+          FULL="${GITHUB_SHA}"
+          sed -i "s|<!-- COMMIT_SHA_SHORT -->|${SHORT}|g" wiki-repo/_Footer.md
+          sed -i "s|<!-- COMMIT_SHA_FULL -->|${FULL}|g"   wiki-repo/_Footer.md
+
+      - name: Commit and push
+        run: |
+          cd wiki-repo
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet \
+            || git commit -m "docs: sync wiki from ${GITHUB_SHA:0:7}"
+          git push

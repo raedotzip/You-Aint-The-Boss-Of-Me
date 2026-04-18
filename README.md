@@ -51,14 +51,14 @@ TBD
 
 ## Documentation
 
-Full documentation lives in the [`docs/`](docs/) folder (also on the wiki):
+Full documentation is on the [GitHub Wiki](https://github.com/raedotzip/VRGame/wiki):
 
 | Page | Description |
 |------|-------------|
-| [Architecture Overview](docs/architecture-overview.md) | Scene structure, game flow, singleton pattern |
-| [Managers](docs/managers.md) | BossManager, MenuController, HUDManager, BulletManager, ObstacleManager |
-| [Boss System](docs/boss-system.md) | State machine pattern, AI behavior, attack states |
-| [Adding a Boss](docs/adding-a-boss.md) | Step-by-step guide to creating a new boss |
-| [Combat System](docs/combat-system.md) | Sword mechanics, parrying, menu box interaction |
-| [Bullets & Obstacles](docs/bullets-and-obstacles.md) | Bullet struct, visual pool, movement types, warning phase, adding new bullets/obstacles |
-| [Player System](docs/player-system.md) | VR locomotion, dash, health, HUD |
+| [Architecture Overview](https://github.com/raedotzip/VRGame/wiki/Architecture-Overview) | Scene structure, game flow, singleton pattern |
+| [Managers](https://github.com/raedotzip/VRGame/wiki/Managers) | BossManager, MenuController, HUDManager, BulletManager, ObstacleManager |
+| [Boss System](https://github.com/raedotzip/VRGame/wiki/Boss-System) | State machine pattern, AI behavior, attack states |
+| [Adding a Boss](https://github.com/raedotzip/VRGame/wiki/Adding-a-Boss) | Step-by-step guide to creating a new boss |
+| [Combat System](https://github.com/raedotzip/VRGame/wiki/Combat-System) | Sword mechanics, parrying, menu box interaction |
+| [Bullets & Obstacles](https://github.com/raedotzip/VRGame/wiki/Bullets-and-Obstacles) | Bullet struct, visual pool, movement types, warning phase, adding new bullets/obstacles |
+| [Player System](https://github.com/raedotzip/VRGame/wiki/Player-System) | VR locomotion, dash, health, HUD |
