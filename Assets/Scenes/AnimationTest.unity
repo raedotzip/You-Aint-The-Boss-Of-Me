@@ -2761,8 +2761,14 @@ MonoBehaviour:
   retreatRange: 6
   retreatChance: 0.37
   sideJumpChance: 0.37
-  mapBoundsRadius: 28
   sideJumpDistance: 6
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  bossRadius: 0.6
+  bossCheckHeight: 1
+  wallSafetyMargin: 0.5
+  fallThreshold: -3
   lavaPitCenter: {fileID: 1519189452}
   pitSafetyMargin: 1.5
   closeWeight_Punch: 3
