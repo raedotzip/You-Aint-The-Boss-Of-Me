@@ -69,6 +69,14 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
 
     public override float OnBossHurt(EnemyStateManager state) => 0f;
 
+    static Vector3 TiltTowardPlayer(Vector3 dir, Vector3 spawnPos, Vector3 playerPos)
+    {
+        float hDist = new Vector3(playerPos.x - spawnPos.x, 0f, playerPos.z - spawnPos.z).magnitude;
+        if (hDist > 0.01f)
+            dir.y = (playerPos.y - spawnPos.y) / hDist;
+        return dir.normalized;
+    }
+
     private void SpawnObstacle(EnemyStateManager state, int index)
     {
         Boss2StateManager boss = (Boss2StateManager)state;
@@ -112,29 +120,31 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
         Vector3 toPlayer = state.player.position - state.transform.position;
         Vector3 dir      = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : state.transform.forward;
 
-        // Light spread so the player can't just stand still
         dir = Quaternion.Euler(
             Random.Range(-6f, 6f),
             Random.Range(-12f, 12f),
             0f) * dir;
 
-        Vector3 spawnPos = ((Boss2StateManager)state).GetRandomSpawnPoint();
-        spawnPos.y = state.player.position.y + 1.0f;
-
-        Bullet b = new Bullet
+        foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
-            position        = spawnPos,
-            direction       = dir.normalized,
-            speed           = bulletSpeed,
-            damage          = bulletDamage,
-            maxLifetime     = bulletLifetime,
-            collisionRadius = 0.3f,
-            canBeParried    = true,
-            destroyOnParry  = true,
-            movementType    = BulletMovementType.Straight,
-            visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-        };
+            Vector3 spawnPos = sp.position;
+            Vector3 spawnDir = TiltTowardPlayer(dir, spawnPos, state.player.position);
 
-        BulletManager.Instance.SpawnBullet(b);
+            Bullet b = new Bullet
+            {
+                position        = spawnPos,
+                direction       = spawnDir,
+                speed           = bulletSpeed,
+                damage          = bulletDamage,
+                maxLifetime     = bulletLifetime,
+                collisionRadius = 0.3f,
+                canBeParried    = true,
+                destroyOnParry  = true,
+                movementType    = BulletMovementType.Straight,
+                visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+            };
+
+            BulletManager.Instance.SpawnBullet(b);
+        }
     }
 }

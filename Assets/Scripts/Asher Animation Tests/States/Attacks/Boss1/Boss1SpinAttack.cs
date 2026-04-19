@@ -103,7 +103,8 @@ public class Boss1SpinAttack : EnemyBaseState
             collisionRadius = 0.3f,
             canBeParried    = true,
             destroyOnParry  = true,
-            movementType    = BulletMovementType.Straight, // Straight so they travel far
+            movementType    = BulletMovementType.Straight,
+            scale           = 2f,
             visualPrefab    = state.bulletData.groundSlamBulletPrefab,
         };
 

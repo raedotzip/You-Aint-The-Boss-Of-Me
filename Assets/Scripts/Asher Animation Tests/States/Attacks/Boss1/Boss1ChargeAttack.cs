@@ -10,21 +10,12 @@ public class Boss1ChargeAttack : EnemyBaseState
     // ===============================
     // CHARGE SETTINGS
     // ===============================
-    private float chargeSpeed    = 30f;
+    private float chargeSpeed    = 60f;
     private float chargeStopDist = 2f;
     private float chargeDuration = 3f;
 
     // How many degrees per second the boss can steer mid-charge.
-    // Low value = nearly locked-in like Reinhardt. Player must dash to escape.
-    private float steerSpeed     = 30f;
-
-    // ===============================
-    // SHOCKWAVE SETTINGS
-    // ===============================
-    private float warningTime     = 0f;
-    private float shockwaveActive = 2.5f;
-    private float mapRadius       = 30f;
-    private float ringThickness   = 1f;
+    private float steerSpeed     = 50f;
 
     // ===============================
     // BULLET SETTINGS
@@ -52,22 +43,29 @@ public class Boss1ChargeAttack : EnemyBaseState
     // Direction locked at charge start — only steers slowly toward player
     private Vector3 chargeDir;
 
-    private float trailFireRate   = 0.08f; // How often trail bullets spawn during charge
+    private float trailFireRate   = 0.08f;
     private float trailTimer      = 0f;
-    private int   trailBulletsPerShot = 3; // Left, right, and behind each fire
-    private float trailSpeed      = 3f;    // Slow so they drop nearby
-    private float trailLifetime   = 0.8f;  // Short lifetime so they don't travel far
-    private float trailArcHeight  = 2f;    // How much they arc up before dropping
+    private int   trailBulletsPerShot = 3;
+    private float trailSpeed      = 3f;
+    private float trailLifetime   = 0.8f;
+    private float trailArcHeight  = 2f;
+
+    // Player knockback on direct hit
+    private float knockbackSpeed    = 10f;
+    private float knockbackDuration = 0.35f;
+    private float knockbackRadius   = 2.2f; // how close the boss must be to the player to land a hit
+    private bool  _hasKnockedPlayer = false;
 
     public override void EnterState(EnemyStateManager state)
     {
-        chargeTimer = 0f;
-        hasSlammed  = false;
-        attackDone  = false;
-        firingWaves = false;
-        wavesFired  = 0;
-        waveTimer   = 0f;
-        trailTimer  = 0f;
+        chargeTimer      = 0f;
+        hasSlammed       = false;
+        attackDone       = false;
+        firingWaves      = false;
+        wavesFired       = 0;
+        waveTimer        = 0f;
+        trailTimer       = 0f;
+        _hasKnockedPlayer = false;
 
         // Lock charge direction toward player's current position at attack start
         Vector3 toPlayer = state.player.position - state.transform.position;
@@ -145,10 +143,36 @@ public class Boss1ChargeAttack : EnemyBaseState
             return;
         }
 
+        // Slam early rather than charging through a wall or into the lava pit
+        Boss1StateManager boss1 = (Boss1StateManager)state;
+        float step = chargeSpeed * Time.deltaTime;
+        if (boss1.WouldHitWall(state.transform.position, chargeDir, step) ||
+            !boss1.IsPositionSafe(state.transform.position + chargeDir * step))
+        {
+            DoSlam(state);
+            return;
+        }
+
         if (state.rb != null)
-            state.rb.MovePosition(state.transform.position + chargeDir * chargeSpeed * Time.deltaTime);
+            state.rb.MovePosition(state.transform.position + chargeDir * step);
         else
-            state.transform.position += chargeDir * chargeSpeed * Time.deltaTime;
+            state.transform.position += chargeDir * step;
+
+        // Knock the player back if the boss body overlaps them during the charge
+        if (!_hasKnockedPlayer &&
+            Vector3.Distance(state.transform.position, state.player.position) <= knockbackRadius)
+        {
+            PlayerMovement pm = state.player.GetComponentInParent<PlayerMovement>();
+            if (pm == null) pm = state.player.GetComponentInChildren<PlayerMovement>();
+            if (pm != null)
+            {
+                Vector3 knockDir = (state.player.position - state.transform.position);
+                knockDir.y = 0f;
+                if (knockDir.sqrMagnitude < 0.001f) knockDir = chargeDir;
+                pm.TakeKnockback(knockDir.normalized, knockbackSpeed, knockbackDuration);
+                _hasKnockedPlayer = true;
+            }
+        }
 
         // Fire trail bullets while charging
         if (trailTimer >= trailFireRate)
@@ -168,10 +192,6 @@ public class Boss1ChargeAttack : EnemyBaseState
         slamPosition.y = 0f;
 
         state.animator.SetTrigger("GroundSlam");
-        Debug.Log("Ground Slammed");
-        //state.animator.SetBool("Running", false);
-
-        SpawnShockwave(state);
 
         firingWaves = true;
         waveTimer   = waveInterval; // Fire first wave immediately
@@ -191,7 +211,7 @@ public class Boss1ChargeAttack : EnemyBaseState
 
             Vector3 dir = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
 
-            float spawnY      = Random.Range(0f, playerHeight);
+            float spawnY      = Random.Range(0.5f, playerHeight);
             float spawnJitter = Random.Range(0f, 0.8f);
 
             Vector3 spawnPos  = slamPosition + dir * spawnJitter;
@@ -211,6 +231,7 @@ public class Boss1ChargeAttack : EnemyBaseState
                 canBeParried    = true,
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
+                scale           = 2f,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
             };
 
@@ -218,36 +239,6 @@ public class Boss1ChargeAttack : EnemyBaseState
         }
     }
 
-    // ===============================
-    // SHOCKWAVE
-    // ===============================
-    private void SpawnShockwave(EnemyStateManager state)
-    {
-        Obstacle o = new Obstacle
-        {
-            position        = slamPosition,
-            rotation        = Quaternion.identity,
-
-            shapeType       = ObstacleShapeType.Cylinder,
-            cylinderHeight  = ringThickness,
-            cylinderRadius  = 0f,
-            isHollow        = true,
-            innerRadius     = 0f,
-
-            warningDuration = warningTime,
-            activeDuration  = shockwaveActive,
-
-            movementType    = ObstacleMovementType.Stationary,
-
-            scalesOverTime  = true,
-            initialScale    = new Vector3(0f,             ringThickness, 0f),
-            finalScale      = new Vector3(mapRadius * 2f, ringThickness, mapRadius * 2f),
-
-            visualPrefab    = state.obstacleData.shockwavePrefab,
-        };
-
-        ObstacleManager.Instance.SpawnObstacle(o);
-    }
     private void SpawnTrailBullets(EnemyStateManager state, Vector3 chargeDir)
     {
         Vector3 bossPos = state.transform.position;
@@ -279,12 +270,13 @@ public class Boss1ChargeAttack : EnemyBaseState
                 position        = spawnPos,
                 direction       = finalDir,
                 speed           = trailSpeed + Random.Range(-0.5f, 1f),
-                damage          = 0f,           // No damage — purely aesthetic
+                damage          = 0f,
                 maxLifetime     = trailLifetime,
                 collisionRadius = 0.1f,
                 canBeParried    = false,
                 destroyOnParry  = false,
                 movementType    = BulletMovementType.Arc,
+                scale           = 2f,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
             };
 

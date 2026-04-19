@@ -114,11 +114,12 @@ public class Boss1RepeatedGroundSlamBulletAttack : EnemyBaseState
             direction       = initialVelocity.normalized,
             speed           = initialVelocity.magnitude,
             damage          = bulletDamage,
-            maxLifetime     = arcDuration + 0.5f, // small buffer so it doesn't vanish mid-air
+            maxLifetime     = arcDuration + 0.5f,
             collisionRadius = 0.3f,
             canBeParried    = true,
             destroyOnParry  = false,
             movementType    = BulletMovementType.Arc,
+            scale           = 2f,
             visualPrefab    = state.bulletData.groundSlamBulletPrefab,
         };
 

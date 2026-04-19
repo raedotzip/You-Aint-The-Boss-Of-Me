@@ -20,25 +20,41 @@ public class Boss1StateManager : EnemyStateManager
     public Boss1RingGapAttack                  ringGapAttack           = new Boss1RingGapAttack();
 
     private Boss1GroundSlamShockwaveAttack     shockwaveState          = new Boss1GroundSlamShockwaveAttack();
-    private Boss1MapSeparatorAttack            mapSeparatorState       = new Boss1MapSeparatorAttack();
     private Boss1TiredState                    tiredState              = new Boss1TiredState();
+    public  Boss1LavaFinisherState             lavaFinisherState       = new Boss1LavaFinisherState();
 
     // ===============================
     // RANGE SETTINGS
     // ===============================
     [Header("Range Thresholds")]
-    public float closeRange = 8f;
-    public float farRange   = 18f;
+    public float closeRange   = 8f;
+    public float farRange     = 18f;
+    [Tooltip("Within this distance the boss will reactively punch or jump away")]
+    public float tooCloseRange = 3f;
 
     // ===============================
     // RETREAT SETTINGS
     // ===============================
     [Header("Retreat Settings")]
-    public float retreatRange                    = 5f;   // tighter — boss commits more
-    [Range(0f, 1f)] public float retreatChance   = 0.25f; // less frequent retreating
-    [Range(0f, 1f)] public float sideJumpChance  = 0.55f; // mostly jumps sideways to reposition
-    public float mapBoundsRadius                 = 28f;
+    public float retreatRange                    = 5f;
+    [Range(0f, 1f)] public float retreatChance   = 0.5f;
+    [Range(0f, 1f)] public float sideJumpChance  = 0.7f;
     public float sideJumpDistance                = 6f;
+
+    // ===============================
+    // WALL / BOUNDS DETECTION
+    // ===============================
+    [Header("Wall Detection")]
+    [Tooltip("Layer(s) that count as walls the boss cannot pass through")]
+    public LayerMask wallLayer;
+    [Tooltip("Radius of the sphere used for wall overlap and cast checks")]
+    public float bossRadius          = 0.6f;
+    [Tooltip("Height offset above the boss origin for wall casts (avoids floor hits)")]
+    public float bossCheckHeight     = 1.0f;
+    [Tooltip("Extra gap kept between the boss and a detected wall")]
+    public float wallSafetyMargin    = 0.5f;
+    [Tooltip("Y level below which the boss is considered to have fallen off the map")]
+    public float fallThreshold       = -3f;
 
     // ===============================
     // LAVA PIT
@@ -56,41 +72,43 @@ public class Boss1StateManager : EnemyStateManager
     // ===============================
     // Close: boss is in your face — big melee, fast pressure
     [Header("Close Range Attack Weights")]
-    [Range(0, 10)] public int closeWeight_Punch         = 4; // most common — fast and aggressive
-    [Range(0, 10)] public int closeWeight_JumpSlam      = 3; // launches into player
-    [Range(0, 10)] public int closeWeight_Spin          = 3; // sweeping close attack
-    [Range(0, 10)] public int closeWeight_BulletSlam    = 1; // rare at close range
-    [Range(0, 10)] public int closeWeight_Charge        = 3; // charges through player
-    [Range(0, 10)] public int closeWeight_TargetedBurst = 1; // occasional ranged surprise
+    [Range(0, 10)] public int closeWeight_Punch         = 6; // primary close attack
+    [Range(0, 10)] public int closeWeight_JumpSlam      = 5; // jump into the player
+    [Range(0, 10)] public int closeWeight_Spin          = 2;
+    [Range(0, 10)] public int closeWeight_Charge        = 8; // charges through player
+    [Range(0, 10)] public int closeWeight_TargetedBurst = 0;
     [Range(0, 10)] public int closeWeight_RingGap       = 1;
 
-    // Mid: boss closes distance or uses area attacks
+    // Mid: boss closes distance fast with charges and jumps
     [Header("Mid Range Attack Weights")]
-    [Range(0, 10)] public int midWeight_BulletSlam      = 2;
-    [Range(0, 10)] public int midWeight_Charge          = 4; // aggressively closes in
-    [Range(0, 10)] public int midWeight_Spin            = 2;
-    [Range(0, 10)] public int midWeight_Shockwave       = 2;
-    [Range(0, 10)] public int midWeight_MapSeparator    = 0;
-    [Range(0, 10)] public int midWeight_SpiralBurst     = 3; // good mid-range pressure
-    [Range(0, 10)] public int midWeight_TargetedBurst   = 3; // tracks player well at mid
+    [Range(0, 10)] public int midWeight_Charge          = 8; // primary mid approach
+    [Range(0, 10)] public int midWeight_Spin            = 1;
+    [Range(0, 10)] public int midWeight_SpiralBurst     = 2;
+    [Range(0, 10)] public int midWeight_TargetedBurst   = 2;
     [Range(0, 10)] public int midWeight_RingGap         = 2;
 
-    // Far: forces player to move, boss closes in
+    // Far: rush the player, close in fast
     [Header("Far Range Attack Weights")]
-    [Range(0, 10)] public int farWeight_Shockwave       = 2;
-    [Range(0, 10)] public int farWeight_MapSeparator    = 0;
-    [Range(0, 10)] public int farWeight_BulletSlam      = 2;
-    [Range(0, 10)] public int farWeight_Charge          = 4; // boss rushes in from far
-    [Range(0, 10)] public int farWeight_SpiralBurst     = 3;
-    [Range(0, 10)] public int farWeight_TargetedBurst   = 4; // punishes staying far away
-    [Range(0, 10)] public int farWeight_RingGap         = 2;
+    [Range(0, 10)] public int farWeight_Charge          = 8; // boss rushes in from far
+    [Range(0, 10)] public int farWeight_SpiralBurst     = 2;
+    [Range(0, 10)] public int farWeight_TargetedBurst   = 2;
+    [Range(0, 10)] public int farWeight_RingGap         = 1;
 
     // ===============================
     // TIRED SETTINGS
     // ===============================
     [Header("Tired Settings")]
-    public int   attacksBeforeTired = 5;  // more attacks before resting
-    public float tiredDuration      = 2f; // shorter rest window
+    public int   attacksBeforeTired        = 8;    // attacks before going tired (normal phase)
+    public int   attacksBeforeTiredEnraged = 14;   // barely rests at low health
+    public float tiredDuration             = 2f;   // vulnerable window (normal)
+    public float tiredDurationEnraged      = 0.8f; // gets up much faster at ≤20% health
+
+    // ===============================
+    // SCALE
+    // ===============================
+    [Header("Boss Scale")]
+    [Tooltip("Uniform scale applied at Start — set above 1 to make the boss larger than the player")]
+    public float bossScale = 1.8f;
 
     // ===============================
     // LOOK-AT SETTINGS
@@ -109,16 +127,27 @@ public class Boss1StateManager : EnemyStateManager
     [HideInInspector] public float maxHealth     = 100f;
     public HealthBarUI bossHealthBar;
 
+    // True once health hits 0 — prevents re-triggering the finisher
+    private bool _finisherTriggered = false;
+
+    // Boss is enraged below 20% health — faster recovery, less frequent rest
+    public bool IsEnraged => health / maxHealth <= 0.2f;
+
+    private Vector3 _lastSafePosition;
+
     public override void Start()
     {
         health = maxHealth;
         animator = GetComponent<Animator>();
+        transform.localScale = Vector3.one * bossScale;
 
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
 
         if (lavaPitCenter != null)
             _pitCollider = lavaPitCenter.GetComponent<BoxCollider>();
+
+        _lastSafePosition = transform.position;
 
         ObstacleManager.Instance.PrewarmObstaclePools(obstacleData);
 
@@ -139,6 +168,35 @@ public class Boss1StateManager : EnemyStateManager
         }
 
         currentState.UpdateState(this);
+
+        // Hard safety net — teleport back if the boss somehow leaves the map
+        EnforceBounds();
+    }
+
+    // Snaps boss back to last safe position if it falls off the map
+    public void EnforceBounds()
+    {
+        if (_finisherTriggered) return;
+
+        Vector3 pos = transform.position;
+
+        if (pos.y < fallThreshold)
+        {
+            transform.position = _lastSafePosition;
+            return;
+        }
+
+        // Track the last safe above-floor position for recovery
+        if (pos.y >= 0f && !IsInPit(pos, 0f))
+            _lastSafePosition = pos;
+    }
+
+    // Returns true if a sphere cast from pos in dir would hit a wall within distance
+    public bool WouldHitWall(Vector3 pos, Vector3 dir, float distance)
+    {
+        Vector3 origin = pos + Vector3.up * bossCheckHeight;
+        return Physics.SphereCast(origin, bossRadius, dir, out _, distance,
+                                  wallLayer, QueryTriggerInteraction.Ignore);
     }
 
     // override protected void OnCollisionEnter(Collision collision)
@@ -155,13 +213,23 @@ public class Boss1StateManager : EnemyStateManager
 
     public void TakeDamage(float amount)
     {
+        TriggerHitFlash(amount);
+
+        // After the finisher triggers, hits push the boss into the lava instead
+        if (_finisherTriggered)
+        {
+            lavaFinisherState.PushBoss(this);
+            return;
+        }
+
         health = Mathf.Max(0f, health - amount);
         if (bossHealthBar != null)
             bossHealthBar.UpdateHealthPercentage(health, maxHealth);
 
         if (health <= 0f)
         {
-            MenuController.Instance?.AdvanceToNextBoss(1);
+            _finisherTriggered = true;
+            SwitchState(lavaFinisherState);
         }
     }
 
@@ -170,7 +238,8 @@ public class Boss1StateManager : EnemyStateManager
     // ===============================
     public void TransitionToNextState()
     {
-        if (attackCounter >= attacksBeforeTired)
+        int tiredThreshold = IsEnraged ? attacksBeforeTiredEnraged : attacksBeforeTired;
+        if (attackCounter >= tiredThreshold)
         {
             attackCounter = 0;
             SwitchState(tiredState);
@@ -178,6 +247,21 @@ public class Boss1StateManager : EnemyStateManager
         }
 
         float dist = Vector3.Distance(transform.position, player.position);
+
+        // Too close — reactive punch (60%) or jump away (40%)
+        if (dist <= tooCloseRange)
+        {
+            if (Random.value < 0.6f)
+            {
+                attackCounter++;
+                SwitchState(punchAttack);
+            }
+            else
+            {
+                SwitchState(ChooseRetreatState());
+            }
+            return;
+        }
 
         // Retreat check — never retreat into idle
         if (dist <= retreatRange && Random.value <= retreatChance)
@@ -223,16 +307,24 @@ public class Boss1StateManager : EnemyStateManager
             // Neither side clear — fall through to jump back
         }
 
+        // Verify jump back is also safe; if not, stay in place with a ranged attack
+        Vector3 backDir  = -(player.position - transform.position).normalized;
+        backDir.y = 0f;
+        if (!IsPositionSafe(transform.position + backDir * sideJumpDistance))
+            return spiralBurstAttack;
+
         return jumpBackState;
     }
 
-    // Check if a position is within the map boundary and not in the lava pit
+    // Returns true if pos is not inside a wall and not inside the lava pit
     public bool IsPositionSafe(Vector3 pos)
     {
-        Vector2 flat = new Vector2(pos.x, pos.z);
-        if (flat.magnitude > mapBoundsRadius) return false;
-
         if (_pitCollider != null && IsInPit(pos, 0f))
+            return false;
+
+        // CheckSphere detects overlap with wall geometry at the boss body height
+        Vector3 checkPos = pos + Vector3.up * bossCheckHeight;
+        if (Physics.CheckSphere(checkPos, bossRadius, wallLayer, QueryTriggerInteraction.Ignore))
             return false;
 
         return true;
@@ -249,19 +341,29 @@ public class Boss1StateManager : EnemyStateManager
                Mathf.Abs(local.z - center.z) < halfSize.z + extraMargin;
     }
 
-    // Returns a safe landing position — clamps to map bounds and pulls back from the
-    // rectangular lava pit so the boss lands just short of the near rim.
+    // Returns a safe landing position — stops at any wall along the jump path
+    // and pulls back from the lava pit.
     public Vector3 ClampLandingPosition(Vector3 proposed, Vector3 jumpFrom)
     {
         proposed.y = 0f;
+        jumpFrom.y = 0f;
 
-        // Clamp to map boundary
-        Vector2 flat = new Vector2(proposed.x, proposed.z);
-        if (flat.magnitude > mapBoundsRadius)
+        Vector3 dir  = proposed - jumpFrom;
+        float   dist = dir.magnitude;
+
+        if (dist > 0.01f)
         {
-            flat       = flat.normalized * mapBoundsRadius;
-            proposed.x = flat.x;
-            proposed.z = flat.y;
+            Vector3 normDir = dir / dist;
+            Vector3 origin  = jumpFrom + Vector3.up * bossCheckHeight;
+
+            // Stop just before any wall between jump start and intended landing
+            if (Physics.SphereCast(origin, bossRadius, normDir, out RaycastHit hit,
+                                   dist, wallLayer, QueryTriggerInteraction.Ignore))
+            {
+                float safeDist = Mathf.Max(0f, hit.distance - bossRadius - wallSafetyMargin);
+                proposed       = jumpFrom + normDir * safeDist;
+                proposed.y     = 0f;
+            }
         }
 
         // Pull back from rectangular lava pit
@@ -272,7 +374,6 @@ public class Boss1StateManager : EnemyStateManager
             float   hw       = halfSize.x + pitSafetyMargin;
             float   hd       = halfSize.z + pitSafetyMargin;
 
-            // Work in pit-local space; snap to the face nearest to jumpFrom
             Vector3 localFrom     = lavaPitCenter.InverseTransformPoint(jumpFrom);
             Vector3 localProposed = lavaPitCenter.InverseTransformPoint(proposed);
 
@@ -291,12 +392,8 @@ public class Boss1StateManager : EnemyStateManager
         return proposed;
     }
 
-    // Legacy name kept so existing callers still compile
-    public bool IsPositionInBounds(Vector3 pos)
-    {
-        Vector2 flat = new Vector2(pos.x, pos.z);
-        return flat.magnitude <= mapBoundsRadius;
-    }
+    // Legacy — kept so any remaining callers still compile
+    public bool IsPositionInBounds(Vector3 pos) => IsPositionSafe(pos);
 
     // ===============================
     // ATTACK SELECTION
@@ -306,37 +403,30 @@ public class Boss1StateManager : EnemyStateManager
         if (dist <= closeRange)
             return PickWeighted(new (EnemyBaseState, int)[]
             {
-                (punchAttack,             closeWeight_Punch),
-                (jumpSlamState,           closeWeight_JumpSlam),
-                (spinAttack,              closeWeight_Spin),
-                (repeatedBulletSlamState, closeWeight_BulletSlam),
-                (chargeAttack,            closeWeight_Charge),
-                (targetedBurstAttack,     closeWeight_TargetedBurst),
-                (ringGapAttack,           closeWeight_RingGap),
+                (punchAttack,         closeWeight_Punch),
+                (jumpSlamState,       closeWeight_JumpSlam),
+                (spinAttack,          closeWeight_Spin),
+                (chargeAttack,        closeWeight_Charge),
+                (targetedBurstAttack, closeWeight_TargetedBurst),
+                (ringGapAttack,       closeWeight_RingGap),
             });
 
         if (dist >= farRange)
             return PickWeighted(new (EnemyBaseState, int)[]
             {
-                (shockwaveState,          farWeight_Shockwave),
-                (mapSeparatorState,       farWeight_MapSeparator),
-                (repeatedBulletSlamState, farWeight_BulletSlam),
-                (chargeAttack,            farWeight_Charge),
-                (spiralBurstAttack,       farWeight_SpiralBurst),
-                (targetedBurstAttack,     farWeight_TargetedBurst),
-                (ringGapAttack,           farWeight_RingGap),
+                (chargeAttack,        farWeight_Charge),
+                (spiralBurstAttack,   farWeight_SpiralBurst),
+                (targetedBurstAttack, farWeight_TargetedBurst),
+                (ringGapAttack,       farWeight_RingGap),
             });
 
         return PickWeighted(new (EnemyBaseState, int)[]
         {
-            (repeatedBulletSlamState, midWeight_BulletSlam),
-            (chargeAttack,            midWeight_Charge),
-            (spinAttack,              midWeight_Spin),
-            (shockwaveState,          midWeight_Shockwave),
-            (mapSeparatorState,       midWeight_MapSeparator),
-            (spiralBurstAttack,       midWeight_SpiralBurst),
-            (targetedBurstAttack,     midWeight_TargetedBurst),
-            (ringGapAttack,           midWeight_RingGap),
+            (chargeAttack,        midWeight_Charge),
+            (spinAttack,          midWeight_Spin),
+            (spiralBurstAttack,   midWeight_SpiralBurst),
+            (targetedBurstAttack, midWeight_TargetedBurst),
+            (ringGapAttack,       midWeight_RingGap),
         });
     }
 

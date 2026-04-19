@@ -21,6 +21,9 @@ public class HUDManager : MonoBehaviour
     [Tooltip("TMP text element at the top of the HUD showing elapsed run time")]
     public TMP_Text timerText;
 
+    [Header("Lore")]
+    public LoreTyper loreTyper;
+
     private float _elapsed;
     private bool  _running;
     private bool  _finished;
@@ -51,6 +54,21 @@ public class HUDManager : MonoBehaviour
             _running  = false;
             _finished = false;
         }
+    }
+
+    public void ShowLore(string message)
+    {
+        if (loreTyper != null) loreTyper.ShowLore(message);
+    }
+
+    public void ShowLoreSequence(string[] messages)
+    {
+        if (loreTyper != null) loreTyper.ShowLoreSequence(messages);
+    }
+
+    public void CancelLore()
+    {
+        if (loreTyper != null) loreTyper.Cancel();
     }
 
     public void ShowBossBar(bool show)

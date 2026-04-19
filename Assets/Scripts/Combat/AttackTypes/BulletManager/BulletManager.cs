@@ -10,6 +10,7 @@ public class BulletManager : MonoBehaviour
     [SerializeField] private float playerEyeHeight  = 1.0f; // offset from player root to chest/eye
     [SerializeField] private float bossHitRadius   = 1.5f;
     [SerializeField] private float parriedBossDamage = 5f;
+    [SerializeField] private LayerMask mapWallLayer;
 
     // ===============================
     // BULLET STORAGE
@@ -63,6 +64,15 @@ public class BulletManager : MonoBehaviour
             b.lifeTime += dt;
 
             if (b.lifeTime >= b.maxLifetime)
+            {
+                DespawnBulletVisual(b);
+                bullets.RemoveAt(i);
+                continue;
+            }
+
+            // Destroy bullets that hit a wall/floor geometry.
+            // Arc bullets are ballistic (meant to land on the floor) — skip the check for them.
+            if (b.movementType != BulletMovementType.Arc && mapWallLayer != 0 && Physics.CheckSphere(b.position, b.collisionRadius, mapWallLayer, QueryTriggerInteraction.Ignore))
             {
                 DespawnBulletVisual(b);
                 bullets.RemoveAt(i);
