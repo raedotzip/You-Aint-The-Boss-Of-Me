@@ -10,21 +10,12 @@ public class Boss1ChargeAttack : EnemyBaseState
     // ===============================
     // CHARGE SETTINGS
     // ===============================
-    private float chargeSpeed    = 30f;
+    private float chargeSpeed    = 60f;
     private float chargeStopDist = 2f;
     private float chargeDuration = 3f;
 
     // How many degrees per second the boss can steer mid-charge.
-    // Low value = nearly locked-in like Reinhardt. Player must dash to escape.
-    private float steerSpeed     = 30f;
-
-    // ===============================
-    // SHOCKWAVE SETTINGS
-    // ===============================
-    private float warningTime     = 0f;
-    private float shockwaveActive = 2.5f;
-    private float mapRadius       = 30f;
-    private float ringThickness   = 1f;
+    private float steerSpeed     = 50f;
 
     // ===============================
     // BULLET SETTINGS
@@ -201,10 +192,6 @@ public class Boss1ChargeAttack : EnemyBaseState
         slamPosition.y = 0f;
 
         state.animator.SetTrigger("GroundSlam");
-        Debug.Log("Ground Slammed");
-        //state.animator.SetBool("Running", false);
-
-        SpawnShockwave(state);
 
         firingWaves = true;
         waveTimer   = waveInterval; // Fire first wave immediately
@@ -224,7 +211,7 @@ public class Boss1ChargeAttack : EnemyBaseState
 
             Vector3 dir = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
 
-            float spawnY      = Random.Range(0f, playerHeight);
+            float spawnY      = Random.Range(0.5f, playerHeight);
             float spawnJitter = Random.Range(0f, 0.8f);
 
             Vector3 spawnPos  = slamPosition + dir * spawnJitter;
@@ -244,6 +231,7 @@ public class Boss1ChargeAttack : EnemyBaseState
                 canBeParried    = true,
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
+                scale           = 2f,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
             };
 
@@ -251,36 +239,6 @@ public class Boss1ChargeAttack : EnemyBaseState
         }
     }
 
-    // ===============================
-    // SHOCKWAVE
-    // ===============================
-    private void SpawnShockwave(EnemyStateManager state)
-    {
-        Obstacle o = new Obstacle
-        {
-            position        = slamPosition,
-            rotation        = Quaternion.identity,
-
-            shapeType       = ObstacleShapeType.Cylinder,
-            cylinderHeight  = ringThickness,
-            cylinderRadius  = 0f,
-            isHollow        = true,
-            innerRadius     = 0f,
-
-            warningDuration = warningTime,
-            activeDuration  = shockwaveActive,
-
-            movementType    = ObstacleMovementType.Stationary,
-
-            scalesOverTime  = true,
-            initialScale    = new Vector3(0f,             ringThickness, 0f),
-            finalScale      = new Vector3(mapRadius * 2f, ringThickness, mapRadius * 2f),
-
-            visualPrefab    = state.obstacleData.shockwavePrefab,
-        };
-
-        ObstacleManager.Instance.SpawnObstacle(o);
-    }
     private void SpawnTrailBullets(EnemyStateManager state, Vector3 chargeDir)
     {
         Vector3 bossPos = state.transform.position;
@@ -312,12 +270,13 @@ public class Boss1ChargeAttack : EnemyBaseState
                 position        = spawnPos,
                 direction       = finalDir,
                 speed           = trailSpeed + Random.Range(-0.5f, 1f),
-                damage          = 0f,           // No damage — purely aesthetic
+                damage          = 0f,
                 maxLifetime     = trailLifetime,
                 collisionRadius = 0.1f,
                 canBeParried    = false,
                 destroyOnParry  = false,
                 movementType    = BulletMovementType.Arc,
+                scale           = 2f,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
             };
 

@@ -80,11 +80,12 @@ public class MenuController : MonoBehaviour
         StartCoroutine(FadeAndReturnToMenu());
     }
 
-    // Called after Boss 1 is defeated — fade out, teleport to Boss 2, fade in
+    // Called after a boss is defeated — advances to the next boss, or returns to menu
+    // if the next boss's spawn point isn't assigned (arena not yet built).
     public void AdvanceToNextBoss(int completedBossIndex)
     {
         int nextBoss = completedBossIndex + 1;
-        if (nextBoss <= 3)
+        if (nextBoss <= 3 && BossSpawnPoint(nextBoss) != null)
             StartCoroutine(FadeAndStartBoss(nextBoss));
         else
             ReturnToMenu();

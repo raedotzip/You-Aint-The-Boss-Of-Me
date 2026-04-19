@@ -98,6 +98,7 @@ public class Boss1SpiralBurstAttack : EnemyBaseState
                 canBeParried    = true,
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
+                scale           = 2f,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
             };
 

@@ -113,6 +113,7 @@ public class Boss1RingGapAttack : EnemyBaseState
                 canBeParried    = true,
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
+                scale           = 2f,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
             };
 

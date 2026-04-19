@@ -70,8 +70,9 @@ public class BulletManager : MonoBehaviour
                 continue;
             }
 
-            // Destroy bullets that hit a wall/floor geometry
-            if (mapWallLayer != 0 && Physics.CheckSphere(b.position, b.collisionRadius, mapWallLayer, QueryTriggerInteraction.Ignore))
+            // Destroy bullets that hit a wall/floor geometry.
+            // Arc bullets are ballistic (meant to land on the floor) — skip the check for them.
+            if (b.movementType != BulletMovementType.Arc && mapWallLayer != 0 && Physics.CheckSphere(b.position, b.collisionRadius, mapWallLayer, QueryTriggerInteraction.Ignore))
             {
                 DespawnBulletVisual(b);
                 bullets.RemoveAt(i);

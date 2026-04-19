@@ -181,10 +181,9 @@ public class PlayerMovement : MonoBehaviour
         {
             moveDir = Vector3.ProjectOnPlane(_dashDir, groundHit.normal).normalized;
 
-            // Only keep upward Y when the slope is steep enough to actually require climbing.
-            // On flat or near-flat ground (normal.y > 0.95, i.e. < ~18°) the CC handles micro
-            // height changes naturally; removing spurious positive Y stops the "float up" feel.
-            if (moveDir.y > 0f && groundHit.normal.y > 0.95f)
+            // Never dash upward when grounded — zero any upward component so the
+            // dash stays flat regardless of minor floor normal variation.
+            if (moveDir.y > 0f)
             {
                 moveDir.y = 0f;
                 if (moveDir.sqrMagnitude > 0.001f) moveDir.Normalize();

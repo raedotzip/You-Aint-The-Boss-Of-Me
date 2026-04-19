@@ -9,7 +9,7 @@ public class Boss1PunchAttack : EnemyBaseState
     // ===============================
     // LUNGE SETTINGS
     // ===============================
-    private float lungeSpeed    = 20f;   // Fast lunge toward player
+    private float lungeSpeed    = 45f;   // Fast lunge toward player
     private float lungeDistance = 4f;    // How far the boss lunges
     private float stopDistance  = 1.5f;  // How close before punch triggers
 
@@ -23,7 +23,7 @@ public class Boss1PunchAttack : EnemyBaseState
     // ===============================
     // RECOVERY SETTINGS
     // ===============================
-    private float recoveryTime  = 0.5f;  // How long boss is frozen after punching
+    private float recoveryTime  = 0.25f;  // How long boss is frozen after punching
 
     // ===============================
     // RUNTIME
@@ -64,7 +64,7 @@ public class Boss1PunchAttack : EnemyBaseState
         targetPos        = state.player.position - toPlayer * stopDistance;
         targetPos.y      = 0f;
 
-        //state.animator.SetTrigger("Punch");
+        state.animator.SetBool("Continuous Punching", true);
     }
 
     public override void UpdateState(EnemyStateManager state)
@@ -172,13 +172,20 @@ public class Boss1PunchAttack : EnemyBaseState
     // ===============================
     private void HitPlayer(EnemyStateManager state)
     {
-        // Find the player and apply damage
-        // Hook this into your player health system
         PlayerHealth playerHealth = state.player.GetComponent<PlayerHealth>();
         if (playerHealth != null)
             playerHealth.TakeDamage(punchDamage);
 
-        Debug.Log("Player punched for " + punchDamage + " damage");
+        // Knock the player away from the punch
+        PlayerMovement pm = state.player.GetComponentInParent<PlayerMovement>();
+        if (pm == null) pm = state.player.GetComponentInChildren<PlayerMovement>();
+        if (pm != null)
+        {
+            Vector3 knockDir = state.player.position - state.transform.position;
+            knockDir.y = 0f;
+            if (knockDir.sqrMagnitude < 0.001f) knockDir = state.transform.forward;
+            pm.TakeKnockback(knockDir.normalized, 14f, 0.35f);
+        }
     }
 
     private void FacePlayer(EnemyStateManager state)

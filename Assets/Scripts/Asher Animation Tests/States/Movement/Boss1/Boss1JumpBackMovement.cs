@@ -31,9 +31,7 @@ public class Boss1JumpBackMovement : EnemyBaseState
         }
         else
         {
-            // Absolute fallback — jump in the direction the boss is facing
             awayDir = -state.transform.forward;
-            Debug.LogWarning("JumpBack fallback direction used — boss and player too close");
         }
 
         targetPosition   = startPosition + awayDir * jumpDistance;
@@ -41,8 +39,6 @@ public class Boss1JumpBackMovement : EnemyBaseState
         elapsedTime      = 0f;
         hasTransitioned = false;
         state.animator.SetTrigger("Jumping");
-
-        Debug.Log($"JumpBack — start: {startPosition}, target: {targetPosition}, awayDir: {awayDir}");
 
         // Face the player while jumping back
         if (toPlayer != Vector3.zero)
@@ -71,8 +67,7 @@ public class Boss1JumpBackMovement : EnemyBaseState
             state.transform.position = targetPosition;
             hasTransitioned          = true;
 
-            Boss1StateManager boss = (Boss1StateManager)state;
-            boss.SwitchState(boss.punchAttack);
+            ((Boss1StateManager)state).TransitionToNextState();
         }
     }
 

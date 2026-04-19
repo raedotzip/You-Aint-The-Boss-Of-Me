@@ -2873,6 +2873,7 @@ MonoBehaviour:
   pipeAttack: {fileID: 0}
   closeRange: 8
   farRange: 18
+  tooCloseRange: 3
   retreatRange: 6
   retreatChance: 0.37
   sideJumpChance: 0.37
@@ -2889,27 +2890,23 @@ MonoBehaviour:
   closeWeight_Punch: 3
   closeWeight_JumpSlam: 3
   closeWeight_Spin: 2
-  closeWeight_BulletSlam: 2
   closeWeight_Charge: 2
   closeWeight_TargetedBurst: 2
   closeWeight_RingGap: 1
-  midWeight_BulletSlam: 3
   midWeight_Charge: 3
   midWeight_Spin: 2
-  midWeight_Shockwave: 1
-  midWeight_MapSeparator: 1
   midWeight_SpiralBurst: 2
   midWeight_TargetedBurst: 2
   midWeight_RingGap: 10
-  farWeight_Shockwave: 3
-  farWeight_MapSeparator: 3
-  farWeight_BulletSlam: 2
   farWeight_Charge: 3
   farWeight_SpiralBurst: 3
   farWeight_TargetedBurst: 3
   farWeight_RingGap: 10
   attacksBeforeTired: 4
+  attacksBeforeTiredEnraged: 14
   tiredDuration: 4.92
+  tiredDurationEnraged: 0.8
+  bossScale: 1.8
   lookAtSpeed: 5
   smoothLookAtEnabled: 1
   attackCounter: 0
@@ -9341,7 +9338,7 @@ MonoBehaviour:
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
   boss3: {fileID: 1790749897}
-  startingBoss: 3
+  startingBoss: 1
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss3Name: Ceaseless Watcher
@@ -10180,31 +10177,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9996573
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0.013618736
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: -0.016421476
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0.015175391
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 1.589
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -1.858
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 1.714
       objectReference: {fileID: 0}
     - target: {fileID: -8513894679676805079, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -17676,15 +17673,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalPosition.x
@@ -18513,7 +18510,7 @@ GameObject:
   - component: {fileID: 2037185648}
   - component: {fileID: 2037185647}
   - component: {fileID: 2037185646}
-  - component: {fileID: 2037185645}
+  - component: {fileID: 2037185650}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -18521,18 +18518,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2037185645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2037185644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26024f774af404844b62252fa5f29816, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2037185646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18617,6 +18602,25 @@ RectTransform:
   m_AnchoredPosition: {x: 598, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2037185650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037185644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c637216bd63fdf549827754fd494e3e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerBar: {fileID: 1925511952}
+  bossBar: {fileID: 952059220}
+  bossBarContainer: {fileID: 952059218}
+  bossNameText: {fileID: 959962861}
+  hudRoot: {fileID: 2037185644}
+  timerText: {fileID: 0}
+  loreTyper: {fileID: 0}
 --- !u!1 &2043343339 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1866289505784801494, guid: c03f58dab0efa1649bae9045e2495962, type: 3}

@@ -20,7 +20,6 @@ public class Boss1StateManager : EnemyStateManager
     public Boss1RingGapAttack                  ringGapAttack           = new Boss1RingGapAttack();
 
     private Boss1GroundSlamShockwaveAttack     shockwaveState          = new Boss1GroundSlamShockwaveAttack();
-    private Boss1MapSeparatorAttack            mapSeparatorState       = new Boss1MapSeparatorAttack();
     private Boss1TiredState                    tiredState              = new Boss1TiredState();
     public  Boss1LavaFinisherState             lavaFinisherState       = new Boss1LavaFinisherState();
 
@@ -28,16 +27,18 @@ public class Boss1StateManager : EnemyStateManager
     // RANGE SETTINGS
     // ===============================
     [Header("Range Thresholds")]
-    public float closeRange = 8f;
-    public float farRange   = 18f;
+    public float closeRange   = 8f;
+    public float farRange     = 18f;
+    [Tooltip("Within this distance the boss will reactively punch or jump away")]
+    public float tooCloseRange = 3f;
 
     // ===============================
     // RETREAT SETTINGS
     // ===============================
     [Header("Retreat Settings")]
     public float retreatRange                    = 5f;
-    [Range(0f, 1f)] public float retreatChance   = 0.25f;
-    [Range(0f, 1f)] public float sideJumpChance  = 0.55f;
+    [Range(0f, 1f)] public float retreatChance   = 0.5f;
+    [Range(0f, 1f)] public float sideJumpChance  = 0.7f;
     public float sideJumpDistance                = 6f;
 
     // ===============================
@@ -71,34 +72,27 @@ public class Boss1StateManager : EnemyStateManager
     // ===============================
     // Close: boss is in your face — big melee, fast pressure
     [Header("Close Range Attack Weights")]
-    [Range(0, 10)] public int closeWeight_Punch         = 4; // most common — fast and aggressive
-    [Range(0, 10)] public int closeWeight_JumpSlam      = 3; // launches into player
-    [Range(0, 10)] public int closeWeight_Spin          = 3; // sweeping close attack
-    [Range(0, 10)] public int closeWeight_BulletSlam    = 1; // rare at close range
-    [Range(0, 10)] public int closeWeight_Charge        = 3; // charges through player
-    [Range(0, 10)] public int closeWeight_TargetedBurst = 1; // occasional ranged surprise
+    [Range(0, 10)] public int closeWeight_Punch         = 6; // primary close attack
+    [Range(0, 10)] public int closeWeight_JumpSlam      = 5; // jump into the player
+    [Range(0, 10)] public int closeWeight_Spin          = 2;
+    [Range(0, 10)] public int closeWeight_Charge        = 8; // charges through player
+    [Range(0, 10)] public int closeWeight_TargetedBurst = 0;
     [Range(0, 10)] public int closeWeight_RingGap       = 1;
 
-    // Mid: boss closes distance or uses area attacks
+    // Mid: boss closes distance fast with charges and jumps
     [Header("Mid Range Attack Weights")]
-    [Range(0, 10)] public int midWeight_BulletSlam      = 2;
-    [Range(0, 10)] public int midWeight_Charge          = 4; // aggressively closes in
-    [Range(0, 10)] public int midWeight_Spin            = 2;
-    [Range(0, 10)] public int midWeight_Shockwave       = 2;
-    [Range(0, 10)] public int midWeight_MapSeparator    = 0;
-    [Range(0, 10)] public int midWeight_SpiralBurst     = 3; // good mid-range pressure
-    [Range(0, 10)] public int midWeight_TargetedBurst   = 3; // tracks player well at mid
+    [Range(0, 10)] public int midWeight_Charge          = 8; // primary mid approach
+    [Range(0, 10)] public int midWeight_Spin            = 1;
+    [Range(0, 10)] public int midWeight_SpiralBurst     = 2;
+    [Range(0, 10)] public int midWeight_TargetedBurst   = 2;
     [Range(0, 10)] public int midWeight_RingGap         = 2;
 
-    // Far: forces player to move, boss closes in
+    // Far: rush the player, close in fast
     [Header("Far Range Attack Weights")]
-    [Range(0, 10)] public int farWeight_Shockwave       = 2;
-    [Range(0, 10)] public int farWeight_MapSeparator    = 0;
-    [Range(0, 10)] public int farWeight_BulletSlam      = 2;
-    [Range(0, 10)] public int farWeight_Charge          = 4; // boss rushes in from far
-    [Range(0, 10)] public int farWeight_SpiralBurst     = 3;
-    [Range(0, 10)] public int farWeight_TargetedBurst   = 4; // punishes staying far away
-    [Range(0, 10)] public int farWeight_RingGap         = 2;
+    [Range(0, 10)] public int farWeight_Charge          = 8; // boss rushes in from far
+    [Range(0, 10)] public int farWeight_SpiralBurst     = 2;
+    [Range(0, 10)] public int farWeight_TargetedBurst   = 2;
+    [Range(0, 10)] public int farWeight_RingGap         = 1;
 
     // ===============================
     // TIRED SETTINGS
@@ -108,6 +102,13 @@ public class Boss1StateManager : EnemyStateManager
     public int   attacksBeforeTiredEnraged = 14;   // barely rests at low health
     public float tiredDuration             = 2f;   // vulnerable window (normal)
     public float tiredDurationEnraged      = 0.8f; // gets up much faster at ≤20% health
+
+    // ===============================
+    // SCALE
+    // ===============================
+    [Header("Boss Scale")]
+    [Tooltip("Uniform scale applied at Start — set above 1 to make the boss larger than the player")]
+    public float bossScale = 1.8f;
 
     // ===============================
     // LOOK-AT SETTINGS
@@ -138,6 +139,7 @@ public class Boss1StateManager : EnemyStateManager
     {
         health = maxHealth;
         animator = GetComponent<Animator>();
+        transform.localScale = Vector3.one * bossScale;
 
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
@@ -174,6 +176,8 @@ public class Boss1StateManager : EnemyStateManager
     // Snaps boss back to last safe position if it falls off the map
     public void EnforceBounds()
     {
+        if (_finisherTriggered) return;
+
         Vector3 pos = transform.position;
 
         if (pos.y < fallThreshold)
@@ -243,6 +247,21 @@ public class Boss1StateManager : EnemyStateManager
         }
 
         float dist = Vector3.Distance(transform.position, player.position);
+
+        // Too close — reactive punch (60%) or jump away (40%)
+        if (dist <= tooCloseRange)
+        {
+            if (Random.value < 0.6f)
+            {
+                attackCounter++;
+                SwitchState(punchAttack);
+            }
+            else
+            {
+                SwitchState(ChooseRetreatState());
+            }
+            return;
+        }
 
         // Retreat check — never retreat into idle
         if (dist <= retreatRange && Random.value <= retreatChance)
@@ -384,37 +403,30 @@ public class Boss1StateManager : EnemyStateManager
         if (dist <= closeRange)
             return PickWeighted(new (EnemyBaseState, int)[]
             {
-                (punchAttack,             closeWeight_Punch),
-                (jumpSlamState,           closeWeight_JumpSlam),
-                (spinAttack,              closeWeight_Spin),
-                (repeatedBulletSlamState, closeWeight_BulletSlam),
-                (chargeAttack,            closeWeight_Charge),
-                (targetedBurstAttack,     closeWeight_TargetedBurst),
-                (ringGapAttack,           closeWeight_RingGap),
+                (punchAttack,         closeWeight_Punch),
+                (jumpSlamState,       closeWeight_JumpSlam),
+                (spinAttack,          closeWeight_Spin),
+                (chargeAttack,        closeWeight_Charge),
+                (targetedBurstAttack, closeWeight_TargetedBurst),
+                (ringGapAttack,       closeWeight_RingGap),
             });
 
         if (dist >= farRange)
             return PickWeighted(new (EnemyBaseState, int)[]
             {
-                (shockwaveState,          farWeight_Shockwave),
-                (mapSeparatorState,       farWeight_MapSeparator),
-                (repeatedBulletSlamState, farWeight_BulletSlam),
-                (chargeAttack,            farWeight_Charge),
-                (spiralBurstAttack,       farWeight_SpiralBurst),
-                (targetedBurstAttack,     farWeight_TargetedBurst),
-                (ringGapAttack,           farWeight_RingGap),
+                (chargeAttack,        farWeight_Charge),
+                (spiralBurstAttack,   farWeight_SpiralBurst),
+                (targetedBurstAttack, farWeight_TargetedBurst),
+                (ringGapAttack,       farWeight_RingGap),
             });
 
         return PickWeighted(new (EnemyBaseState, int)[]
         {
-            (repeatedBulletSlamState, midWeight_BulletSlam),
-            (chargeAttack,            midWeight_Charge),
-            (spinAttack,              midWeight_Spin),
-            (shockwaveState,          midWeight_Shockwave),
-            (mapSeparatorState,       midWeight_MapSeparator),
-            (spiralBurstAttack,       midWeight_SpiralBurst),
-            (targetedBurstAttack,     midWeight_TargetedBurst),
-            (ringGapAttack,           midWeight_RingGap),
+            (chargeAttack,        midWeight_Charge),
+            (spinAttack,          midWeight_Spin),
+            (spiralBurstAttack,   midWeight_SpiralBurst),
+            (targetedBurstAttack, midWeight_TargetedBurst),
+            (ringGapAttack,       midWeight_RingGap),
         });
     }
 
