@@ -8,15 +8,12 @@ public class Boss1TiredState : EnemyBaseState
 
     public override void EnterState(EnemyStateManager state)
     {
-        timer     = 0f;
-        Boss1StateManager boss = (Boss1StateManager)state;
-        tiredDuration = boss.tiredDuration;
+        timer      = 0f;
         hasBeenHit = false;
 
-        // Play tired animation — boss hunches over, vulnerable
-        //state.animator.SetTrigger("Tired");
+        Boss1StateManager boss = (Boss1StateManager)state;
+        tiredDuration = boss.IsEnraged ? boss.tiredDurationEnraged : boss.tiredDuration;
 
-        Debug.Log("Boss is tired — player can attack!");
         state.animator.SetBool("Tired", true);
     }
 
@@ -24,14 +21,28 @@ public class Boss1TiredState : EnemyBaseState
     {
         timer += Time.deltaTime;
 
+        SnapToGround(state);
+
         if (timer >= tiredDuration)
         {
-            // Go straight to next attack — skip idle so boss doesn't freeze
             Boss1StateManager boss = (Boss1StateManager)state;
             boss.attackCounter = 0;
             boss.TransitionToNextState();
         }
-        Debug.Log(timer);
+    }
+
+    // Raycasts down from above the boss and pins its Y to the floor so the
+    // animation never floats above the ground.
+    private void SnapToGround(EnemyStateManager state)
+    {
+        Vector3 origin = state.transform.position + Vector3.up * 2f;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 4f,
+                            ((Boss1StateManager)state).wallLayer, QueryTriggerInteraction.Ignore))
+        {
+            Vector3 pos = state.transform.position;
+            pos.y = hit.point.y;
+            state.transform.position = pos;
+        }
     }
 
     public override float OnBossHurt(EnemyStateManager state)

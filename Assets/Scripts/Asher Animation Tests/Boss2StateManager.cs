@@ -259,6 +259,7 @@ public class Boss2StateManager : EnemyStateManager
     {
         if (_forceFieldUp) return;
 
+        TriggerHitFlash(amount);
         health = Mathf.Max(0f, health - amount);
 
         // Each stage allows exactly 1/3 of max health to be dealt.

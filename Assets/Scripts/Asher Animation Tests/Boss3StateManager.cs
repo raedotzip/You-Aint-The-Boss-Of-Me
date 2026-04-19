@@ -265,6 +265,7 @@ public class Boss3StateManager : EnemyStateManager
     // ===============================
     public void TakeDamage(float amount)
     {
+        TriggerHitFlash(amount);
         health = Mathf.Max(0f, health - amount);
         bossHealthBar?.UpdateHealthPercentage(health, maxHealth);
 

@@ -9,6 +9,15 @@ public abstract class EnemyStateManager : MonoBehaviour
     public BossObstacleData obstacleData;
     public BossBulletData bulletData;
 
+    private BossHitFlash _hitFlash;
+
+    // Call from any boss TakeDamage — lazily finds the BossHitFlash component
+    public void TriggerHitFlash(float damage)
+    {
+        if (_hitFlash == null) _hitFlash = GetComponent<BossHitFlash>();
+        _hitFlash?.Flash(damage);
+    }
+
     public virtual void Start()
     {
         animator = GetComponent<Animator>();

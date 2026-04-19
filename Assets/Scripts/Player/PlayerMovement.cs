@@ -34,6 +34,15 @@ public class PlayerMovement : MonoBehaviour
     private float _effectiveDashDistance = 0f;
 
     // ===============================
+    // KNOCKBACK
+    // ===============================
+    private bool    _isKnockedBack;
+    private float   _knockbackTimer;
+    private float   _knockbackDuration;
+    private Vector3 _knockbackDir;
+    private float   _knockbackSpeed;
+
+    // ===============================
     // PHYSICS
     // ===============================
     private CharacterController cc;
@@ -73,7 +82,9 @@ public class PlayerMovement : MonoBehaviour
             StartDash();
         }
 
-        if (_isDashing)
+        if (_isKnockedBack)
+            UpdateKnockback(dt);
+        else if (_isDashing)
             UpdateDash(dt);
         else
             UpdateNormalMovement(dt);
@@ -237,8 +248,36 @@ public class PlayerMovement : MonoBehaviour
 
     public void SyncTeleport()
     {
-        verticalVelocity = 0f; // Reset gravity
-        _isDashing = false;    // Stop any active dashes
+        verticalVelocity = 0f;
+        _isDashing       = false;
+        _isKnockedBack   = false;
+    }
+
+    // Called by enemies that hit the player (e.g. boss charge)
+    public void TakeKnockback(Vector3 direction, float speed, float duration)
+    {
+        _knockbackDir      = direction;
+        _knockbackDir.y    = 0f;
+        if (_knockbackDir.sqrMagnitude > 0.001f) _knockbackDir.Normalize();
+        _knockbackSpeed    = speed;
+        _knockbackDuration = duration;
+        _knockbackTimer    = 0f;
+        _isKnockedBack     = true;
+        _isDashing         = false;
+    }
+
+    private void UpdateKnockback(float dt)
+    {
+        _knockbackTimer += dt;
+        float t            = Mathf.Clamp01(_knockbackTimer / _knockbackDuration);
+        float currentSpeed = Mathf.Lerp(_knockbackSpeed, 0f, t); // decelerate to zero
+
+        Vector3 move = _knockbackDir * currentSpeed * dt;
+        move.y       = verticalVelocity * dt;
+        cc.Move(move);
+
+        if (_knockbackTimer >= _knockbackDuration)
+            _isKnockedBack = false;
     }
 
     // ===============================

@@ -22,6 +22,7 @@ public class Boss1StateManager : EnemyStateManager
     private Boss1GroundSlamShockwaveAttack     shockwaveState          = new Boss1GroundSlamShockwaveAttack();
     private Boss1MapSeparatorAttack            mapSeparatorState       = new Boss1MapSeparatorAttack();
     private Boss1TiredState                    tiredState              = new Boss1TiredState();
+    public  Boss1LavaFinisherState             lavaFinisherState       = new Boss1LavaFinisherState();
 
     // ===============================
     // RANGE SETTINGS
@@ -103,8 +104,10 @@ public class Boss1StateManager : EnemyStateManager
     // TIRED SETTINGS
     // ===============================
     [Header("Tired Settings")]
-    public int   attacksBeforeTired = 5;  // more attacks before resting
-    public float tiredDuration      = 2f; // shorter rest window
+    public int   attacksBeforeTired        = 8;    // attacks before going tired (normal phase)
+    public int   attacksBeforeTiredEnraged = 14;   // barely rests at low health
+    public float tiredDuration             = 2f;   // vulnerable window (normal)
+    public float tiredDurationEnraged      = 0.8f; // gets up much faster at ≤20% health
 
     // ===============================
     // LOOK-AT SETTINGS
@@ -122,6 +125,12 @@ public class Boss1StateManager : EnemyStateManager
     [HideInInspector] public float health        = 100f;
     [HideInInspector] public float maxHealth     = 100f;
     public HealthBarUI bossHealthBar;
+
+    // True once health hits 0 — prevents re-triggering the finisher
+    private bool _finisherTriggered = false;
+
+    // Boss is enraged below 20% health — faster recovery, less frequent rest
+    public bool IsEnraged => health / maxHealth <= 0.2f;
 
     private Vector3 _lastSafePosition;
 
@@ -200,13 +209,23 @@ public class Boss1StateManager : EnemyStateManager
 
     public void TakeDamage(float amount)
     {
+        TriggerHitFlash(amount);
+
+        // After the finisher triggers, hits push the boss into the lava instead
+        if (_finisherTriggered)
+        {
+            lavaFinisherState.PushBoss(this);
+            return;
+        }
+
         health = Mathf.Max(0f, health - amount);
         if (bossHealthBar != null)
             bossHealthBar.UpdateHealthPercentage(health, maxHealth);
 
         if (health <= 0f)
         {
-            MenuController.Instance?.AdvanceToNextBoss(1);
+            _finisherTriggered = true;
+            SwitchState(lavaFinisherState);
         }
     }
 
@@ -215,7 +234,8 @@ public class Boss1StateManager : EnemyStateManager
     // ===============================
     public void TransitionToNextState()
     {
-        if (attackCounter >= attacksBeforeTired)
+        int tiredThreshold = IsEnraged ? attacksBeforeTiredEnraged : attacksBeforeTired;
+        if (attackCounter >= tiredThreshold)
         {
             attackCounter = 0;
             SwitchState(tiredState);
