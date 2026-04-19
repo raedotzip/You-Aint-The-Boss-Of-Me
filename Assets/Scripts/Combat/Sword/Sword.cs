@@ -23,13 +23,13 @@ public class Sword : MonoBehaviour
 
     [Header("Swing Damage Scaling")]
     [Tooltip("Tip travel distance (meters) for minimum damage. Wrist flicks will be at or below this.")]
-    public float minSwingDistance = 0.08f;
+    public float minSwingDistance = 0.06f;
     [Tooltip("Tip travel distance (meters) for maximum damage. A full wide swing reaches this.")]
-    public float maxSwingDistance = 0.55f;
-    [Tooltip("Damage multiplier at minSwingDistance (flick).")]
-    public float minDamageMultiplier = 0.25f;
-    [Tooltip("Damage multiplier at maxSwingDistance (full swing).")]
-    public float maxDamageMultiplier = 1.5f;
+    public float maxSwingDistance = 0.50f;
+    [Tooltip("Damage multiplier at minSwingDistance (flick) — keep low to punish lazy hits.")]
+    public float minDamageMultiplier = 0.1f;
+    [Tooltip("Damage multiplier at maxSwingDistance (full swing) — reward committed swings.")]
+    public float maxDamageMultiplier = 2.0f;
 
     [Header("Life Steal")]
     [Tooltip("Tip travel distance required before any healing occurs. Must be a wide swing.")]
@@ -106,6 +106,8 @@ public class Sword : MonoBehaviour
         {
             if (bladeTip != null)
                 swingTipDistance += Vector3.Distance(bladeTip.position, lastTipPos);
+            else
+                swingTipDistance += Velocity.magnitude * Time.deltaTime; // fallback: controller arc
 
             if (speed < swingStopThreshold)
             {

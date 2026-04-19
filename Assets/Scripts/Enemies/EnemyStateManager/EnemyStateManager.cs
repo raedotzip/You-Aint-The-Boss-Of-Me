@@ -14,7 +14,8 @@ public abstract class EnemyStateManager : MonoBehaviour
     // Call from any boss TakeDamage — lazily finds the BossHitFlash component
     public void TriggerHitFlash(float damage)
     {
-        if (_hitFlash == null) _hitFlash = GetComponent<BossHitFlash>();
+        if (_hitFlash == null) _hitFlash = GetComponentInChildren<BossHitFlash>(true);
+        if (_hitFlash == null) _hitFlash = gameObject.AddComponent<BossHitFlash>();
         _hitFlash?.Flash(damage);
     }
 

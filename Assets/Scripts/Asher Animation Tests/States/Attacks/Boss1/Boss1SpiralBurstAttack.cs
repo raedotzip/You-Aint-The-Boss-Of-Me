@@ -85,7 +85,7 @@ public class Boss1SpiralBurstAttack : EnemyBaseState
             Vector3 finalDir = Quaternion.AngleAxis(downwardAngle, tiltAxis) * outwardDir;
 
             Vector3 spawnPos   = state.transform.position + outwardDir * 0.8f;
-            spawnPos.y         = Random.Range(0.3f, 0.8f);
+            spawnPos.y         = Random.Range(1.1f, 1.8f);
 
             Bullet b = new Bullet
             {

@@ -2863,15 +2863,15 @@ MonoBehaviour:
   closeWeight_Punch: 3
   closeWeight_JumpSlam: 3
   closeWeight_Spin: 2
-  closeWeight_Charge: 2
+  closeWeight_Charge: 10
   closeWeight_TargetedBurst: 2
   closeWeight_RingGap: 1
-  midWeight_Charge: 3
+  midWeight_Charge: 10
   midWeight_Spin: 2
   midWeight_SpiralBurst: 2
   midWeight_TargetedBurst: 2
   midWeight_RingGap: 10
-  farWeight_Charge: 3
+  farWeight_Charge: 10
   farWeight_SpiralBurst: 3
   farWeight_TargetedBurst: 3
   farWeight_RingGap: 10
@@ -17655,15 +17655,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17671,7 +17671,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       propertyPath: m_LocalPosition.z
@@ -17903,6 +17903,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       insertIndex: -1
       addedObject: {fileID: 396362660}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2073485677}
     - targetCorrespondingSourceObject: {fileID: -7774620517717459388, guid: 0eb3be3e92073a446b0eb32f201a0220, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1296853607}
@@ -18657,6 +18660,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5079666625898026024, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
+--- !u!114 &2073485677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 396362656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88102dd021a0cb440849f958da365c08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashDuration: 0.15
+  minFlashStrength: 0.25
+  maxFlashStrength: 0.88
+  referenceDamage: 25
 --- !u!1 &2079416128 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4700445694717642426, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -18862,7 +18881,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 1
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -18884,7 +18903,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.04385998, y: 0.0022626696, z: 0.017377952}
   m_Center: {x: 0.009259421, y: -0.0010814032, z: -0.00045751475}

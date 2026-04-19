@@ -64,15 +64,20 @@ public class Boss1JumpBackMovement : EnemyBaseState
 
         if (t >= 1f)
         {
-            state.transform.position = targetPosition;
-            hasTransitioned          = true;
-
+            hasTransitioned = true;
+            SnapToGround(state, targetPosition);
             ((Boss1StateManager)state).TransitionToNextState();
         }
     }
 
-    public override float OnBossHurt(EnemyStateManager state)
+    private void SnapToGround(EnemyStateManager state, Vector3 landPos)
     {
-        return 0;
+        int mask = ~(1 << state.gameObject.layer);
+        Vector3 origin = landPos + Vector3.up * 0.5f;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 3f, mask, QueryTriggerInteraction.Ignore))
+            landPos.y = hit.point.y;
+        state.transform.position = landPos;
     }
+
+    public override float OnBossHurt(EnemyStateManager state) => 0;
 }

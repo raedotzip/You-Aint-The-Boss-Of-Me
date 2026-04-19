@@ -11,8 +11,8 @@ public class Boss1SpinAttack : EnemyBaseState
     // SPIN SETTINGS
     // ===============================
     private float spinDuration   = 3f;
-    private float spinSpeed      = 360f;
-    private float spinAccelerate = 180f;
+    private float spinSpeed      = 60f;   // starts slow then ramps up
+    private float spinAccelerate = 300f;  // reaches ~960 deg/s by end of spin
 
     // ===============================
     // BULLET SETTINGS
@@ -40,6 +40,10 @@ public class Boss1SpinAttack : EnemyBaseState
         currentSpinSpeed = spinSpeed;
         currentAngle     = state.transform.eulerAngles.y;
 
+        // Ensure the animator never overrides the code-driven rotation
+        if (state.animator != null)
+            state.animator.applyRootMotion = false;
+
         ((Boss1StateManager)state).smoothLookAtEnabled = false;
         state.animator.SetBool("Spin", true);
     }
@@ -57,9 +61,11 @@ public class Boss1SpinAttack : EnemyBaseState
         bulletTimer      += Time.deltaTime;
         currentSpinSpeed += spinAccelerate * Time.deltaTime;
 
-        // Rotate boss
-        currentAngle += currentSpinSpeed * Time.deltaTime;
-        state.transform.rotation = Quaternion.Euler(0f, currentAngle, 0f);
+        // Rotate boss — Rotate() avoids Euler gimbal issues and can't be
+        // silently overridden by an absolute assignment elsewhere in the frame
+        float delta   = currentSpinSpeed * Time.deltaTime;
+        currentAngle += delta;
+        state.transform.Rotate(Vector3.up, delta, Space.World);
 
         if (bulletTimer >= bulletFireRate)
         {
@@ -91,7 +97,7 @@ public class Boss1SpinAttack : EnemyBaseState
 
         // Spawn at boss position, offset outward so bullet starts at his edge
         Vector3 spawnPos = bossPos + outwardDir * 0.8f;
-        spawnPos.y       = Random.Range(0.3f, 0.7f);
+        spawnPos.y       = Random.Range(1.1f, 1.6f);
 
         Bullet b = new Bullet
         {

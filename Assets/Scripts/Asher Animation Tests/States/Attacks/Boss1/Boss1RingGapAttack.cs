@@ -11,9 +11,9 @@ public class Boss1RingGapAttack : EnemyBaseState
     // ===============================
     // RING SETTINGS
     // ===============================
-    private int   ringCount          = 4;    // Total rings to fire
+    private int   ringCount          = 2;    // Total rings to fire
     private float timeBetweenRings   = 1.2f; // Gap between rings so player can reposition
-    private int   bulletsPerRing     = 20;   // More bullets = smaller gap is more readable
+    private int   bulletsPerRing     = 30;   // More bullets = smaller gap is more readable
     private float gapSizeDegrees     = 60f;  // Degrees of the opening (player must stand here)
     private float gapRotatePerRing   = 90f;  // How far the gap rotates each ring
 
@@ -100,7 +100,7 @@ public class Boss1RingGapAttack : EnemyBaseState
             Vector3 dir  = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
 
             Vector3 spawnPos = spawnBase + dir * 0.8f;
-            spawnPos.y       = Random.Range(0.3f, 0.9f);
+            spawnPos.y       = Random.Range(1.1f, 1.8f);
 
             Bullet b = new Bullet
             {

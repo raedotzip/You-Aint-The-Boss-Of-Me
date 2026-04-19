@@ -113,7 +113,7 @@ public class Boss1TargetedBurstAttack : EnemyBaseState
         dir         = dir.normalized;
 
         Vector3 spawnPos = state.transform.position;
-        spawnPos.y       = Random.Range(0.5f, 1.2f);
+        spawnPos.y       = Random.Range(1.2f, 2.0f);
 
         Bullet b = new Bullet
         {

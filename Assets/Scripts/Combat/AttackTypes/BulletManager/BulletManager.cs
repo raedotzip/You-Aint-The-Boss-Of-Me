@@ -70,9 +70,12 @@ public class BulletManager : MonoBehaviour
                 continue;
             }
 
-            // Destroy bullets that hit a wall/floor geometry.
-            // Arc bullets are ballistic (meant to land on the floor) — skip the check for them.
-            if (b.movementType != BulletMovementType.Arc && mapWallLayer != 0 && Physics.CheckSphere(b.position, b.collisionRadius, mapWallLayer, QueryTriggerInteraction.Ignore))
+            // Destroy bullets that enter MapWall geometry.
+            // Grace period skips the check for the first 0.05 s so bullets spawned
+            // near an arena wall aren't killed before they leave the boss's vicinity.
+            // Arc bullets are ballistic — skip the check for them.
+            if (b.movementType != BulletMovementType.Arc && mapWallLayer != 0 && b.lifeTime > 0.05f &&
+                Physics.CheckSphere(b.position, b.collisionRadius, mapWallLayer, QueryTriggerInteraction.Ignore))
             {
                 DespawnBulletVisual(b);
                 bullets.RemoveAt(i);

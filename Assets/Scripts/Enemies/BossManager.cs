@@ -83,6 +83,9 @@ public class BossManager : MonoBehaviour
 
         _activeBossIndex = bossIndex;
 
+        if (bossIndex > 0 && HUDManager.Instance != null)
+            HUDManager.Instance.ShowHUD(true);
+
         if (bossIndex == 1 && boss1 != null)
         {
             if (HUDManager.Instance != null)

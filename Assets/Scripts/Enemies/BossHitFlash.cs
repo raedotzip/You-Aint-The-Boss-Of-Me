@@ -17,8 +17,9 @@ public class BossHitFlash : MonoBehaviour
     [SerializeField] private float referenceDamage  = 25f;
 
     // Shader property IDs — cached so string lookups happen once
-    private static readonly int ColorID     = Shader.PropertyToID("_Color");
-    private static readonly int BaseColorID = Shader.PropertyToID("_BaseColor");
+    private static readonly int ColorID        = Shader.PropertyToID("_Color");
+    private static readonly int BaseColorID    = Shader.PropertyToID("_BaseColor");
+    private static readonly int EmissionColorID = Shader.PropertyToID("_EmissionColor");
 
     private Renderer[]            _renderers;
     private MaterialPropertyBlock _mpb;
@@ -68,8 +69,9 @@ public class BossHitFlash : MonoBehaviour
                 if (_renderers[i] == null) continue;
                 Color c = Color.Lerp(_originalColors[i], Color.white, strength);
                 _renderers[i].GetPropertyBlock(_mpb);
-                _mpb.SetColor(ColorID,     c);  // Standard shader
-                _mpb.SetColor(BaseColorID, c);  // URP Lit
+                _mpb.SetColor(ColorID,         c);                          // Standard
+                _mpb.SetColor(BaseColorID,     c);                          // URP Lit
+                _mpb.SetColor(EmissionColorID, Color.white * strength * 2f); // emissive glow
                 _renderers[i].SetPropertyBlock(_mpb);
             }
 

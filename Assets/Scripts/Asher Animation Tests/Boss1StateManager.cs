@@ -100,8 +100,8 @@ public class Boss1StateManager : EnemyStateManager
     [Header("Tired Settings")]
     public int   attacksBeforeTired        = 8;    // attacks before going tired (normal phase)
     public int   attacksBeforeTiredEnraged = 14;   // barely rests at low health
-    public float tiredDuration             = 2f;   // vulnerable window (normal)
-    public float tiredDurationEnraged      = 0.8f; // gets up much faster at ≤20% health
+    public float tiredDuration             = 1.0f; // vulnerable window (normal)
+    public float tiredDurationEnraged      = 0.4f; // gets up much faster at ≤20% health
 
     // ===============================
     // SCALE
@@ -138,8 +138,20 @@ public class Boss1StateManager : EnemyStateManager
     public override void Start()
     {
         health = maxHealth;
-        animator = GetComponent<Animator>();
-        transform.localScale = Vector3.one * bossScale;
+        animator = GetComponent<Animator>() ?? GetComponentInChildren<Animator>();
+
+        if (animator != null)
+            animator.applyRootMotion = false;
+
+        // The Rigidbody lives on a child FBX node, not on this root transform.
+        // MovePosition on the child rb moves it independently of the root, so the
+        // boss runs in place. Making it kinematic prevents physics fighting parent
+        // movement; nulling the reference forces all states to use transform.position.
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb = null;
+        }
 
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
@@ -149,13 +161,15 @@ public class Boss1StateManager : EnemyStateManager
 
         _lastSafePosition = transform.position;
 
-        ObstacleManager.Instance.PrewarmObstaclePools(obstacleData);
+        ObstacleManager.Instance?.PrewarmObstaclePools(obstacleData);
 
         SwitchState(idleState);
     }
 
     public override void Update()
     {
+        if (currentState == null) return;
+
         if (smoothLookAtEnabled && player != null)
         {
             Vector3 toPlayer = player.position - transform.position;
@@ -173,22 +187,40 @@ public class Boss1StateManager : EnemyStateManager
         EnforceBounds();
     }
 
-    // Snaps boss back to last safe position if it falls off the map
+    // Snaps boss back to last safe position if it falls off the map or clips into a wall
     public void EnforceBounds()
     {
         if (_finisherTriggered) return;
 
         Vector3 pos = transform.position;
 
+        // Fell off the map
         if (pos.y < fallThreshold)
         {
             transform.position = _lastSafePosition;
             return;
         }
 
-        // Track the last safe above-floor position for recovery
+        // Clipped into wall geometry — snap back immediately
+        if (wallLayer != 0)
+        {
+            Vector3 checkPos = pos + Vector3.up * bossCheckHeight;
+            if (Physics.CheckSphere(checkPos, bossRadius, wallLayer, QueryTriggerInteraction.Ignore))
+            {
+                transform.position = _lastSafePosition;
+                return;
+            }
+        }
+
+        // Only record a safe position when the boss is on solid ground —
+        // prevents an out-of-bounds spot from overwriting a good recovery point
         if (pos.y >= 0f && !IsInPit(pos, 0f))
-            _lastSafePosition = pos;
+        {
+            int groundMask = ~(1 << gameObject.layer);
+            Vector3 groundOrigin = pos + Vector3.up * 0.5f;
+            if (Physics.Raycast(groundOrigin, Vector3.down, 3f, groundMask, QueryTriggerInteraction.Ignore))
+                _lastSafePosition = pos;
+        }
     }
 
     // Returns true if a sphere cast from pos in dir would hit a wall within distance
@@ -464,12 +496,11 @@ public class Boss1StateManager : EnemyStateManager
 
     public void DisableAnimationBools()
     {
+        if (animator == null) return;
         foreach (AnimatorControllerParameter param in animator.parameters)
         {
             if (param.type == AnimatorControllerParameterType.Bool)
-            {
                 animator.SetBool(param.name, false);
-            }
         }
     }
 }

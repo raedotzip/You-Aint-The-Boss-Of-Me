@@ -39,11 +39,20 @@ public class Boss1JumpSlamAttack : EnemyBaseState
         if (t >= 1f)
         {
             hasLanded = true;
-            state.transform.position = targetPosition;
+            SnapToGround(state, targetPosition);
             state.animator.SetTrigger("GroundSlam");
             Boss1StateManager boss = (Boss1StateManager)state;
             boss.TransitionToNextState();
         }
+    }
+
+    private void SnapToGround(EnemyStateManager state, Vector3 landPos)
+    {
+        int mask = ~(1 << state.gameObject.layer);
+        Vector3 origin = landPos + Vector3.up * 0.5f;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 3f, mask, QueryTriggerInteraction.Ignore))
+            landPos.y = hit.point.y;
+        state.transform.position = landPos;
     }
 
     public override float OnBossHurt(EnemyStateManager state) => 0;

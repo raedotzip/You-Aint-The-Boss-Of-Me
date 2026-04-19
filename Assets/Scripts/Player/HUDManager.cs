@@ -37,6 +37,20 @@ public class HUDManager : MonoBehaviour
         if (hudRoot != null) hudRoot.SetActive(false);
     }
 
+    void Start()
+    {
+        Debug.Log($"HUD: hudRoot={hudRoot}, playerBar={playerBar}, bossBar={bossBar}, bossBarContainer={bossBarContainer}");
+
+        // Auto-wire the player health bar if not already assigned in the Inspector
+        var playerHealth = FindObjectOfType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            if (playerHealth.playerHealthBar == null)
+                playerHealth.playerHealthBar = playerBar;
+            playerBar?.UpdateHealthPercentage(playerHealth.currentHealth, playerHealth.maxHealth);
+        }
+    }
+
     void Update()
     {
         if (!_running || _finished) return;
@@ -47,6 +61,7 @@ public class HUDManager : MonoBehaviour
     public void ShowHUD(bool show)
     {
         if (hudRoot != null) hudRoot.SetActive(show);
+        Debug.Log($"[HUD] ShowHUD({show}) — hudRoot.activeSelf={hudRoot?.activeSelf} activeInHierarchy={hudRoot?.activeInHierarchy}", this);
         if (show && !_running && !_finished)
             StartTimer();
         if (!show)
