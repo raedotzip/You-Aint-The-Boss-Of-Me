@@ -128,13 +128,13 @@ public class PlayerMovement : MonoBehaviour
 
         float safeDistance = GetSafeDashDistance(dir);
 
-        if (safeDistance < 0.05f) return;
+        if (safeDistance < 0.1f) return;
 
-        _dashDir = dir;
+        _dashDir              = dir;
         _effectiveDashDistance = safeDistance;
-        _dashTimer = dashDuration * (safeDistance / dashDistance);
-        _cooldownTimer = dashCooldown;
-        _isDashing = true;
+        _dashTimer            = dashDuration;   // always run the full duration; speed scales to cover safeDistance
+        _cooldownTimer        = dashCooldown;
+        _isDashing            = true;
     }
 
     // ===============================
@@ -144,28 +144,11 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 origin = transform.position + cc.center;
 
-        // Detect walls
+        // Stop before any wall in the dash direction
         if (Physics.SphereCast(origin, cc.radius, dir, out RaycastHit hit, dashDistance, collisionLayers))
-        {
-            // Stop just before wall
             return Mathf.Max(0f, hit.distance - 0.05f);
-        }
 
-        // Ledge safety
-        float step = 0.5f;
-        float safe = 0f;
-
-        for (float d = step; d <= dashDistance; d += step)
-        {
-            Vector3 pos = transform.position + dir * d;
-
-            if (Physics.Raycast(pos + Vector3.up, Vector3.down, ledgeCheckDepth + 1f, collisionLayers))
-                safe = d;
-            else
-                break;
-        }
-
-        return safe;
+        return dashDistance;
     }
 
     // ===============================
@@ -175,27 +158,40 @@ public class PlayerMovement : MonoBehaviour
     {
         _dashTimer -= dt;
 
+        // Speed is calculated so we always cover exactly _effectiveDashDistance over dashDuration
         float speed = _effectiveDashDistance / dashDuration;
 
-        // Sample the floor ahead of the player to detect upcoming slopes
-        float castDist = (cc.height / 2f) + 0.3f;
-        Vector3 sampleOrigin = transform.position + cc.center + _dashDir * (cc.radius + 0.2f);
-        Vector3 moveDir;
+        // Sample the floor directly under the player to get the slope normal
+        Vector3 origin   = transform.position + cc.center;
+        float   castDist = (cc.height / 2f) + 0.4f;
 
-        if (Physics.SphereCast(sampleOrigin, cc.radius * 0.8f, Vector3.down, out RaycastHit groundHit, castDist, collisionLayers))
+        Vector3 moveDir;
+        if (Physics.SphereCast(origin, cc.radius * 0.8f, Vector3.down, out RaycastHit groundHit, castDist, collisionLayers))
         {
-            // Project flat dash direction onto the slope so we follow the terrain
             moveDir = Vector3.ProjectOnPlane(_dashDir, groundHit.normal).normalized;
+
+            // Only keep upward Y when the slope is steep enough to actually require climbing.
+            // On flat or near-flat ground (normal.y > 0.95, i.e. < ~18°) the CC handles micro
+            // height changes naturally; removing spurious positive Y stops the "float up" feel.
+            if (moveDir.y > 0f && groundHit.normal.y > 0.95f)
+            {
+                moveDir.y = 0f;
+                if (moveDir.sqrMagnitude > 0.001f) moveDir.Normalize();
+            }
         }
         else
         {
-            // Airborne: keep horizontal dash + gravity
-            moveDir = _dashDir + Vector3.up * (verticalVelocity / speed);
+            // Airborne: keep horizontal direction and apply gravity
+            moveDir = _dashDir;
         }
 
         Vector3 totalMove = moveDir * speed * dt;
 
-        // Break into steps to prevent clipping through walls
+        // Apply gravity separately so incline dashes don't fight it
+        if (!isGrounded)
+            totalMove.y += verticalVelocity * dt;
+
+        // Sub-steps to prevent tunnelling through thin walls
         int steps = 4;
         Vector3 stepMove = totalMove / steps;
 
@@ -203,7 +199,8 @@ public class PlayerMovement : MonoBehaviour
         {
             CollisionFlags flags = cc.Move(stepMove);
 
-            // Stop dash if we hit a wall
+            // Stop on a solid wall; walkable slopes are handled above via ProjectOnPlane
+            // so Sides here means a genuine wall or steep obstacle
             if ((flags & CollisionFlags.Sides) != 0)
             {
                 _isDashing = false;
