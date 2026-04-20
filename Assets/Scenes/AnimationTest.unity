@@ -290,6 +290,7 @@ MonoBehaviour:
   hudRoot: {fileID: 2037185644}
   timerText: {fileID: 0}
   loreTyper: {fileID: 0}
+  showHUDOnStart: 0
 --- !u!1 &48871823 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5251744554987952991, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -21856,6 +21857,7 @@ MonoBehaviour:
   hudRoot: {fileID: 2037185644}
   timerText: {fileID: 0}
   loreTyper: {fileID: 0}
+  showHUDOnStart: 0
 --- !u!1 &2043343339 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1866289505784801494, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
