@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Boss1ChargeAttack : EnemyBaseState
 {
-    private float chargeSpeed = 5f;
+    private float chargeSpeed = 10f;
     private float chargeStopDist = 2f;
-    private float chargeDuration = 3f;
+    private float chargeDuration = 2f;
     private float steerSpeed = 50f;
 
     private int bulletWaves = 6;
