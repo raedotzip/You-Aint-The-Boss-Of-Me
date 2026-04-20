@@ -38,6 +38,7 @@ public class Boss1JumpBackMovement : EnemyBaseState
         targetPosition   = ((Boss1StateManager)state).ClampLandingPosition(targetPosition, startPosition);
         elapsedTime      = 0f;
         hasTransitioned = false;
+        ((Boss1StateManager)state).isAirborne = true;
         state.animator.SetTrigger("Jumping");
 
         // Face the player while jumping back
@@ -66,7 +67,9 @@ public class Boss1JumpBackMovement : EnemyBaseState
         {
             hasTransitioned = true;
             SnapToGround(state, targetPosition);
-            ((Boss1StateManager)state).TransitionToNextState();
+            Boss1StateManager boss = (Boss1StateManager)state;
+            boss.isAirborne = false;
+            boss.TransitionToNextState();
         }
     }
 

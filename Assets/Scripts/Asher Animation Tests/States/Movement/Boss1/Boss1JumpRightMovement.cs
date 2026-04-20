@@ -26,6 +26,7 @@ public class Boss1JumpRightMovement : EnemyBaseState
 
         elapsedTime     = 0f;
         hasTransitioned = false;
+        ((Boss1StateManager)state).isAirborne = true;
 
         // Face player while jumping sideways
         Vector3 lookDir = toPlayer;
@@ -33,7 +34,6 @@ public class Boss1JumpRightMovement : EnemyBaseState
         if (lookDir != Vector3.zero)
             state.transform.rotation = Quaternion.LookRotation(lookDir);
         state.animator.SetTrigger("Jumping");
-        Debug.Log("Jumping Right");
     }
 
     public override void UpdateState(EnemyStateManager state)
@@ -56,7 +56,8 @@ public class Boss1JumpRightMovement : EnemyBaseState
             SnapToGround(state, targetPosition);
 
             Boss1StateManager boss = (Boss1StateManager)state;
-            float distToPlayer     = Vector3.Distance(state.transform.position, state.player.position);
+            boss.isAirborne = false;
+            float distToPlayer = Vector3.Distance(state.transform.position, state.player.position);
 
             if (distToPlayer >= boss.closeRange)
                 boss.SwitchState(boss.chargeAttack);

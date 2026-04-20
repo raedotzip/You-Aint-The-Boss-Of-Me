@@ -106,6 +106,7 @@ public class BossManager : MonoBehaviour
             if (HUDManager.Instance != null)
             {
                 boss2.bossHealthBar = HUDManager.Instance.bossBar;
+                boss2.bossHealthBar?.UpdateHealthPercentage(boss2.health, boss2.maxHealth);
                 HUDManager.Instance.SetBossName(boss2Name);
             }
 
