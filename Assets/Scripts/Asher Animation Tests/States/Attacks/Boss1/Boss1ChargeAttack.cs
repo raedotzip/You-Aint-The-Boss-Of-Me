@@ -115,7 +115,8 @@ public class Boss1ChargeAttack : EnemyBaseState
         }
 
         Boss1StateManager boss = (Boss1StateManager)state;
-        float step = chargeSpeed * Time.deltaTime;
+        // Clamp step so the boss never overshoots into the player
+        float step = Mathf.Min(chargeSpeed * Time.deltaTime, Mathf.Max(0f, distToPlayer - chargeStopDist));
         Vector3 nextPos = state.transform.position + chargeDir * step;
 
         if (boss.WouldHitWall(state.transform.position, chargeDir, step) ||

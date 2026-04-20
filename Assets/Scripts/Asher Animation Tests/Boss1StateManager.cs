@@ -76,36 +76,38 @@ public class Boss1StateManager : EnemyStateManager
     // ===============================
     // Close: boss is in your face — big melee, fast pressure
     [Header("Close Range Attack Weights")]
-    [Range(0, 10)] public int closeWeight_Punch         = 6; // primary close attack
-    [Range(0, 10)] public int closeWeight_JumpSlam      = 5; // jump into the player
-    [Range(0, 10)] public int closeWeight_Spin          = 2;
-    [Range(0, 10)] public int closeWeight_Charge        = 8; // charges through player
+    [Range(0, 10)] public int closeWeight_Punch         = 5; // primary close attack
+    [Range(0, 10)] public int closeWeight_JumpSlam      = 8; // jump into the player
+    [Range(0, 10)] public int closeWeight_Spin          = 0;
+    [Range(0, 10)] public int closeWeight_Charge        = 9; // charges through player
     [Range(0, 10)] public int closeWeight_TargetedBurst = 0;
-    [Range(0, 10)] public int closeWeight_RingGap       = 1;
+    [Range(0, 10)] public int closeWeight_RingGap       = 0;
 
     // Mid: boss closes distance fast with charges and jumps
     [Header("Mid Range Attack Weights")]
-    [Range(0, 10)] public int midWeight_Charge          = 8; // primary mid approach
-    [Range(0, 10)] public int midWeight_Spin            = 1;
-    [Range(0, 10)] public int midWeight_SpiralBurst     = 2;
-    [Range(0, 10)] public int midWeight_TargetedBurst   = 2;
-    [Range(0, 10)] public int midWeight_RingGap         = 2;
+    [Range(0, 10)] public int midWeight_Charge          = 9; // primary mid approach
+    [Range(0, 10)] public int midWeight_JumpSlam        = 6; // jump slam from mid range
+    [Range(0, 10)] public int midWeight_Spin            = 0;
+    [Range(0, 10)] public int midWeight_SpiralBurst     = 1;
+    [Range(0, 10)] public int midWeight_TargetedBurst   = 1;
+    [Range(0, 10)] public int midWeight_RingGap         = 1;
 
     // Far: rush the player, close in fast
     [Header("Far Range Attack Weights")]
-    [Range(0, 10)] public int farWeight_Charge          = 8; // boss rushes in from far
-    [Range(0, 10)] public int farWeight_SpiralBurst     = 2;
-    [Range(0, 10)] public int farWeight_TargetedBurst   = 2;
-    [Range(0, 10)] public int farWeight_RingGap         = 1;
+    [Range(0, 10)] public int farWeight_Charge          = 9; // boss rushes in from far
+    [Range(0, 10)] public int farWeight_JumpSlam        = 4; // jump slam from far
+    [Range(0, 10)] public int farWeight_SpiralBurst     = 1;
+    [Range(0, 10)] public int farWeight_TargetedBurst   = 1;
+    [Range(0, 10)] public int farWeight_RingGap         = 0;
 
     // ===============================
     // TIRED SETTINGS
     // ===============================
     [Header("Tired Settings")]
-    public int   attacksBeforeTired        = 8;    // attacks before going tired (normal phase)
-    public int   attacksBeforeTiredEnraged = 14;   // barely rests at low health
-    public float tiredDuration             = 1.0f; // vulnerable window (normal)
-    public float tiredDurationEnraged      = 0.4f; // gets up much faster at ≤20% health
+    public int   attacksBeforeTired        = 12;   // attacks before going tired (normal phase)
+    public float tiredDuration             = 0.6f; // vulnerable window (normal)
+    public int   attacksBeforeTiredEnraged = 20;   // barely rests at low health
+    public float tiredDurationEnraged      = 0.3f; // gets up much faster at ≤20% health
 
     // ===============================
     // SCALE
@@ -463,6 +465,7 @@ public class Boss1StateManager : EnemyStateManager
             return PickWeighted(new (EnemyBaseState, int)[]
             {
                 (chargeAttack,        farWeight_Charge),
+                (jumpSlamState,       farWeight_JumpSlam),
                 (spiralBurstAttack,   farWeight_SpiralBurst),
                 (targetedBurstAttack, farWeight_TargetedBurst),
                 (ringGapAttack,       farWeight_RingGap),
@@ -471,6 +474,7 @@ public class Boss1StateManager : EnemyStateManager
         return PickWeighted(new (EnemyBaseState, int)[]
         {
             (chargeAttack,        midWeight_Charge),
+            (jumpSlamState,       midWeight_JumpSlam),
             (spinAttack,          midWeight_Spin),
             (spiralBurstAttack,   midWeight_SpiralBurst),
             (targetedBurstAttack, midWeight_TargetedBurst),

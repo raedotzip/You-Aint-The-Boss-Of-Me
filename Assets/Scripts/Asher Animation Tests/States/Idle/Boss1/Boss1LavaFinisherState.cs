@@ -81,6 +81,12 @@ public class Boss1LavaFinisherState : EnemyBaseState
 
                 if (t >= 1f)
                 {
+                    // Snap edge position Y to actual ground so the boss doesn't float
+                    int groundMask = ~(1 << state.gameObject.layer);
+                    Vector3 snapOrigin = new Vector3(_edgePos.x, _edgePos.y + 2f, _edgePos.z);
+                    if (Physics.Raycast(snapOrigin, Vector3.down, out RaycastHit groundHit, 6f, groundMask, QueryTriggerInteraction.Ignore))
+                        _edgePos.y = groundHit.point.y;
+
                     state.transform.position = _edgePos;
                     boss.isAirborne = false;
                     _phase = Phase.WobbleAtEdge;
@@ -91,10 +97,18 @@ public class Boss1LavaFinisherState : EnemyBaseState
                 break;
 
             case Phase.WobbleAtEdge:
-                // Unstable wobble at the edge
+                // Unstable wobble at the edge — keep Y fixed to ground
                 state.transform.position = _edgePos + new Vector3(
                     Mathf.Sin(Time.time * 9f) * 0.06f, 0f,
                     Mathf.Sin(Time.time * 7f) * 0.03f);
+
+                // Prevent the animator child from drifting upward during the Tired animation
+                if (state.animator != null && state.animator.transform != state.transform)
+                {
+                    Vector3 localPos = state.animator.transform.localPosition;
+                    localPos.y = 0f;
+                    state.animator.transform.localPosition = localPos;
+                }
 
                 // Keep facing the lava
                 Vector3 toLava = _lavaCenter - state.transform.position;
