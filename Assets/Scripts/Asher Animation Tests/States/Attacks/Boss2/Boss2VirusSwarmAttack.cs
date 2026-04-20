@@ -5,7 +5,7 @@ public class Boss2VirusSwarmAttack : EnemyBaseState
 {
     private int   virusCount   = 12;
     private float spawnDelay   = 0.15f;
-    private float bulletSpeed  = 3.5f;
+    private float bulletSpeed  = 2.8f;
     private float bulletDamage = 10f;
     private float lifetime     = 5f;
 
@@ -82,6 +82,7 @@ public class Boss2VirusSwarmAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = movement,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                scale           = 0.5f,
             };
 
             BulletManager.Instance.SpawnBullet(b);

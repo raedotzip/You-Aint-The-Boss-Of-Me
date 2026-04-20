@@ -6,7 +6,7 @@ public class Boss2SpiralAttack : EnemyBaseState
     private float rotateSpeed    = 200f; // degrees per second
     private float fireRate       = 0.06f;
     private int   arms           = 2;
-    private float bulletSpeed    = 4.5f;
+    private float bulletSpeed    = 3.5f;
     private float bulletDamage   = 11f;
     private float bulletLifetime = 4f;
     private float duration       = 4.5f;
@@ -86,6 +86,7 @@ public class Boss2SpiralAttack : EnemyBaseState
                     destroyOnParry  = false,
                     movementType    = BulletMovementType.Straight,
                     visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                    scale           = 0.5f,
                 };
 
                 BulletManager.Instance.SpawnBullet(b);

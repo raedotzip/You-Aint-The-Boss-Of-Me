@@ -8,7 +8,7 @@ public class Boss2EMPWaveAttack : EnemyBaseState
     private int   bulletsPerRing   = 22;
     private float gapSizeDegrees   = 50f;
     private float gapRotatePerRing = 90f;
-    private float bulletSpeed      = 4f;
+    private float bulletSpeed      = 3f;
     private float bulletDamage     = 12f;
     private float bulletLifetime   = 3f;
 
@@ -91,6 +91,7 @@ public class Boss2EMPWaveAttack : EnemyBaseState
                     destroyOnParry  = true,
                     movementType    = BulletMovementType.Straight,
                     visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                    scale           = 0.5f,
                 };
 
                 BulletManager.Instance.SpawnBullet(b);

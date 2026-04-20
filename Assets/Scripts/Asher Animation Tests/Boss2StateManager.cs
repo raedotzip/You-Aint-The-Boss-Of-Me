@@ -13,6 +13,8 @@ public class Boss2StateManager : EnemyStateManager
     public Boss2DataStrikeAttack  dataStrikeAttack  = new Boss2DataStrikeAttack();
     public Boss2SpiralAttack           spiralAttack           = new Boss2SpiralAttack();
     public Boss2ObstacleBarrageAttack  obstacleBarrageAttack  = new Boss2ObstacleBarrageAttack();
+    public Boss2RailgunAttack          railgunAttack          = new Boss2RailgunAttack();
+    public Boss2MortarBarrageAttack    mortarBarrageAttack    = new Boss2MortarBarrageAttack();
 
     private Boss2TiredState       tiredState        = new Boss2TiredState();
 
@@ -48,6 +50,37 @@ public class Boss2StateManager : EnemyStateManager
     private bool _forceFieldUp          = true;
 
     private readonly List<Boss2MiniComputer> _miniComputerRefs = new List<Boss2MiniComputer>();
+
+    // ===============================
+    // CEILING CURTAIN (bullet walls across walkways)
+    // ===============================
+    [Header("Ceiling Curtain — Path Blocking")]
+    [Tooltip("Empty GameObjects on the ceiling/force-field above each walkway. Forward = fire direction (toward floor). Right = across the walkway.")]
+    public Transform[] ceilingFirePoints;
+
+    [Tooltip("Total width of the bullet curtain in meters — match your walkway width")]
+    public float curtainWidth = 6f;
+
+    [Tooltip("Seconds between curtain volleys per phase (phase 0, 1, 2)")]
+    public float[] pathBlockIntervals = { 3f, 2f, 1f };
+
+    [Tooltip("How many ceiling fire points shoot simultaneously per phase")]
+    public int[] pathBlockFirePointsPerSpawn = { 1, 2, 3 };
+
+    private float _pathBlockTimer;
+
+    // Bullet columns, gap width, speed, and damage scale up per phase
+    private static readonly int[]   CurtainBulletCols   = { 12,  16,  22   };
+    private static readonly int[]   CurtainGapCols      = { 3,   2,   2    };
+    private static readonly float[] CurtainBulletSpeed  = { 4.5f, 6f, 8f   };
+    private static readonly float[] CurtainBulletDamage = { 8f,  11f, 15f  };
+
+    // ===============================
+    // PHASE ESCALATION
+    // ===============================
+    // Phase 0 → 1 → 2: boss rests less, attacks more, curtain pressure increases
+    private static readonly float[] PhasesTiredDuration      = { 2.5f, 1.5f, 0.4f };
+    private static readonly int[]   PhasesAttacksBeforeTired = { 3,    4,    6    };
 
     // ===============================
     // RANGE SETTINGS
@@ -88,6 +121,19 @@ public class Boss2StateManager : EnemyStateManager
     [Range(0, 10)] public int farWeight_DataStrike        = 3;
     [Range(0, 10)] public int farWeight_Spiral            = 2;
     [Range(0, 10)] public int farWeight_ObstacleBarrage   = 4;
+    [Range(0, 10)] public int farWeight_Railgun           = 2;
+    [Range(0, 10)] public int farWeight_MortarBarrage     = 3;
+
+    // ===============================
+    // CLOSE + MID RAILGUN / MORTAR WEIGHTS
+    // ===============================
+    [Header("Close Range — Railgun / Mortar")]
+    [Range(0, 10)] public int closeWeight_Railgun         = 1;
+    [Range(0, 10)] public int closeWeight_MortarBarrage   = 1;
+
+    [Header("Mid Range — Railgun / Mortar")]
+    [Range(0, 10)] public int midWeight_Railgun           = 2;
+    [Range(0, 10)] public int midWeight_MortarBarrage     = 2;
 
     // ===============================
     // TIRED SETTINGS
@@ -116,6 +162,10 @@ public class Boss2StateManager : EnemyStateManager
         _miniComputersRemaining = miniComputersTotal;
         health   = maxHealth;
         animator = GetComponent<Animator>();
+        // Apply Phase 0 settings so inspector defaults align with the escalation table
+        tiredDuration      = PhasesTiredDuration[0];
+        attacksBeforeTired = PhasesAttacksBeforeTired[0];
+        _pathBlockTimer    = pathBlockIntervals != null && pathBlockIntervals.Length > 0 ? pathBlockIntervals[0] : 5f;
         rb       = GetComponent<Rigidbody>();
 
         if (rb != null)
@@ -132,6 +182,9 @@ public class Boss2StateManager : EnemyStateManager
 
     public override void Update()
     {
+        if (_isActive && _forceFieldUp)
+            UpdatePathBlocking();
+
         if (!_isActive) return;
         currentState.UpdateState(this);
     }
@@ -182,7 +235,8 @@ public class Boss2StateManager : EnemyStateManager
 
         if (!_isActive)
         {
-            _isActive = true;
+            _isActive       = true;
+            _pathBlockTimer = pathBlockIntervals != null && pathBlockIntervals.Length > _stage ? pathBlockIntervals[_stage] : 5f;
             SwitchState(idleState);
         }
 
@@ -216,6 +270,13 @@ public class Boss2StateManager : EnemyStateManager
         _forceFieldUp           = true;
         _isActive               = false;
 
+        // Escalate difficulty for the new phase
+        int idx            = Mathf.Min(_stage, PhasesTiredDuration.Length - 1);
+        tiredDuration      = PhasesTiredDuration[idx];
+        attacksBeforeTired = PhasesAttacksBeforeTired[idx];
+        ApplyPhaseAttackWeights(_stage);
+        _pathBlockTimer    = pathBlockIntervals != null && pathBlockIntervals.Length > _stage ? pathBlockIntervals[_stage] : 2.5f;
+
         if (forceField != null)
             forceField.SetActive(true);
 
@@ -227,7 +288,7 @@ public class Boss2StateManager : EnemyStateManager
         _isActive = true;
         SwitchState(idleState);
 
-        Debug.Log($"[Boss2] Repair phase — stage now {_stage}. Destroy the mini computers again.");
+        Debug.Log($"[Boss2] Phase {_stage + 1} — tiredDuration={tiredDuration:F1}s, attacksBeforeTired={attacksBeforeTired}.");
     }
 
     private void PushPlayerOutOfForceField()
@@ -339,6 +400,8 @@ public class Boss2StateManager : EnemyStateManager
                 (dataStrikeAttack,      closeWeight_DataStrike),
                 (spiralAttack,          closeWeight_Spiral),
                 (obstacleBarrageAttack, closeWeight_ObstacleBarrage),
+                (railgunAttack,         closeWeight_Railgun),
+                (mortarBarrageAttack,   closeWeight_MortarBarrage),
             });
 
         if (dist >= farRange)
@@ -350,6 +413,8 @@ public class Boss2StateManager : EnemyStateManager
                 (dataStrikeAttack,      farWeight_DataStrike),
                 (spiralAttack,          farWeight_Spiral),
                 (obstacleBarrageAttack, farWeight_ObstacleBarrage),
+                (railgunAttack,         farWeight_Railgun),
+                (mortarBarrageAttack,   farWeight_MortarBarrage),
             });
 
         return PickWeighted(new (EnemyBaseState, int)[]
@@ -360,6 +425,8 @@ public class Boss2StateManager : EnemyStateManager
             (dataStrikeAttack,      midWeight_DataStrike),
             (spiralAttack,          midWeight_Spiral),
             (obstacleBarrageAttack, midWeight_ObstacleBarrage),
+            (railgunAttack,         midWeight_Railgun),
+            (mortarBarrageAttack,   midWeight_MortarBarrage),
         });
     }
 
@@ -383,6 +450,106 @@ public class Boss2StateManager : EnemyStateManager
         }
 
         return options[0].state;
+    }
+
+    // ===============================
+    // CEILING CURTAIN PATH BLOCKING
+    // ===============================
+    private void UpdatePathBlocking()
+    {
+        if (ceilingFirePoints == null || ceilingFirePoints.Length == 0) return;
+
+        _pathBlockTimer -= Time.deltaTime;
+        if (_pathBlockTimer > 0f) return;
+
+        float interval  = pathBlockIntervals != null && pathBlockIntervals.Length > _stage ? pathBlockIntervals[_stage] : 5f;
+        _pathBlockTimer = interval;
+
+        int count = pathBlockFirePointsPerSpawn != null && pathBlockFirePointsPerSpawn.Length > _stage
+            ? pathBlockFirePointsPerSpawn[_stage] : 1;
+        count = Mathf.Min(count, ceilingFirePoints.Length);
+
+        int[] shuffled = ShuffledIndices(ceilingFirePoints.Length);
+        for (int i = 0; i < count; i++)
+            FireCeilingCurtain(ceilingFirePoints[shuffled[i]]);
+    }
+
+    private void FireCeilingCurtain(Transform firePoint)
+    {
+        if (firePoint == null) return;
+        if (bulletData == null) { Debug.LogWarning("[Boss2] bulletData is null — assign it in the Inspector on Boss2StateManager."); return; }
+
+        int   idx    = Mathf.Min(_stage, CurtainBulletCols.Length - 1);
+        int   cols   = CurtainBulletCols[idx];
+        int   gap    = CurtainGapCols[idx];
+        float speed  = CurtainBulletSpeed[idx];
+        float damage = CurtainBulletDamage[idx];
+
+        // Gap position: never flush against the edges so there is always wall on both sides
+        int gapStart = Random.Range(1, cols - gap);
+
+        for (int i = 0; i < cols; i++)
+        {
+            if (i >= gapStart && i < gapStart + gap) continue; // leave the gap open
+
+            float   t        = cols > 1 ? (float)i / (cols - 1) : 0.5f;
+            Vector3 offset   = firePoint.right * Mathf.Lerp(-curtainWidth * 0.5f, curtainWidth * 0.5f, t);
+            Vector3 spawnPos = firePoint.position + offset;
+
+            Bullet b = new Bullet
+            {
+                position        = spawnPos,
+                direction       = firePoint.forward,
+                speed           = speed,
+                damage          = damage,
+                maxLifetime     = 3f,
+                collisionRadius = 0.25f,
+                canBeParried    = false,
+                movementType    = BulletMovementType.Straight,
+                visualPrefab    = bulletData.groundSlamBulletPrefab,
+                scale           = 0.5f,
+            };
+            BulletManager.Instance.SpawnBullet(b);
+        }
+    }
+
+    private static int[] ShuffledIndices(int count)
+    {
+        int[] arr = new int[count];
+        for (int i = 0; i < count; i++) arr[i] = i;
+        for (int i = count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (arr[i], arr[j]) = (arr[j], arr[i]);
+        }
+        return arr;
+    }
+
+    // ===============================
+    // PHASE ATTACK WEIGHTS
+    // ===============================
+    private void ApplyPhaseAttackWeights(int phase)
+    {
+        if (phase == 1)
+        {
+            // Phase 2 — area denial and sustained pressure
+            closeWeight_Spiral = 5; closeWeight_EMPWave = 5; closeWeight_ObstacleBarrage = 4;
+            closeWeight_MortarBarrage = 3;
+            midWeight_Spiral   = 5; midWeight_LaserBeam = 5; midWeight_ObstacleBarrage   = 5;
+            midWeight_Railgun  = 3; midWeight_MortarBarrage = 3;
+            farWeight_LaserBeam = 6; farWeight_ObstacleBarrage = 6; farWeight_Spiral     = 4;
+            farWeight_Railgun   = 3; farWeight_MortarBarrage  = 4;
+        }
+        else if (phase == 2)
+        {
+            // Phase 3 — maximum aggression: fast high-damage attacks, railgun and mortar rain
+            closeWeight_DataStrike = 7; closeWeight_LaserBeam = 6; closeWeight_Spiral = 6;
+            closeWeight_ObstacleBarrage = 5; closeWeight_Railgun = 3; closeWeight_MortarBarrage = 4;
+            midWeight_DataStrike   = 6; midWeight_LaserBeam   = 7; midWeight_Spiral    = 6;
+            midWeight_ObstacleBarrage = 5; midWeight_Railgun = 5; midWeight_MortarBarrage = 5;
+            farWeight_LaserBeam    = 7; farWeight_DataStrike  = 6; farWeight_VirusSwarm = 5;
+            farWeight_ObstacleBarrage = 5; farWeight_Railgun = 6; farWeight_MortarBarrage = 6;
+        }
     }
 
     // ===============================

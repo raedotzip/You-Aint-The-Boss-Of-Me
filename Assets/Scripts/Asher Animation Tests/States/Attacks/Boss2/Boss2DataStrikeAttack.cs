@@ -8,7 +8,7 @@ public class Boss2DataStrikeAttack : EnemyBaseState
     private float spreadAngle        = 14f;
     private float pauseBetweenBursts = 0.5f;
     private float inBurstFireRate    = 0.04f;
-    private float bulletSpeed        = 6f;
+    private float bulletSpeed        = 4.5f;
     private float bulletDamage       = 12f;
     private float bulletLifetime     = 3f;
 
@@ -111,6 +111,7 @@ public class Boss2DataStrikeAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                scale           = 0.5f,
             };
 
             BulletManager.Instance.SpawnBullet(b);

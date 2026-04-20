@@ -8,7 +8,7 @@ public class Boss2LaserBeamAttack : EnemyBaseState
     private int   sweepCount     = 2;    // passes left-right
     private float fireRate       = 0.04f;
     private int   bulletsPerSalvo = 3;
-    private float bulletSpeed    = 8f;
+    private float bulletSpeed    = 6f;
     private float bulletDamage   = 9f;
     private float bulletLifetime = 3.5f;
 
@@ -98,7 +98,7 @@ public class Boss2LaserBeamAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 1.5f,
+                scale           = 0.8f,
             };
 
             BulletManager.Instance.SpawnBullet(b);

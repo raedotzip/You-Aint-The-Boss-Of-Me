@@ -13,7 +13,7 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
 
     // Covering bullet fire between obstacles
     private float bulletFireRate   = 0.35f;
-    private float bulletSpeed      = 4f;
+    private float bulletSpeed      = 3f;
     private float bulletDamage     = 10f;
     private float bulletLifetime   = 4f;
 
@@ -142,6 +142,7 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                scale           = 0.5f,
             };
 
             BulletManager.Instance.SpawnBullet(b);
