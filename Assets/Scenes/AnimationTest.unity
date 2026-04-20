@@ -3229,17 +3229,19 @@ MonoBehaviour:
   closeWeight_TargetedBurst: 2
   closeWeight_RingGap: 1
   midWeight_Charge: 10
+  midWeight_JumpSlam: 6
   midWeight_Spin: 2
   midWeight_SpiralBurst: 2
   midWeight_TargetedBurst: 2
   midWeight_RingGap: 10
   farWeight_Charge: 10
+  farWeight_JumpSlam: 4
   farWeight_SpiralBurst: 3
   farWeight_TargetedBurst: 3
   farWeight_RingGap: 10
   attacksBeforeTired: 4
-  attacksBeforeTiredEnraged: 14
   tiredDuration: 4.92
+  attacksBeforeTiredEnraged: 14
   tiredDurationEnraged: 0.8
   bossScale: 1.8
   lookAtSpeed: 5
@@ -6530,7 +6532,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 587, y: 818}
+  m_AnchoredPosition: {x: -87, y: -150}
   m_SizeDelta: {x: 350, y: 60}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &952059220
@@ -20329,7 +20331,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -646, y: 818}
+  m_AnchoredPosition: {x: 74, y: -90}
   m_SizeDelta: {x: 350, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1925511954

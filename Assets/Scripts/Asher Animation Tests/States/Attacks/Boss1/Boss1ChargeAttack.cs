@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Boss1ChargeAttack : EnemyBaseState
 {
-    private float chargeSpeed = 5f;
+    private float chargeSpeed = 10f;
     private float chargeStopDist = 2f;
-    private float chargeDuration = 3f;
+    private float chargeDuration = 2f;
     private float steerSpeed = 50f;
 
     private int bulletWaves = 6;
@@ -115,7 +115,8 @@ public class Boss1ChargeAttack : EnemyBaseState
         }
 
         Boss1StateManager boss = (Boss1StateManager)state;
-        float step = chargeSpeed * Time.deltaTime;
+        // Clamp step so the boss never overshoots into the player
+        float step = Mathf.Min(chargeSpeed * Time.deltaTime, Mathf.Max(0f, distToPlayer - chargeStopDist));
         Vector3 nextPos = state.transform.position + chargeDir * step;
 
         if (boss.WouldHitWall(state.transform.position, chargeDir, step) ||
