@@ -24,6 +24,10 @@ public class HUDManager : MonoBehaviour
     [Header("Lore")]
     public LoreTyper loreTyper;
 
+    [Header("Testing")]
+    [Tooltip("Keep the HUD visible on load — useful when testing directly in-scene without going through the menu flow")]
+    public bool showHUDOnStart = false;
+
     private float _elapsed;
     private bool  _running;
     private bool  _finished;
@@ -34,7 +38,7 @@ public class HUDManager : MonoBehaviour
         else Destroy(gameObject);
 
         if (bossBarContainer != null) bossBarContainer.SetActive(false);
-        if (hudRoot != null) hudRoot.SetActive(false);
+        if (hudRoot != null && !showHUDOnStart) hudRoot.SetActive(false);
     }
 
     void Start()

@@ -139,6 +139,10 @@ public class Boss1StateManager : EnemyStateManager
     // Set by jump states so EnforceBounds skips the wall-overlap check mid-air
     [HideInInspector] public bool isAirborne = false;
 
+    // Skips the wall-overlap check for one frame after a state switch so the
+    // localPosition reset in SwitchState doesn't cause a false wall detection.
+    private bool _skipWallCheckNextFrame = false;
+
     // Boss is enraged below 20% health — faster recovery, less frequent rest
     public bool IsEnraged => health / maxHealth <= 0.2f;
 
@@ -217,9 +221,9 @@ public class Boss1StateManager : EnemyStateManager
             return;
         }
 
-        // Clipped into wall geometry — skip this check while airborne because the
-        // intended landing spot may briefly overlap a wall during the arc.
-        if (!isAirborne && wallLayer != 0)
+        // Clipped into wall geometry — skip this check while airborne or for one
+        // frame after a state switch (localPosition reset can cause a false hit).
+        if (!isAirborne && wallLayer != 0 && !_skipWallCheckNextFrame)
         {
             Vector3 checkPos = pos + Vector3.up * bossCheckHeight;
             if (Physics.CheckSphere(checkPos, bossRadius, wallLayer, QueryTriggerInteraction.Ignore))
@@ -229,6 +233,7 @@ public class Boss1StateManager : EnemyStateManager
                 return;
             }
         }
+        _skipWallCheckNextFrame = false;
 
         // Only record a safe position when the boss is on solid ground —
         // prevents an out-of-bounds spot from overwriting a good recovery point
@@ -509,6 +514,7 @@ public class Boss1StateManager : EnemyStateManager
 
     public void SwitchState(EnemyBaseState newState)
     {
+        _skipWallCheckNextFrame = true;
         DisableAnimationBools();
 
         // If the Animator is on a child FBX node, animation keyframes can drift its

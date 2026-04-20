@@ -155,8 +155,8 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 origin = transform.position + cc.center;
 
-        // Stop before any wall in the dash direction
-        if (Physics.SphereCast(origin, cc.radius, dir, out RaycastHit hit, dashDistance, collisionLayers))
+        // Stop before any wall in the dash direction — ignore triggers (e.g. lava pit barrier)
+        if (Physics.SphereCast(origin, cc.radius, dir, out RaycastHit hit, dashDistance, collisionLayers, QueryTriggerInteraction.Ignore))
             return Mathf.Max(0f, hit.distance - 0.05f);
 
         return dashDistance;
