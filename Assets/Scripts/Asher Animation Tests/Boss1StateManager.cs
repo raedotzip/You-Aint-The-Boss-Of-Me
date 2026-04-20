@@ -62,8 +62,12 @@ public class Boss1StateManager : EnemyStateManager
     [Header("Lava Pit")]
     [Tooltip("Empty GameObject with a BoxCollider sized to the pit — rotate/scale it to match")]
     public Transform lavaPitCenter;
+    [Tooltip("Optional: exact spot where boss stands at the lava edge while wobbling. If unassigned, auto-computed as 70% between boss and pit center.")]
+    public Transform lavaEdgePosition;
     [Tooltip("Extra buffer inside the pit edge — boss lands this far short of the rim")]
     public float pitSafetyMargin = 1.5f;
+    [Tooltip("Y level at which the boss is considered fully sunk — triggers AdvanceToNextBoss")]
+    public float lavaFallDepth = -15f;
 
     private BoxCollider _pitCollider;
 
@@ -130,6 +134,9 @@ public class Boss1StateManager : EnemyStateManager
     // True once health hits 0 — prevents re-triggering the finisher
     private bool _finisherTriggered = false;
 
+    // Set by jump states so EnforceBounds skips the wall-overlap check mid-air
+    [HideInInspector] public bool isAirborne = false;
+
     // Boss is enraged below 20% health — faster recovery, less frequent rest
     public bool IsEnraged => health / maxHealth <= 0.2f;
 
@@ -151,6 +158,12 @@ public class Boss1StateManager : EnemyStateManager
         {
             rb.isKinematic = true;
             rb = null;
+        }
+        // Also kinematize any child Rigidbodies (the FBX node) that aren't caught above.
+        foreach (var childRb in GetComponentsInChildren<Rigidbody>())
+        {
+            childRb.isKinematic = true;
+            Debug.Log($"[Boss1] Kinematized child Rigidbody on '{childRb.gameObject.name}'");
         }
 
         if (player == null)
@@ -197,16 +210,19 @@ public class Boss1StateManager : EnemyStateManager
         // Fell off the map
         if (pos.y < fallThreshold)
         {
+            Debug.LogWarning($"[Boss1] EnforceBounds: fell below fallThreshold ({pos.y:F2} < {fallThreshold}) — teleporting to {_lastSafePosition}. State={currentState?.GetType().Name}");
             transform.position = _lastSafePosition;
             return;
         }
 
-        // Clipped into wall geometry — snap back immediately
-        if (wallLayer != 0)
+        // Clipped into wall geometry — skip this check while airborne because the
+        // intended landing spot may briefly overlap a wall during the arc.
+        if (!isAirborne && wallLayer != 0)
         {
             Vector3 checkPos = pos + Vector3.up * bossCheckHeight;
             if (Physics.CheckSphere(checkPos, bossRadius, wallLayer, QueryTriggerInteraction.Ignore))
             {
+                Debug.LogWarning($"[Boss1] EnforceBounds: wall overlap at {pos} — teleporting to {_lastSafePosition}. State={currentState?.GetType().Name}");
                 transform.position = _lastSafePosition;
                 return;
             }
@@ -490,6 +506,13 @@ public class Boss1StateManager : EnemyStateManager
     public void SwitchState(EnemyBaseState newState)
     {
         DisableAnimationBools();
+
+        // If the Animator is on a child FBX node, animation keyframes can drift its
+        // local Y over time, making the visible mesh sink underground or float.
+        // Reset local position each state transition to prevent accumulation.
+        if (animator != null && animator.transform != transform)
+            animator.transform.localPosition = Vector3.zero;
+
         currentState = newState;
         currentState.EnterState(this);
     }

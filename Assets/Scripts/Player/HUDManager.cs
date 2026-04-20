@@ -60,8 +60,9 @@ public class HUDManager : MonoBehaviour
 
     public void ShowHUD(bool show)
     {
-        if (hudRoot != null) hudRoot.SetActive(show);
-        Debug.Log($"[HUD] ShowHUD({show}) — hudRoot.activeSelf={hudRoot?.activeSelf} activeInHierarchy={hudRoot?.activeInHierarchy}", this);
+        if (hudRoot == null) { Debug.LogError("[HUD] hudRoot is not assigned in the Inspector — HUD cannot show! Re-link it on the HUDManager GameObject.", this); return; }
+        hudRoot.SetActive(show);
+        Debug.Log($"[HUD] ShowHUD({show}) — hudRoot.activeSelf={hudRoot.activeSelf} activeInHierarchy={hudRoot.activeInHierarchy}", this);
         if (show && !_running && !_finished)
             StartTimer();
         if (!show)

@@ -21,6 +21,7 @@ public class Boss1JumpSlamAttack : EnemyBaseState
 
         elapsedTime = 0f;
         hasLanded   = false;
+        ((Boss1StateManager)state).isAirborne = true;
         state.animator.SetTrigger("JumpAttack");
     }
 
@@ -42,6 +43,7 @@ public class Boss1JumpSlamAttack : EnemyBaseState
             SnapToGround(state, targetPosition);
             state.animator.SetTrigger("GroundSlam");
             Boss1StateManager boss = (Boss1StateManager)state;
+            boss.isAirborne = false;
             boss.TransitionToNextState();
         }
     }

@@ -146,8 +146,8 @@ public class Boss2StateManager : EnemyStateManager
     // RUNTIME
     // ===============================
     [HideInInspector] public int   attackCounter = 0;
-    [HideInInspector] public float health        = 100f;
-    [HideInInspector] public float maxHealth     = 100f;
+    [HideInInspector] public float health        = 1f;
+    [HideInInspector] public float maxHealth     = 1f;
     public HealthBarUI bossHealthBar;
 
     [Header("Sword Hit Detection")]
@@ -178,6 +178,8 @@ public class Boss2StateManager : EnemyStateManager
             forceField.SetActive(true);
 
         _sword = FindObjectOfType<Sword>();
+        if (_sword == null)
+            Debug.LogWarning("[Boss2] Sword not found at Start — will retry in FixedUpdate.");
     }
 
     public override void Update()
@@ -191,6 +193,7 @@ public class Boss2StateManager : EnemyStateManager
 
     void FixedUpdate()
     {
+        if (_sword == null) _sword = FindObjectOfType<Sword>();
         if (_forceFieldUp || _sword == null) return;
         if (_hitCooldown > 0f) { _hitCooldown -= Time.fixedDeltaTime; return; }
 
@@ -221,7 +224,12 @@ public class Boss2StateManager : EnemyStateManager
     public void RegisterMiniComputer(Boss2MiniComputer mini)
     {
         if (!_miniComputerRefs.Contains(mini))
+        {
             _miniComputerRefs.Add(mini);
+            // Keep count in sync with actual registered computers so the
+            // force field drops correctly even if miniComputersTotal is wrong.
+            _miniComputersRemaining = _miniComputerRefs.Count;
+        }
     }
 
     // ===============================

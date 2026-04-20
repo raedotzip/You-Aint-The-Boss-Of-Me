@@ -3171,7 +3171,9 @@ MonoBehaviour:
   wallSafetyMargin: 0.5
   fallThreshold: -3
   lavaPitCenter: {fileID: 1519189452}
+  lavaEdgePosition: {fileID: 2018148107}
   pitSafetyMargin: 1.5
+  lavaFallDepth: -15
   closeWeight_Punch: 3
   closeWeight_JumpSlam: 3
   closeWeight_Spin: 2
@@ -3198,6 +3200,7 @@ MonoBehaviour:
   health: 100
   maxHealth: 100
   bossHealthBar: {fileID: 952059220}
+  isAirborne: 0
 --- !u!1 &410596979 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -125756602389041171, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -3513,6 +3516,16 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!4 &449859187 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7616405305726910333, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+  m_PrefabInstance: {fileID: 1070997891}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &449859190 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 721785493195458901, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+  m_PrefabInstance: {fileID: 1070997891}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &457582972 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -893072301007757515, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -7636,7 +7649,10 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 4838878539073628411, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 7616405305726910333, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2037185649}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 699919978108120474, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       insertIndex: -1
@@ -10407,7 +10423,7 @@ MonoBehaviour:
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
   boss3: {fileID: 1790749897}
-  startingBoss: 2
+  startingBoss: 1
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss3Name: Ceaseless Watcher
@@ -12132,19 +12148,22 @@ PrefabInstance:
       insertIndex: 0
       addedObject: {fileID: 1119737523}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
-      insertIndex: 2
+      insertIndex: 1
+      addedObject: {fileID: 2018148107}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
+      insertIndex: 3
       addedObject: {fileID: 135137344}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
-      insertIndex: 33
+      insertIndex: 34
       addedObject: {fileID: 1950697819}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
-      insertIndex: 40
+      insertIndex: 41
       addedObject: {fileID: 1096086690}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
-      insertIndex: 46
+      insertIndex: 47
       addedObject: {fileID: 1872217845}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
-      insertIndex: 47
+      insertIndex: 48
       addedObject: {fileID: 1655951510}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       insertIndex: -1
@@ -21216,6 +21235,37 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2481426021776792608, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
+--- !u!1 &2018148106
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2018148107}
+  m_Layer: 7
+  m_Name: BossLavaStand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2018148107
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2018148106}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0, z: 6.29}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1519189451}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2019113953 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3943351149822609644, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -21611,7 +21661,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 100
+  m_ReferencePixelsPerUnit: 100.13
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
@@ -21631,14 +21681,14 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 2
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 449859190}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -21651,19 +21701,19 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2037185644}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2}
+  m_LocalScale: {x: 0.001, y: 0.001, z: 0.001}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1925511953}
   - {fileID: 952059219}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 449859187}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 598, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2037185650
 MonoBehaviour:
@@ -22086,7 +22136,6 @@ SceneRoots:
   - {fileID: 741720513}
   - {fileID: 1702661063}
   - {fileID: 1284531394}
-  - {fileID: 2037185649}
   - {fileID: 1403217546}
   - {fileID: 142566567}
   - {fileID: 302271964}
