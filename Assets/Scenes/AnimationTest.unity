@@ -3181,17 +3181,19 @@ MonoBehaviour:
   closeWeight_TargetedBurst: 2
   closeWeight_RingGap: 1
   midWeight_Charge: 10
+  midWeight_JumpSlam: 6
   midWeight_Spin: 2
   midWeight_SpiralBurst: 2
   midWeight_TargetedBurst: 2
   midWeight_RingGap: 10
   farWeight_Charge: 10
+  farWeight_JumpSlam: 4
   farWeight_SpiralBurst: 3
   farWeight_TargetedBurst: 3
   farWeight_RingGap: 10
   attacksBeforeTired: 4
-  attacksBeforeTiredEnraged: 14
   tiredDuration: 4.92
+  attacksBeforeTiredEnraged: 14
   tiredDurationEnraged: 0.8
   bossScale: 1.8
   lookAtSpeed: 5
@@ -11329,31 +11331,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9996573
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013618736
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.016421476
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.015175391
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 1.589
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -1.858
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 1.714
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8513894679676805079, guid: ff2f4f5d9c7fb5645ab2666744e76733, type: 3}
       propertyPath: m_Materials.Array.data[0]
