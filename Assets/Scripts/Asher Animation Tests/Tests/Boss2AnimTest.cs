@@ -21,7 +21,6 @@ public class Boss2AnimTest : MonoBehaviour
             if (timer % 200 == 0)
             {
                 animator.SetTrigger("Hurt");
-                Debug.Log("Hurt Trigger");
             }
             timer++;
 
