@@ -5,7 +5,7 @@ using TMPro;
 
 public class TypeScript : MonoBehaviour
 {
-    private TMP_Text tmpText;   // we’ll focus on TMP since you're using it
+    private TMP_Text tmpText;   // we will focus on TMP 
     private Text uiText;        // fallback if ever needed
 
     private Coroutine typingCoroutine;
