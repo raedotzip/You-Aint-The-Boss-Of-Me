@@ -250,6 +250,9 @@ public class Boss1StateManager : EnemyStateManager
 
         _lastSafePosition = transform.position;
 
+        foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+            smr.updateWhenOffscreen = true;
+
         ObstacleManager.Instance?.PrewarmObstaclePools(obstacleData);
 
         SwitchState(idleState);

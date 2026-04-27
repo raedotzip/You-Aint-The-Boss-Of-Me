@@ -45,6 +45,12 @@ public class HUDManager : MonoBehaviour
     {
         Debug.Log($"HUD: hudRoot={hudRoot}, playerBar={playerBar}, bossBar={bossBar}, bossBarContainer={bossBarContainer}");
 
+        if (hudRoot != null && Camera.main != null)
+        {
+            var follow = hudRoot.GetComponent<VRHudFollow>() ?? hudRoot.AddComponent<VRHudFollow>();
+            follow.Init(Camera.main.transform);
+        }
+
         // Auto-wire the player health bar if not already assigned in the Inspector
         var playerHealth = FindObjectOfType<PlayerHealth>();
         if (playerHealth != null)
