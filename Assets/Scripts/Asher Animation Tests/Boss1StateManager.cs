@@ -109,6 +109,76 @@ public class Boss1StateManager : EnemyStateManager
     public int   attacksBeforeTiredEnraged = 20;   // barely rests at low health
     public float tiredDurationEnraged      = 0.3f; // gets up much faster at ≤20% health
 
+
+    // ===============================
+    // ATTACK AUDIO
+    // ===============================
+    // ===============================
+    // ATTACK AUDIO
+    // ===============================
+    [Header("Boss Audio")]
+    public AudioSource audioSource;
+
+    [Header("SFX Clips")]
+    public AudioClip jumpSlamImpactClip;
+    public AudioClip spinClip;
+    public AudioClip punchClip;
+    public AudioClip chargeClip;
+    public AudioClip landClip;
+
+    [Header("SFX Settings")]
+    [Range(0f, 2f)]
+    public float sfxVolume = 1f;
+
+    // ===============================
+    // AUDIO PLAYER
+    // ===============================
+    private void PlaySFX(AudioClip clip, string debugName)
+    {
+        if (audioSource == null)
+        {
+            Debug.LogWarning("[Boss Audio] Missing AudioSource!");
+            return;
+        }
+
+        if (clip == null)
+        {
+            Debug.LogWarning($"[Boss Audio] {debugName} clip not assigned!");
+            return;
+        }
+
+        audioSource.PlayOneShot(clip, sfxVolume);
+        Debug.Log($"[Boss Audio] Played {debugName} (Volume: {sfxVolume})");
+    }
+
+    // ===============================
+    // SPECIFIC ATTACK SOUNDS
+    // ===============================
+    public void PlayJumpSlamImpact()
+    {
+        PlaySFX(jumpSlamImpactClip, "Jump Slam Impact");
+    }
+
+    public void PlaySpin()
+    {
+        PlaySFX(spinClip, "Spin Attack");
+    }
+
+    public void PlayPunch()
+    {
+        PlaySFX(punchClip, "Punch Attack");
+    }
+
+    public void PlayCharge()
+    {
+        PlaySFX(chargeClip, "Charge Attack");
+    }
+
+    public void PlayLand()
+    {
+        PlaySFX(landClip, "Landing Impact");
+    }
+
     // ===============================
     // SCALE
     // ===============================

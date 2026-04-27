@@ -3432,6 +3432,13 @@ MonoBehaviour:
   tiredDuration: 4.92
   attacksBeforeTiredEnraged: 14
   tiredDurationEnraged: 0.8
+  audioSource: {fileID: 0}
+  jumpSlamImpactClip: {fileID: 8300000, guid: 633ef7ed447959c4b9b34971d144ab6f, type: 3}
+  spinClip: {fileID: 8300000, guid: e4a4d60dad83e6b48aad9365c02f2500, type: 3}
+  punchClip: {fileID: 8300000, guid: 5bb31393f86483e4ebaaca08dfc4d9b2, type: 3}
+  chargeClip: {fileID: 8300000, guid: cea70c3e52c4b6b44863443b0e993b0c, type: 3}
+  landClip: {fileID: 8300000, guid: 756384eda21a30b468e93b6b13ba885d, type: 3}
+  sfxVolume: 2
   bossScale: 1.8
   lookAtSpeed: 5
   smoothLookAtEnabled: 1
@@ -3765,6 +3772,14 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 721785493195458901, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
   m_PrefabInstance: {fileID: 1070997891}
   m_PrefabAsset: {fileID: 0}
+--- !u!81 &449859193
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 449859181}
+  m_Enabled: 1
 --- !u!1 &457582972 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -893072301007757515, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -7917,6 +7932,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5471030500579814732, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 449859186}
+    - targetCorrespondingSourceObject: {fileID: 5471030500579814732, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 449859193}
     - targetCorrespondingSourceObject: {fileID: 838974720865997422, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1856132141}
