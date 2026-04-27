@@ -1,6 +1,6 @@
 //Maya ASCII 2024 scene
 //Name: sword.ma
-//Last modified: Mon, Apr 27, 2026 05:13:06 PM
+//Last modified: Mon, Apr 27, 2026 05:32:08 PM
 //Codeset: 1252
 requires maya "2024";
 requires "stereoCamera" "10.0";
@@ -13,7 +13,7 @@ fileInfo "product" "Maya 2024";
 fileInfo "version" "2024";
 fileInfo "cutIdentifier" "202310181224-69282f2959";
 fileInfo "osv" "Windows 11 Enterprise v2009 (Build: 26200)";
-fileInfo "UUID" "52FA538E-41B5-0E47-0D96-9A979C2DBC8F";
+fileInfo "UUID" "A481B349-485A-8E3D-85B6-C6831F35A4C1";
 fileInfo "license" "education";
 createNode transform -s -n "persp";
 	rename -uid "C05DF1D2-467E-2530-AB95-81AE2BBDB70F";
@@ -2877,10 +2877,10 @@ createNode groupId -n "groupId10";
 	rename -uid "4F708FB4-404F-948B-76AA-DD940178854D";
 	setAttr ".ihi" 0;
 createNode mayaUsdLayerManager -n "mayaUsdLayerManager1";
-	rename -uid "DEA5DB50-4E41-E306-C02C-87B0CDC542A2";
+	rename -uid "AAD2F754-4AC4-00DA-F429-BC9057987354";
 	setAttr ".sst" -type "string" "";
 createNode nodeGraphEditorInfo -n "hyperShadePrimaryNodeEditorSavedTabsInfo";
-	rename -uid "3C175DC2-49B0-5564-9441-AE92AAC158D5";
+	rename -uid "94BF2249-4BFF-1D3B-19F3-F2BB49E6F2B5";
 	setAttr ".tgi[0].tn" -type "string" "Untitled_1";
 	setAttr ".tgi[0].vl" -type "double2" -44.047617297323995 -640.4761650259544 ;
 	setAttr ".tgi[0].vh" -type "double2" 776.19044534743909 44.047617297323995 ;
