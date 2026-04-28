@@ -28,14 +28,14 @@ public class boss2ScreenAnimator : MonoBehaviour
         targetMat = materials[0];
         Debug.Log(targetMat);
         targetMat.SetTextureOffset("_Albedo", new Vector2(0, 0));
-        col = 0;
+        col = 1;
         Debug.Log("ON");
         cycleRoutine = StartCoroutine(CycleScreens());
     }
 
     void Update()
     {
-        Vector2 offset = new Vector2(-col * xOffsetUnit, -row * yOffsetUnit);
+        Vector2 offset = new Vector2(col * xOffsetUnit, -row * yOffsetUnit);
         targetMat.SetTextureOffset("_Albedo", offset);
     }
 
