@@ -116,10 +116,6 @@ public class Boss1StateManager : EnemyStateManager
     public int   attacksBeforeTiredEnraged = 20;   // barely rests at low health
     public float tiredDurationEnraged      = 0.3f; // gets up much faster at ≤20% health
 
-
-    // ===============================
-    // ATTACK AUDIO
-    // ===============================
     // ===============================
     // ATTACK AUDIO
     // ===============================
@@ -154,7 +150,12 @@ public class Boss1StateManager : EnemyStateManager
             return;
         }
 
-        audioSource.PlayOneShot(clip, sfxVolume);
+        audioSource.Stop();
+
+        audioSource.clip = clip;
+        audioSource.volume = sfxVolume;
+        audioSource.Play();
+
         Debug.Log($"[Boss Audio] Played {debugName} (Volume: {sfxVolume})");
     }
 
@@ -184,6 +185,29 @@ public class Boss1StateManager : EnemyStateManager
     public void PlayLand()
     {
         PlaySFX(landClip, "Landing Impact");
+    }
+
+    // ===============================
+    // MORE AUDIO STUFF
+    // ===============================
+    public void PlayAttackAudioForState(EnemyBaseState state)
+    {
+        if (state == jumpSlamState)
+        {
+            PlayJumpSlamImpact();
+        }
+        else if (state == chargeAttack)
+        {
+            PlayCharge();
+        }
+        else if (state == punchAttack)
+        {
+            PlayPunch();
+        }
+        else if (state == spinAttack)
+        {
+            PlaySpin();
+        }
     }
 
     // ===============================
@@ -224,7 +248,7 @@ public class Boss1StateManager : EnemyStateManager
     public bool IsEnraged => health / maxHealth <= 0.2f;
 
     private Vector3 _lastSafePosition;
-
+     
     public override void Start()
     {
         health = maxHealth;
@@ -638,6 +662,8 @@ public class Boss1StateManager : EnemyStateManager
 
         currentState = newState;
         currentState.EnterState(this);
+
+        PlayAttackAudioForState(newState);
     }
 
     public void DisableAnimationBools()
