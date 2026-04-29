@@ -53,7 +53,6 @@ public class boss2ScreenAnimator : MonoBehaviour
 
     void NextScreen() {
         //col = boss2.phase;
-        Debug.Log("GO");
         row = (int)Random.Range(0, 4);
         //Debug.Log($"{col}, {row}");
     }

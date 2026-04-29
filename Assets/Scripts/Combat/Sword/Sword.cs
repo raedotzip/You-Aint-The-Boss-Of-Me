@@ -62,6 +62,7 @@ public class Sword : MonoBehaviour
 
     private Dictionary<Rigidbody, float> cooldowns = new Dictionary<Rigidbody, float>();
     private Dictionary<int, float> _miniComputerCooldowns = new Dictionary<int, float>();
+    private Dictionary<int, float> _bossHitCooldowns = new Dictionary<int, float>();
 
     void Awake()
     {
@@ -120,6 +121,7 @@ public class Sword : MonoBehaviour
     void FixedUpdate()
     {
         SweepBladeMelee();
+        ScanBossAlongBlade();
         ScanMiniComputersAlongBlade();
         ScanMenuBoxesAlongBlade();
 
@@ -136,7 +138,7 @@ public class Sword : MonoBehaviour
     void SweepBladeMelee()
     {
         if (bladeBase == null || bladeTip == null) return;
-        
+
         for (int i = 0; i <= 4; i++)
         {
             float t = i / 4f;
@@ -181,28 +183,12 @@ public class Sword : MonoBehaviour
 
                 cooldowns[rb] = Time.time;
 
-                // Menu box slice — select the option and skip boss/physics logic
+                // Menu box slice — select the option and skip physics logic
                 MenuBox menuBox = hit.collider.GetComponentInParent<MenuBox>();
                 if (menuBox != null)
                 {
                     menuBox.OnSliced();
                     continue;
-                }
-
-                // Boss damage routed through BossManager (works for any boss)
-                EnemyStateManager hitBoss = hit.collider.GetComponentInParent<EnemyStateManager>();
-                if (hitBoss != null && BossManager.Instance != null)
-                {
-                    float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
-                    float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
-
-                    BossHitbox hitbox = hit.collider.GetComponent<BossHitbox>();
-                    float limbMultiplier = hitbox != null ? hitbox.damageMultiplier : 1f;
-
-                    BossManager.Instance.TakeDamageOnActive(damageAmount * multiplier * limbMultiplier);
-
-                    if (swingTipDistance >= healSwingThreshold && playerHealth != null)
-                        playerHealth.Heal(healAmount);
                 }
 
                 // Physics reflect — skip kinematic Rigidbodies (menu boxes, static props)
@@ -241,6 +227,47 @@ public class Sword : MonoBehaviour
                 float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
                 float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
                 mc.TakeDamage(damageAmount * multiplier);
+                StartCoroutine(HitStop());
+            }
+        }
+    }
+
+    // OverlapSphere boss scan — layer-independent so boss FBX colliders are always detected
+    void ScanBossAlongBlade()
+    {
+        if (bladeBase == null || bladeTip == null) return;
+        if (BossManager.Instance == null) return;
+
+        EnemyStateManager bossHitThisScan = null;
+
+        for (int i = 0; i <= 4; i++)
+        {
+            float t = i / 4f;
+            Vector3 point = Vector3.Lerp(bladeBase.position, bladeTip.position, t);
+
+            Collider[] overlaps = Physics.OverlapSphere(point, sphereRadius * 2f, ~0, QueryTriggerInteraction.Ignore);
+            foreach (var col in overlaps)
+            {
+                EnemyStateManager hitBoss = col.GetComponentInParent<EnemyStateManager>();
+                if (hitBoss == null || hitBoss == bossHitThisScan) continue;
+
+                int id = hitBoss.GetInstanceID();
+                if (_bossHitCooldowns.TryGetValue(id, out float last) && Time.time - last < hitCooldown) continue;
+
+                bossHitThisScan = hitBoss;
+                _bossHitCooldowns[id] = Time.time;
+
+                float swingT     = Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance);
+                float multiplier = Mathf.Lerp(minDamageMultiplier, maxDamageMultiplier, swingT);
+
+                BossHitbox hitbox = col.GetComponentInParent<BossHitbox>();
+                float limbMultiplier = hitbox != null ? hitbox.damageMultiplier : 1f;
+
+                BossManager.Instance.TakeDamageOnActive(damageAmount * multiplier * limbMultiplier);
+
+                if (swingTipDistance >= healSwingThreshold && playerHealth != null)
+                    playerHealth.Heal(healAmount);
+
                 StartCoroutine(HitStop());
             }
         }

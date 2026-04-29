@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Boss1StateManager : EnemyStateManager
 {
@@ -55,6 +56,12 @@ public class Boss1StateManager : EnemyStateManager
     public float wallSafetyMargin    = 0.5f;
     [Tooltip("Y level below which the boss is considered to have fallen off the map")]
     public float fallThreshold       = -3f;
+
+    [Header("Arena Bounds")]
+    [Tooltip("Parent GameObject. Every BoxCollider child with Is Trigger checked defines a valid zone. Boss is clamped to the nearest zone if it leaves all of them.")]
+    public Transform arenaBoundsRoot;
+
+    private BoxCollider[] _arenaBoundsColliders;
 
     // ===============================
     // LAVA PIT
@@ -248,6 +255,14 @@ public class Boss1StateManager : EnemyStateManager
         if (lavaPitCenter != null)
             _pitCollider = lavaPitCenter.GetComponent<BoxCollider>();
 
+        if (arenaBoundsRoot != null)
+        {
+            var all = arenaBoundsRoot.GetComponentsInChildren<BoxCollider>();
+            var list = new List<BoxCollider>();
+            foreach (var b in all) if (b.isTrigger) list.Add(b);
+            _arenaBoundsColliders = list.ToArray();
+        }
+
         _lastSafePosition = transform.position;
 
         foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>())
@@ -307,6 +322,31 @@ public class Boss1StateManager : EnemyStateManager
             }
         }
         _skipWallCheckNextFrame = false;
+
+        // Clamp to arena bounds — boss must be inside at least one trigger zone
+        if (_arenaBoundsColliders != null && _arenaBoundsColliders.Length > 0)
+        {
+            bool insideAny = false;
+            foreach (var box in _arenaBoundsColliders)
+            {
+                if (box.bounds.Contains(pos)) { insideAny = true; break; }
+            }
+
+            if (!insideAny)
+            {
+                // Find the closest point across all zones and snap XZ to it
+                Vector3 best = pos;
+                float minDist = float.MaxValue;
+                foreach (var box in _arenaBoundsColliders)
+                {
+                    Vector3 cp = box.ClosestPoint(pos);
+                    float d = (cp.x - pos.x) * (cp.x - pos.x) + (cp.z - pos.z) * (cp.z - pos.z);
+                    if (d < minDist) { minDist = d; best = cp; }
+                }
+                transform.position = new Vector3(best.x, pos.y, best.z);
+                pos = transform.position;
+            }
+        }
 
         // Only record a safe position when the boss is on solid ground —
         // prevents an out-of-bounds spot from overwriting a good recovery point
