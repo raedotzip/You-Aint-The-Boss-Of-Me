@@ -36,7 +36,7 @@ public class Boss2MiniComputer : MonoBehaviour
 
     void Awake()
     {
-        _currentHealth = maxHealth;
+        currentHealth = maxHealth;
         _screenAnimator = GetComponent<boss2ScreenAnimator>();
         _animator = GetComponent<Animator>();
     }
@@ -95,9 +95,9 @@ public class Boss2MiniComputer : MonoBehaviour
     public void TakeDamage(float amount)
     {
         if (_dead) return;
-        _currentHealth -= amount;
-        Debug.Log($"[MiniComputer] '{gameObject.name}' hit for {amount:F1}, health={_currentHealth:F1}");
-        if (_currentHealth <= 0f)
+        currentHealth -= amount;
+        Debug.Log($"[MiniComputer] '{gameObject.name}' hit for {amount:F1}, health={currentHealth:F1}");
+        if (currentHealth <= 0f)
         {
             Die();
         }
@@ -116,7 +116,7 @@ public class Boss2MiniComputer : MonoBehaviour
             _activeDestroyEffect = null;
         }
 
-        _currentHealth = maxHealth;
+        currentHealth = maxHealth;
         _dead          = false;
         _hitCooldown   = 0f;
 
