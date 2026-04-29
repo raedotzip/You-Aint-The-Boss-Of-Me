@@ -805,6 +805,7 @@ MonoBehaviour:
   minSwordSpeed: 0.8
   topRackSpin: {fileID: 1384606537}
   lookAtSpeed: 3
+  currentHealth: 0
 --- !u!4 &78313861 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 709ffa577e29e5843a1d2f81a3864603, type: 3}
@@ -894,6 +895,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &80494493 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7210662768870458606, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -2044,7 +2046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caec172e1cba7f247b17ed043bfbd555, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1
+  maxHealth: 10
   boss2: {fileID: 1875370447}
   destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
   reviveEffect: {fileID: 0}
@@ -2052,6 +2054,7 @@ MonoBehaviour:
   minSwordSpeed: 0.8
   topRackSpin: {fileID: 202972558}
   lookAtSpeed: 3
+  currentHealth: 0
 --- !u!4 &202972556 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 709ffa577e29e5843a1d2f81a3864603, type: 3}
@@ -2146,6 +2149,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &205498809
 GameObject:
   m_ObjectHideFlags: 0
@@ -7904,7 +7908,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4884577168612163704, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: moveSpeed
-      value: 6
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4884577168612163704, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: inputSource
@@ -7981,6 +7985,10 @@ PrefabInstance:
     - target: {fileID: 6861158301207144950, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6898387933681055645, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7001263772640908746, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: m_Layer
@@ -8077,6 +8085,7 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 4838878539073628411, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
     - {fileID: 9141656965758369188, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+    - {fileID: 6898387933681055645, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
     m_RemovedGameObjects:
     - {fileID: 4519716618037115583, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
     m_AddedGameObjects:
@@ -8409,6 +8418,7 @@ MonoBehaviour:
   minSwordSpeed: 0.8
   topRackSpin: {fileID: 372245709}
   lookAtSpeed: 3
+  currentHealth: 0
 --- !u!4 &1083922894 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 709ffa577e29e5843a1d2f81a3864603, type: 3}
@@ -8498,6 +8508,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &1083958680 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8234638769834959286, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -10837,6 +10848,7 @@ MonoBehaviour:
   minSwordSpeed: 0.8
   topRackSpin: {fileID: 2124416271}
   lookAtSpeed: 3
+  currentHealth: 0
 --- !u!4 &1412676428 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 709ffa577e29e5843a1d2f81a3864603, type: 3}
@@ -10926,6 +10938,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &1413042342 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3352727641615647396, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
@@ -11027,7 +11040,7 @@ MonoBehaviour:
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
   boss3: {fileID: 1790749897}
-  startingBoss: 1
+  startingBoss: 2
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss3Name: Ceaseless Watcher
@@ -11622,6 +11635,7 @@ MonoBehaviour:
   minSwordSpeed: 0.8
   topRackSpin: {fileID: 175029124}
   lookAtSpeed: 3
+  currentHealth: 0
 --- !u!4 &1504144131 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 709ffa577e29e5843a1d2f81a3864603, type: 3}
@@ -11711,6 +11725,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &1504637210 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6274249110218598130, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -20782,6 +20797,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+<<<<<<< HEAD
 --- !u!82 &1875370452
 AudioSource:
   m_ObjectHideFlags: 0
@@ -20878,6 +20894,9 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+=======
+  boss2: {fileID: 1875370447}
+>>>>>>> bbab7a76a5acc84d620a70ec950c74c937f881c8
 --- !u!1 &1883348956 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7470782734314634954, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}

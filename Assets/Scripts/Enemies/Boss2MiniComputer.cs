@@ -25,16 +25,20 @@ public class Boss2MiniComputer : MonoBehaviour
     [Tooltip("How quickly the rack turns to face the player (higher = snappier)")]
     public float lookAtSpeed = 3f;
 
-    private float      _currentHealth;
+    public float currentHealth;
     private bool       _dead = false;
     private Sword      _sword;
     private float      _hitCooldown = 0f;
     private GameObject _activeDestroyEffect;
     private Transform  _player;
+    private boss2ScreenAnimator _screenAnimator;
+    private Animator _animator;
 
     void Awake()
     {
-        _currentHealth = maxHealth;
+        currentHealth = maxHealth;
+        _screenAnimator = GetComponent<boss2ScreenAnimator>();
+        _animator = GetComponent<Animator>();
     }
 
     void Start()
@@ -91,10 +95,17 @@ public class Boss2MiniComputer : MonoBehaviour
     public void TakeDamage(float amount)
     {
         if (_dead) return;
-        _currentHealth -= amount;
-        Debug.Log($"[MiniComputer] '{gameObject.name}' hit for {amount:F1}, health={_currentHealth:F1}");
-        if (_currentHealth <= 0f)
+        currentHealth -= amount;
+        Debug.Log($"[MiniComputer] '{gameObject.name}' hit for {amount:F1}, health={currentHealth:F1}");
+        if (currentHealth <= 0f)
+        {
             Die();
+        }
+        else
+        {
+            _animator.SetTrigger("Hurt");
+            _screenAnimator.ShowHurtScreen(0.2f);
+        }
     }
 
     public void Revive()
@@ -105,9 +116,11 @@ public class Boss2MiniComputer : MonoBehaviour
             _activeDestroyEffect = null;
         }
 
-        _currentHealth = maxHealth;
+        currentHealth = maxHealth;
         _dead          = false;
         _hitCooldown   = 0f;
+
+        _animator.SetBool("Destroyed", false);
 
         if (reviveEffect != null)
             Instantiate(reviveEffect, transform.position, Quaternion.identity);
@@ -116,6 +129,8 @@ public class Boss2MiniComputer : MonoBehaviour
     void Die()
     {
         _dead = true;
+
+        _animator.SetBool("Destroyed", true);
 
         if (destroyEffect != null)
             _activeDestroyEffect = Instantiate(destroyEffect, transform.position, Quaternion.identity);

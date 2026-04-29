@@ -18,6 +18,9 @@ public class boss2ScreenAnimator : MonoBehaviour
     private int row;
     Coroutine cycleRoutine;
     private bool isHurt = false;
+    private float maxHealth;
+    private float thirdHealth;
+    public Boss2StateManager boss2;
 
     void Start()
     {
@@ -31,6 +34,9 @@ public class boss2ScreenAnimator : MonoBehaviour
         col = 1;
         Debug.Log("ON");
         cycleRoutine = StartCoroutine(CycleScreens());
+        // boss2 = GetComponent<Boss2MiniComputer>();
+        maxHealth = boss2.maxHealth;
+        thirdHealth = (maxHealth / 3) + 0.1f;
     }
 
     void Update()
@@ -52,9 +58,9 @@ public class boss2ScreenAnimator : MonoBehaviour
     }
 
     void NextScreen() {
-        //col = boss2.phase;
+        col = 2 - (int)(boss2.health / thirdHealth);
         row = (int)Random.Range(0, 4);
-        //Debug.Log($"{col}, {row}");
+        Debug.Log($"{boss2.health}, {thirdHealth}, {col}");
     }
 
     public void ShowHurtScreen(float duration)
