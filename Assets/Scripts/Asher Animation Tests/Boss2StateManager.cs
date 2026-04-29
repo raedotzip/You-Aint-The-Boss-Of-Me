@@ -188,7 +188,7 @@ public class Boss2StateManager : EnemyStateManager
             UpdatePathBlocking();
 
         if (!_isActive) return;
-        currentState.UpdateState(this);
+        this.currentState.UpdateState(this);
     }
 
     void FixedUpdate()

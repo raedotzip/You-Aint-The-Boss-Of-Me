@@ -120,6 +120,8 @@ public class Boss2MiniComputer : MonoBehaviour
         _dead          = false;
         _hitCooldown   = 0f;
 
+        _animator.SetBool("Destroyed", false);
+
         if (reviveEffect != null)
             Instantiate(reviveEffect, transform.position, Quaternion.identity);
     }

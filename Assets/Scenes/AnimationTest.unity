@@ -895,6 +895,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &80494493 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7210662768870458606, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -2045,7 +2046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caec172e1cba7f247b17ed043bfbd555, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1
+  maxHealth: 10
   boss2: {fileID: 1875370447}
   destroyEffect: {fileID: 8247150505129162586, guid: dd2f51ab8bfae054a98fe8e632359605, type: 3}
   reviveEffect: {fileID: 0}
@@ -2148,6 +2149,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &205498809
 GameObject:
   m_ObjectHideFlags: 0
@@ -8506,6 +8508,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &1083958680 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8234638769834959286, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -10935,6 +10938,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &1413042342 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3352727641615647396, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
@@ -11721,6 +11725,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &1504637210 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6274249110218598130, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -20780,6 +20785,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &1883348956 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7470782734314634954, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
