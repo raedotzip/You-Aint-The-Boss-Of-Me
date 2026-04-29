@@ -290,6 +290,19 @@ public class Boss1StateManager : EnemyStateManager
 
         currentState.UpdateState(this);
 
+        // Animation clips incrementally drift the FBX child node's local Y.
+        // Clamping it every frame keeps the SkinnedMeshRenderer bounds accurate
+        // so Unity's frustum culling never incorrectly hides the boss.
+        if (animator != null && animator.transform != transform)
+        {
+            Vector3 local = animator.transform.localPosition;
+            if (local.y != 0f)
+            {
+                local.y = 0f;
+                animator.transform.localPosition = local;
+            }
+        }
+
         // Hard safety net — teleport back if the boss somehow leaves the map
         EnforceBounds();
     }

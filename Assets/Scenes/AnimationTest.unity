@@ -11027,7 +11027,7 @@ MonoBehaviour:
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
   boss3: {fileID: 1790749897}
-  startingBoss: 1
+  startingBoss: 2
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss3Name: Ceaseless Watcher
