@@ -31,10 +31,14 @@ public class Boss2MiniComputer : MonoBehaviour
     private float      _hitCooldown = 0f;
     private GameObject _activeDestroyEffect;
     private Transform  _player;
+    private boss2ScreenAnimator _screenAnimator;
+    private Animator _animator;
 
     void Awake()
     {
         _currentHealth = maxHealth;
+        _screenAnimator = GetComponent<boss2ScreenAnimator>();
+        _animator = GetComponent<Animator>();
     }
 
     void Start()
@@ -94,7 +98,14 @@ public class Boss2MiniComputer : MonoBehaviour
         _currentHealth -= amount;
         Debug.Log($"[MiniComputer] '{gameObject.name}' hit for {amount:F1}, health={_currentHealth:F1}");
         if (_currentHealth <= 0f)
+        {
             Die();
+        }
+        else
+        {
+            _animator.SetTrigger("Hurt");
+            _screenAnimator.ShowHurtScreen(0.2f);
+        }
     }
 
     public void Revive()
@@ -116,6 +127,8 @@ public class Boss2MiniComputer : MonoBehaviour
     void Die()
     {
         _dead = true;
+
+        _animator.SetBool("Destroyed", true);
 
         if (destroyEffect != null)
             _activeDestroyEffect = Instantiate(destroyEffect, transform.position, Quaternion.identity);
