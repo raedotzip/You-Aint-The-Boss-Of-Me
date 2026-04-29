@@ -25,7 +25,7 @@ public class Boss2MiniComputer : MonoBehaviour
     [Tooltip("How quickly the rack turns to face the player (higher = snappier)")]
     public float lookAtSpeed = 3f;
 
-    private float      _currentHealth;
+    public float currentHealth;
     private bool       _dead = false;
     private Sword      _sword;
     private float      _hitCooldown = 0f;
