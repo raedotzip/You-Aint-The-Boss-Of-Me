@@ -60,7 +60,7 @@ public class boss2ScreenAnimator : MonoBehaviour
     void NextScreen() {
         col = 2 - (int)Mathf.Min(2, boss2.currentHealth / thirdHealth);
         row = (int)Random.Range(0, 4);
-        //Debug.Log($"{col}, {row}");
+        Debug.Log($"{col}, {row}");
     }
 
     public void ShowHurtScreen(float duration)
