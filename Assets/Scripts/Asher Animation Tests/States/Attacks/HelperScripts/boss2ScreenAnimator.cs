@@ -21,6 +21,7 @@ public class boss2ScreenAnimator : MonoBehaviour
     private float maxHealth;
     private float thirdHealth;
     public Boss2StateManager boss2;
+    MaterialPropertyBlock block;
 
     void Start()
     {
@@ -28,7 +29,8 @@ public class boss2ScreenAnimator : MonoBehaviour
         yOffsetUnit = 1f / rows;
         rend = GetComponentInChildren<Renderer>();
         Material[] materials = rend.sharedMaterials;
-        targetMat = materials[0];
+        targetMat = System.Array.Find(materials, m => m.name.Contains("MonitorImages"));
+        Debug.Log(materials);
         Debug.Log(targetMat);
         targetMat.SetTextureOffset("_Albedo", new Vector2(0, 0));
         col = 1;
@@ -36,12 +38,19 @@ public class boss2ScreenAnimator : MonoBehaviour
         // boss2 = GetComponent<Boss2MiniComputer>();
         maxHealth = boss2.maxHealth;
         thirdHealth = (maxHealth / 3) + 0.1f;
+        block = new MaterialPropertyBlock();
     }
 
     void Update()
     {
         Vector2 offset = new Vector2(col * xOffsetUnit, -row * yOffsetUnit);
-        targetMat.SetTextureOffset("_Albedo", offset);
+
+        if (block == null)
+            block = new MaterialPropertyBlock();
+
+        rend.GetPropertyBlock(block);
+        block.SetVector("_Albedo_ST", new Vector4(1, 1, offset.x, offset.y));
+        rend.SetPropertyBlock(block);
     }
 
     IEnumerator CycleScreens()

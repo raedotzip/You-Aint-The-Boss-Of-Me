@@ -26,11 +26,7 @@ Material:
     - _Albedo:
         m_Texture: {fileID: 2800000, guid: c841c8ee3b51519449dd1ac908aca75b, type: 3}
         m_Scale: {x: 1, y: 1}
-<<<<<<< HEAD
-        m_Offset: {x: 0.33333334, y: -0.4}
-=======
-        m_Offset: {x: 0.6666667, y: 0}
->>>>>>> bbab7a76a5acc84d620a70ec950c74c937f881c8
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}

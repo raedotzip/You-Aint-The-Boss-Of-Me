@@ -20797,7 +20797,6 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
-<<<<<<< HEAD
 --- !u!82 &1875370452
 AudioSource:
   m_ObjectHideFlags: 0
@@ -20894,9 +20893,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-=======
   boss2: {fileID: 1875370447}
->>>>>>> bbab7a76a5acc84d620a70ec950c74c937f881c8
 --- !u!1 &1883348956 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7470782734314634954, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
