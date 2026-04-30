@@ -6642,6 +6642,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5594425540210165303, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
+--- !u!114 &929580092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929580084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c1f04e580d636e4abda57023042a082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  columns: 3
+  rows: 5
+  fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1 &929735805 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2534917740356252589, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -10655,6 +10671,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8647421899221952697, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
+--- !u!114 &1412415603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1412415595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c1f04e580d636e4abda57023042a082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  columns: 3
+  rows: 5
+  fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!1001 &1412676425
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18825,6 +18857,22 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6215030366402891996, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
+--- !u!114 &1803536565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803536557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c1f04e580d636e4abda57023042a082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  columns: 3
+  rows: 5
+  fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!64 &1803739396
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -20409,12 +20457,21 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -5295158526840547457, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1412415599}
+    - targetCorrespondingSourceObject: {fileID: -5295158526840547457, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1412415603}
     - targetCorrespondingSourceObject: {fileID: -5599569792375045623, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1803536561}
+    - targetCorrespondingSourceObject: {fileID: -5599569792375045623, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1803536565}
     - targetCorrespondingSourceObject: {fileID: -2243777093874816799, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 929580088}
+    - targetCorrespondingSourceObject: {fileID: -2243777093874816799, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 929580092}
     - targetCorrespondingSourceObject: {fileID: -5495550547418501619, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1581333262}
@@ -20789,7 +20846,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1875370445}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3c1f04e580d636e4abda57023042a082, type: 3}
   m_Name: 
@@ -20797,6 +20854,7 @@ MonoBehaviour:
   columns: 3
   rows: 5
   fps: 10
+  boss2: {fileID: 1875370447}
 --- !u!82 &1875370452
 AudioSource:
   m_ObjectHideFlags: 0
@@ -20893,7 +20951,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  boss2: {fileID: 1875370447}
 --- !u!1 &1883348956 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7470782734314634954, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
