@@ -8,10 +8,10 @@ public class Boss1JumpBackMovement : EnemyBaseState
     private float journeyTime = 0.8f;
     private float elapsedTime = 0f;
 
-    private float jumpHeight  = 3f;
+    private float jumpHeight  = 4f;
     public AnimationCurve jumpCurve;
 
-    public float jumpDistance = 6f;
+    public float jumpDistance = 15f;
 
     private bool hasTransitioned = false;
 
@@ -35,7 +35,10 @@ public class Boss1JumpBackMovement : EnemyBaseState
         }
 
         targetPosition   = startPosition + awayDir * jumpDistance;
+        Debug.Log($"{targetPosition}");
+        Debug.Log($"{jumpDistance}");
         targetPosition   = ((Boss1StateManager)state).ClampLandingPosition(targetPosition, startPosition);
+        Debug.Log($"{targetPosition}");
         elapsedTime      = 0f;
         hasTransitioned = false;
         ((Boss1StateManager)state).isAirborne = true;

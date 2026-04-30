@@ -32,7 +32,6 @@ public class boss2ScreenAnimator : MonoBehaviour
         Debug.Log(targetMat);
         targetMat.SetTextureOffset("_Albedo", new Vector2(0, 0));
         col = 1;
-        Debug.Log("ON");
         cycleRoutine = StartCoroutine(CycleScreens());
         // boss2 = GetComponent<Boss2MiniComputer>();
         maxHealth = boss2.maxHealth;
@@ -60,7 +59,7 @@ public class boss2ScreenAnimator : MonoBehaviour
     void NextScreen() {
         col = 2 - (int)(boss2.health / thirdHealth);
         row = (int)Random.Range(0, 4);
-        Debug.Log($"{boss2.health}, {thirdHealth}, {col}");
+        //Debug.Log($"{boss2.health}, {thirdHealth}, {col}");
     }
 
     public void ShowHurtScreen(float duration)

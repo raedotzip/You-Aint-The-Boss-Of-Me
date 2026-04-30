@@ -276,7 +276,7 @@ public class Boss1StateManager : EnemyStateManager
     public override void Update()
     {
         if (currentState == null) return;
-
+        //Debug.Log($"Pos:{transform.position}, Current State: {currentState}");
         if (smoothLookAtEnabled && player != null)
         {
             Vector3 toPlayer = player.position - transform.position;
@@ -526,6 +526,7 @@ public class Boss1StateManager : EnemyStateManager
     // and pulls back from the lava pit.
     public Vector3 ClampLandingPosition(Vector3 proposed, Vector3 jumpFrom)
     {
+        return new Vector3(Mathf.Clamp(proposed.x, -10, 11), 0f, Mathf.Clamp(proposed.z, -7, 11));
         proposed.y = 0f;
         jumpFrom.y = 0f;
 
