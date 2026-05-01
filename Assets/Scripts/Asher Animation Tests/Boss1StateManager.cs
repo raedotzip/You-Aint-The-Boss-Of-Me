@@ -211,6 +211,16 @@ public class Boss1StateManager : EnemyStateManager
     }
 
     // ===============================
+    // STOPWATCH
+    // ===============================
+    [Header("Boss Timer")]
+    public float bossTimer = 0f;
+    private bool _timerRunning = false;
+    private bool _timerStarted = false;
+
+
+
+    // ===============================
     // SCALE
     // ===============================
     [Header("Boss Scale")]
@@ -233,6 +243,7 @@ public class Boss1StateManager : EnemyStateManager
     [HideInInspector] public float health        = 100f;
     [HideInInspector] public float maxHealth     = 100f;
     public HealthBarUI bossHealthBar;
+    public BossTimerUI bossTimerUI;
 
     // True once health hits 0 — prevents re-triggering the finisher
     private bool _finisherTriggered = false;
@@ -299,6 +310,9 @@ public class Boss1StateManager : EnemyStateManager
 
     public override void Update()
     {
+        if (_timerRunning)
+            bossTimer += Time.deltaTime;
+
         if (currentState == null) return;
         //Debug.Log($"Pos:{transform.position}, Current State: {currentState}");
         if (smoothLookAtEnabled && player != null)
@@ -434,6 +448,11 @@ public class Boss1StateManager : EnemyStateManager
         if (health <= 0f)
         {
             _finisherTriggered = true;
+
+            Debug.Log($"[Boss1] Fight completed in {bossTimer:F2} seconds");
+
+            bossTimerUI?.SetTime(bossTimer);
+
             SwitchState(lavaFinisherState);
         }
     }
@@ -443,6 +462,16 @@ public class Boss1StateManager : EnemyStateManager
     // ===============================
     public void TransitionToNextState()
     {
+        if (!_timerStarted)
+        {
+            _timerStarted = true;
+            _timerRunning = true;
+            bossTimer = 0f;
+
+            bossTimerUI?.StartTimer();
+            Debug.Log("[Boss1] Stopwatch started on first attack.");
+        }
+
         int tiredThreshold = IsEnraged ? attacksBeforeTiredEnraged : attacksBeforeTired;
         if (attackCounter >= tiredThreshold)
         {
