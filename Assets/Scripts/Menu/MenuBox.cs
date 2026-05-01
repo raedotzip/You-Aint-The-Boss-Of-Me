@@ -12,7 +12,7 @@ public class MenuBox : MonoBehaviour
     [Tooltip("Text shown on the front face — auto-created as a child TextMesh")]
     public string label = "Option";
     public Color  labelColor = Color.white;
-    public float  labelSize  = 0.12f; // world-space character height
+    public float  labelSize  = 0.02f; // world-space character height
 
     [Header("Slice Settings")]
     [Tooltip("Sphere radius around box center that counts as hovering")]
@@ -79,7 +79,7 @@ public class MenuBox : MonoBehaviour
         // Undo the parent's lossyScale so 1 TextMesh unit == 1 world meter, then we
         // set characterSize below to hit the desired world-space height.
         Vector3 ws = transform.lossyScale;
-        go.transform.localScale = new Vector3(1f / ws.x, 1f / ws.y, 1f / ws.z);
+        go.transform.localScale = Vector3.one;
 
         TextMesh tm = go.GetComponent<TextMesh>();
         if (tm == null) tm = go.AddComponent<TextMesh>();
@@ -98,7 +98,11 @@ public class MenuBox : MonoBehaviour
         // Estimate character aspect ~0.6 wide per unit tall for the default font
         float heightFit = worldHeight * 0.65f;
         float widthFit  = worldWidth  * 0.85f / (charCount * 0.55f);
-        tm.characterSize = Mathf.Min(heightFit, widthFit);
+        tm.characterSize = Mathf.Clamp(
+        Mathf.Min(heightFit, widthFit),
+        0.01f,
+        0.05f
+        );
     }
 
     void Update()
