@@ -40,9 +40,13 @@ public class BossManager : MonoBehaviour
     [Tooltip("Boss 2's bar is hidden until mini computers are destroyed — leave false")]
     public bool boss2ShowsBarImmediately = false;
 
-    private int _activeBossIndex = 0;
+    private int  _activeBossIndex  = 0;
+    private bool _boss1Defeated;
+    private bool _boss2Defeated;
+    private bool _boss3Defeated;
 
-    public int StartingBoss => startingBoss;
+    public int StartingBoss    => startingBoss;
+    public int ActiveBossIndex => _activeBossIndex;
 
     // ===============================
     // UNITY
@@ -137,6 +141,32 @@ public class BossManager : MonoBehaviour
         if (_activeBossIndex == 2) return boss2;
         if (_activeBossIndex == 3) return boss3;
         return null;
+    }
+
+    public void MarkBossDefeated(int bossIndex)
+    {
+        if (bossIndex == 1) _boss1Defeated = true;
+        if (bossIndex == 2) _boss2Defeated = true;
+        if (bossIndex == 3) _boss3Defeated = true;
+    }
+
+    public bool IsBossDefeated(int bossIndex)
+    {
+        if (bossIndex == 1) return _boss1Defeated;
+        if (bossIndex == 2) return _boss2Defeated;
+        if (bossIndex == 3) return _boss3Defeated;
+        return false;
+    }
+
+    // Resets defeated flags and arena triggers — call when the player returns to the menu.
+    public void ResetRun()
+    {
+        _boss1Defeated = false;
+        _boss2Defeated = false;
+        _boss3Defeated = false;
+
+        foreach (var trigger in FindObjectsOfType<BossArenaTrigger>())
+            trigger.ResetTrigger();
     }
 
     // Routes parried bullet damage to whichever boss is active

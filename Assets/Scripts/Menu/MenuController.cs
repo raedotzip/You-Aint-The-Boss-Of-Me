@@ -84,6 +84,7 @@ public class MenuController : MonoBehaviour
     // if the next boss's spawn point isn't assigned (arena not yet built).
     public void AdvanceToNextBoss(int completedBossIndex)
     {
+        BossManager.Instance?.MarkBossDefeated(completedBossIndex);
         int nextBoss = completedBossIndex + 1;
         if (nextBoss <= 3 && BossSpawnPoint(nextBoss) != null)
             StartCoroutine(FadeAndStartBoss(nextBoss));
@@ -98,9 +99,9 @@ public class MenuController : MonoBehaviour
         yield return new WaitForSeconds(fadeDuration);
 
         SetMenuVisible(false);
+        BossManager.Instance?.SetActiveBoss(0);   // deactivate previous boss; next boss starts via arena trigger
         TeleportPlayer(BossSpawnPoint(bossIndex));
-        HUDManager.Instance?.ShowHUD(true);
-        BossManager.Instance?.SetActiveBoss(bossIndex);
+        HUDManager.Instance?.ShowHUD(true);       // player bar + timer visible; boss bar stays hidden until arena entry
 
         SteamVR_Fade.View(Color.clear, fadeDuration);
     }
@@ -111,6 +112,7 @@ public class MenuController : MonoBehaviour
         yield return new WaitForSeconds(fadeDuration);
 
         BossManager.Instance?.SetActiveBoss(0);
+        BossManager.Instance?.ResetRun();          // clears defeated flags and resets arena triggers
         HUDManager.Instance?.ShowHUD(false);
         SetMenuVisible(true);
         TeleportPlayer(menuSpawnPoint);
