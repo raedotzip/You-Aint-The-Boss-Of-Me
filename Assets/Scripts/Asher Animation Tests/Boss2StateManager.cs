@@ -165,6 +165,11 @@ public class Boss2StateManager : EnemyStateManager
         health = maxHealth;
     }
 
+    void OnDisable()
+    {
+        _isActive = false;
+    }
+
     public override void Start()
     {
         _miniComputersRemaining = miniComputersTotal;

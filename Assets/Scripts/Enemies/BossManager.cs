@@ -51,13 +51,13 @@ public class BossManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        // Disable bosses in Awake so they are off before their own Start() can run.
+        SetBossActive(boss1, false);
+        SetBossActive(boss2, false);
     }
 
     void Start()
     {
-        SetBossActive(boss1, false);
-        SetBossActive(boss2, false);
-
         if (HUDManager.Instance != null)
             HUDManager.Instance.ShowBossBar(false);
 
