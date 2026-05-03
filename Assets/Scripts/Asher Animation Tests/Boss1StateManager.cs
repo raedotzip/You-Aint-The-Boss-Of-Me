@@ -580,51 +580,6 @@ public class Boss1StateManager : EnemyStateManager
     public Vector3 ClampLandingPosition(Vector3 proposed, Vector3 jumpFrom)
     {
         return new Vector3(Mathf.Clamp(proposed.x, -10, 11), 0f, Mathf.Clamp(proposed.z, -7, 11));
-        proposed.y = 0f;
-        jumpFrom.y = 0f;
-
-        Vector3 dir  = proposed - jumpFrom;
-        float   dist = dir.magnitude;
-
-        if (dist > 0.01f)
-        {
-            Vector3 normDir = dir / dist;
-            Vector3 origin  = jumpFrom + Vector3.up * bossCheckHeight;
-
-            // Stop just before any wall between jump start and intended landing
-            if (Physics.SphereCast(origin, bossRadius, normDir, out RaycastHit hit,
-                                   dist, wallLayer, QueryTriggerInteraction.Ignore))
-            {
-                float safeDist = Mathf.Max(0f, hit.distance - bossRadius - wallSafetyMargin);
-                proposed       = jumpFrom + normDir * safeDist;
-                proposed.y     = 0f;
-            }
-        }
-
-        // Pull back from rectangular lava pit
-        if (_pitCollider != null && IsInPit(proposed, pitSafetyMargin))
-        {
-            Vector3 center   = _pitCollider.center;
-            Vector3 halfSize = _pitCollider.size * 0.5f;
-            float   hw       = halfSize.x + pitSafetyMargin;
-            float   hd       = halfSize.z + pitSafetyMargin;
-
-            Vector3 localFrom     = lavaPitCenter.InverseTransformPoint(jumpFrom);
-            Vector3 localProposed = lavaPitCenter.InverseTransformPoint(proposed);
-
-            float overlapX = hw - Mathf.Abs(localFrom.x - center.x);
-            float overlapZ = hd - Mathf.Abs(localFrom.z - center.z);
-
-            if (overlapX < overlapZ)
-                localProposed.x = center.x + Mathf.Sign(localFrom.x - center.x) * hw;
-            else
-                localProposed.z = center.z + Mathf.Sign(localFrom.z - center.z) * hd;
-
-            proposed   = lavaPitCenter.TransformPoint(localProposed);
-            proposed.y = 0f;
-        }
-
-        return proposed;
     }
 
     // Legacy — kept so any remaining callers still compile

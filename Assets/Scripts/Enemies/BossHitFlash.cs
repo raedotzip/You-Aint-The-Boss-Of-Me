@@ -16,41 +16,27 @@ public class BossHitFlash : MonoBehaviour
     [Tooltip("Damage value that maps to maxFlashStrength. Hits above this are capped.")]
     [SerializeField] private float referenceDamage  = 25f;
 
-    // Shader property IDs — cached so string lookups happen once
-    private static readonly int ColorID        = Shader.PropertyToID("_Color");
-    private static readonly int BaseColorID    = Shader.PropertyToID("_BaseColor");
-    private static readonly int EmissionColorID = Shader.PropertyToID("_EmissionColor");
-
     private Renderer[]            _renderers;
     private MaterialPropertyBlock _mpb;
-    private Color[]               _originalColors;
     private Coroutine             _flashRoutine;
+
+    private static readonly int TintID = Shader.PropertyToID("_Tint");
+    private static readonly int WhitenessID = Shader.PropertyToID("_Whiteness");
 
     void Awake()
     {
-        _renderers      = GetComponentsInChildren<Renderer>(true);
-        _mpb            = new MaterialPropertyBlock();
-        _originalColors = new Color[_renderers.Length];
-
-        for (int i = 0; i < _renderers.Length; i++)
-        {
-            Material m = _renderers[i].sharedMaterial;
-            if (m == null) { _originalColors[i] = Color.white; continue; }
-
-            // Read the base colour from whichever property this shader exposes
-            if      (m.HasProperty(ColorID))     _originalColors[i] = m.GetColor(ColorID);
-            else if (m.HasProperty(BaseColorID)) _originalColors[i] = m.GetColor(BaseColorID);
-            else                                  _originalColors[i] = Color.white;
-        }
+        _renderers = GetComponentsInChildren<Renderer>(true);
+        _mpb = new MaterialPropertyBlock();
     }
 
-    // damage — the raw damage value of the hit; drives how white the flash appears
     public void Flash(float damage)
     {
-        float t        = Mathf.Clamp01(damage / referenceDamage);
+        float t = Mathf.Clamp01(damage / referenceDamage);
         float strength = Mathf.Lerp(minFlashStrength, maxFlashStrength, t);
 
-        if (_flashRoutine != null) StopCoroutine(_flashRoutine);
+        if (_flashRoutine != null)
+            StopCoroutine(_flashRoutine);
+
         _flashRoutine = StartCoroutine(DoFlash(strength));
     }
 
@@ -61,28 +47,31 @@ public class BossHitFlash : MonoBehaviour
         while (elapsed < flashDuration)
         {
             elapsed += Time.deltaTime;
-            // Ease out: full flash immediately, then fade back to original
+
+            // Ease out
             float strength = Mathf.Lerp(peakStrength, 0f, elapsed / flashDuration);
 
-            for (int i = 0; i < _renderers.Length; i++)
+            foreach (var r in _renderers)
             {
-                if (_renderers[i] == null) continue;
-                Color c = Color.Lerp(_originalColors[i], Color.white, strength);
-                _renderers[i].GetPropertyBlock(_mpb);
-                _mpb.SetColor(ColorID,         c);                          // Standard
-                _mpb.SetColor(BaseColorID,     c);                          // URP Lit
-                _mpb.SetColor(EmissionColorID, Color.white * strength * 2f); // emissive glow
-                _renderers[i].SetPropertyBlock(_mpb);
+                if (r == null) continue;
+
+                r.GetPropertyBlock(_mpb);
+
+                _mpb.SetColor(TintID, Color.white);     // force white tint
+                _mpb.SetFloat(WhitenessID, strength);   // control blend
+
+                r.SetPropertyBlock(_mpb);
             }
 
             yield return null;
         }
 
-        // Clear property block so originals are fully restored
+        // Reset
         _mpb.Clear();
         foreach (var r in _renderers)
         {
-            if (r != null) r.SetPropertyBlock(_mpb);
+            if (r != null)
+                r.SetPropertyBlock(_mpb);
         }
 
         _flashRoutine = null;
