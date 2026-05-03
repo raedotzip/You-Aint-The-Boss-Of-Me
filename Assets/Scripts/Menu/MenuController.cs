@@ -16,6 +16,8 @@ public class MenuController : MonoBehaviour
     [Header("Spawn Points")]
     [Tooltip("Where the player stands inside the menu sphere")]
     public Transform menuSpawnPoint;
+    [Tooltip("Where the player spawns in the lab")]
+    public Transform labSpawnPoint;
     [Tooltip("Where the player spawns for Boss 1")]
     public Transform boss1SpawnPoint;
     [Tooltip("Where the player spawns for Boss 2")]
