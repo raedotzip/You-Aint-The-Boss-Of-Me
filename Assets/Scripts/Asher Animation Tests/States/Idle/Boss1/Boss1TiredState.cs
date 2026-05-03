@@ -22,6 +22,7 @@ public class Boss1TiredState : EnemyBaseState
         tiredDuration = boss.IsEnraged ? boss.tiredDurationEnraged : boss.tiredDuration;
         tiredStartPos = boss.transform.position;
         tiredDownPos = new Vector3(tiredStartPos.x, tiredStartPos.y - 0.5f, tiredStartPos.z);
+        boss.smoothLookAtEnabled = false;
 
     state.animator.SetBool("Tired", true);
     }
@@ -56,6 +57,7 @@ public class Boss1TiredState : EnemyBaseState
             if (getUpTimer >= getUpDelay)
             {
                 Boss1StateManager boss = (Boss1StateManager)state;
+                boss.smoothLookAtEnabled = true;
                 boss.attackCounter = 0;
                 boss.transform.position = tiredStartPos;
                 boss.TransitionToNextState();

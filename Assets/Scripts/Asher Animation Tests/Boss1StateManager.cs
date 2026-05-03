@@ -240,8 +240,8 @@ public class Boss1StateManager : EnemyStateManager
     // RUNTIME
     // ===============================
     [HideInInspector] public int   attackCounter = 0;
-    [HideInInspector] public float health        = 100f;
-    [HideInInspector] public float maxHealth     = 100f;
+    [HideInInspector] public float health        = 200f;
+    [HideInInspector] public float maxHealth     = 200f;
     public HealthBarUI bossHealthBar;
     public BossTimerUI bossTimerUI;
 
