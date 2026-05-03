@@ -108,6 +108,11 @@ public class HUDManager : MonoBehaviour
             bossNameText.text = bossName;
     }
 
+    public void UpdateBossHealth(float current, float max)
+    {
+        bossBar?.UpdateHealthPercentage(current, max);
+    }
+
     public void StartTimer()
     {
         _elapsed  = 0f;

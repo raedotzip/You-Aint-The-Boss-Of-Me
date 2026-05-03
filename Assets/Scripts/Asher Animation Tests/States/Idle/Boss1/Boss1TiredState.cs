@@ -3,7 +3,7 @@ using UnityEngine;
 public class Boss1TiredState : EnemyBaseState
 {
     private float tiredDuration  = 3f;
-    private float getUpDelay     = 1.0f; // stand-up animation window before next attack
+    private float getUpDelay     = 0.5f; // stand-up animation window before next attack
     private float timer          = 0f;
     private float getUpTimer     = 0f;
     private Vector3 tiredStartPos;

@@ -24,15 +24,13 @@ public class BossManager : MonoBehaviour
     [Header("Boss References")]
     public Boss1StateManager boss1;
     public Boss2StateManager boss2;
-    public Boss3StateManager boss3;
 
-    [Header("Starting Boss (0 = none, 1–3 = boss index)")]
+    [Header("Starting Boss (0 = none, 1–2 = boss index)")]
     public int startingBoss = 0;
 
     [Header("Boss Names")]
     public string boss1Name = "Roe Jogan";
     public string boss2Name = "The Mainframe";
-    public string boss3Name = "The Overseer";
 
     [Header("HUD")]
     [Tooltip("Show the health bar immediately when Boss 1 becomes active")]
@@ -43,7 +41,6 @@ public class BossManager : MonoBehaviour
     private int  _activeBossIndex  = 0;
     private bool _boss1Defeated;
     private bool _boss2Defeated;
-    private bool _boss3Defeated;
 
     public int StartingBoss    => startingBoss;
     public int ActiveBossIndex => _activeBossIndex;
@@ -54,14 +51,13 @@ public class BossManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        // Disable bosses in Awake so they are off before their own Start() can run.
+        SetBossActive(boss1, false);
+        SetBossActive(boss2, false);
     }
 
     void Start()
     {
-        SetBossActive(boss1, false);
-        SetBossActive(boss2, false);
-        SetBossActive(boss3, false);
-
         if (HUDManager.Instance != null)
             HUDManager.Instance.ShowBossBar(false);
 
@@ -80,7 +76,6 @@ public class BossManager : MonoBehaviour
         // Shut down the current boss and hide the bar
         if (_activeBossIndex == 1 && boss1 != null) SetBossActive(boss1, false);
         if (_activeBossIndex == 2 && boss2 != null) SetBossActive(boss2, false);
-        if (_activeBossIndex == 3 && boss3 != null) SetBossActive(boss3, false);
 
         if (HUDManager.Instance != null)
             HUDManager.Instance.ShowBossBar(false);
@@ -120,18 +115,6 @@ public class BossManager : MonoBehaviour
                 HUDManager.Instance.ShowBossBar(true);
         }
 
-        if (bossIndex == 3 && boss3 != null)
-        {
-            if (HUDManager.Instance != null)
-            {
-                boss3.bossHealthBar = HUDManager.Instance.bossBar;
-                boss3.bossHealthBar?.UpdateHealthPercentage(boss3.health, boss3.maxHealth);
-                HUDManager.Instance.SetBossName(boss3Name);
-            }
-
-            SetBossActive(boss3, true);
-            HUDManager.Instance?.ShowBossBar(true);
-        }
     }
 
     // Returns the active boss — used by BulletManager for parry damage targeting
@@ -139,7 +122,6 @@ public class BossManager : MonoBehaviour
     {
         if (_activeBossIndex == 1) return boss1;
         if (_activeBossIndex == 2) return boss2;
-        if (_activeBossIndex == 3) return boss3;
         return null;
     }
 
@@ -147,14 +129,12 @@ public class BossManager : MonoBehaviour
     {
         if (bossIndex == 1) _boss1Defeated = true;
         if (bossIndex == 2) _boss2Defeated = true;
-        if (bossIndex == 3) _boss3Defeated = true;
     }
 
     public bool IsBossDefeated(int bossIndex)
     {
         if (bossIndex == 1) return _boss1Defeated;
         if (bossIndex == 2) return _boss2Defeated;
-        if (bossIndex == 3) return _boss3Defeated;
         return false;
     }
 
@@ -163,7 +143,6 @@ public class BossManager : MonoBehaviour
     {
         _boss1Defeated = false;
         _boss2Defeated = false;
-        _boss3Defeated = false;
 
         foreach (var trigger in FindObjectsOfType<BossArenaTrigger>())
             trigger.ResetTrigger();
@@ -174,7 +153,6 @@ public class BossManager : MonoBehaviour
     {
         if (_activeBossIndex == 1 && boss1 != null) boss1.TakeDamage(amount);
         if (_activeBossIndex == 2 && boss2 != null) boss2.TakeDamage(amount);
-        if (_activeBossIndex == 3 && boss3 != null) boss3.TakeDamage(amount);
     }
 
     // ===============================
