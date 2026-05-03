@@ -115,17 +115,35 @@ public class Boss3StateManager : EnemyStateManager
     // ===============================
     [HideInInspector] public int   attackCounter = 0;
     [HideInInspector] public float health        = 150f;
-    [HideInInspector] public float maxHealth     = 150f;
+
+    [Header("Health")]
+    public float maxHealth = 150f;
     public HealthBarUI bossHealthBar;
+
+    [Header("Boss Info")]
+    public string bossDisplayName = "Boss 3";
 
     private Sword  _sword;
     private float  _hitCooldown;
     private float  _bobTimer;
     private float  _passiveFireTimer;
 
+    void OnValidate()
+    {
+        health = maxHealth;
+    }
+
     public override void Start()
     {
         health   = maxHealth;
+
+        if (HUDManager.Instance != null)
+        {
+            HUDManager.Instance.ShowBossBar(true);
+            HUDManager.Instance.SetBossName(bossDisplayName);
+            HUDManager.Instance.UpdateBossHealth(health, maxHealth);
+        }
+
         animator = GetComponent<Animator>();
         rb       = GetComponent<Rigidbody>();
 
@@ -268,6 +286,7 @@ public class Boss3StateManager : EnemyStateManager
         TriggerHitFlash(amount);
         health = Mathf.Max(0f, health - amount);
         bossHealthBar?.UpdateHealthPercentage(health, maxHealth);
+        HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
 
         if (health <= 0f)
         {

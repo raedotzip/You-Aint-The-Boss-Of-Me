@@ -4030,10 +4030,11 @@ MonoBehaviour:
   lookAtSpeed: 5
   smoothLookAtEnabled: 1
   attackCounter: 0
-  health: 100
-  maxHealth: 100
+  health: 200
+  maxHealth: 200
   bossHealthBar: {fileID: 952059220}
   bossTimerUI: {fileID: 0}
+  bossDisplayName: Boss 1
   isAirborne: 0
 --- !u!1 &397862654
 GameObject:
@@ -21186,6 +21187,7 @@ MonoBehaviour:
   health: 150
   maxHealth: 150
   bossHealthBar: {fileID: 952059220}
+  bossDisplayName: Boss 3
 --- !u!135 &1790749898
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -23238,6 +23240,7 @@ MonoBehaviour:
   health: 100
   maxHealth: 100
   bossHealthBar: {fileID: 952059220}
+  bossDisplayName: Boss 2
   hitRadius: 0.6
   minSwordSpeed: 0.8
   audioSource: {fileID: 1875370452}

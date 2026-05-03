@@ -241,9 +241,19 @@ public class Boss1StateManager : EnemyStateManager
     // ===============================
     [HideInInspector] public int   attackCounter = 0;
     [HideInInspector] public float health        = 100f;
-    [HideInInspector] public float maxHealth     = 100f;
+
+    [Header("Health")]
+    public float maxHealth = 100f;
     public HealthBarUI bossHealthBar;
     public BossTimerUI bossTimerUI;
+
+    [Header("Boss Info")]
+    public string bossDisplayName = "Boss 1";
+
+    void OnValidate()
+    {
+        health = maxHealth;
+    }
 
     // True once health hits 0 — prevents re-triggering the finisher
     private bool _finisherTriggered = false;
@@ -263,6 +273,14 @@ public class Boss1StateManager : EnemyStateManager
     public override void Start()
     {
         health = maxHealth;
+
+        if (HUDManager.Instance != null)
+        {
+            HUDManager.Instance.ShowBossBar(true);
+            HUDManager.Instance.SetBossName(bossDisplayName);
+            HUDManager.Instance.UpdateBossHealth(health, maxHealth);
+        }
+
         animator = GetComponent<Animator>() ?? GetComponentInChildren<Animator>();
 
         if (animator != null)
@@ -444,6 +462,7 @@ public class Boss1StateManager : EnemyStateManager
         health = Mathf.Max(0f, health - amount);
         if (bossHealthBar != null)
             bossHealthBar.UpdateHealthPercentage(health, maxHealth);
+        HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
 
         if (health <= 0f)
         {
