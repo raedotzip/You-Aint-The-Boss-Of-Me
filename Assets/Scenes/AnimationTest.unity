@@ -1488,6 +1488,7 @@ Transform:
   - {fileID: 654216634}
   - {fileID: 1161523262}
   - {fileID: 1348501719}
+  - {fileID: 751715077}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &142728738 stripped
@@ -4015,11 +4016,11 @@ MonoBehaviour:
   attacksBeforeTiredEnraged: 14
   tiredDurationEnraged: 0.8
   audioSource: {fileID: 2073485679}
-  jumpSlamImpactClip: {fileID: 8300000, guid: 633ef7ed447959c4b9b34971d144ab6f, type: 3}
-  spinClip: {fileID: 8300000, guid: e4a4d60dad83e6b48aad9365c02f2500, type: 3}
-  punchClip: {fileID: 8300000, guid: 5bb31393f86483e4ebaaca08dfc4d9b2, type: 3}
-  chargeClip: {fileID: 8300000, guid: df2070df23f236e43bd21a8d8e0f2c32, type: 3}
-  landClip: {fileID: 8300000, guid: 756384eda21a30b468e93b6b13ba885d, type: 3}
+  jumpSlamImpactClip: {fileID: 8300000, guid: 87988e3a15f5fb54f97205137f9528c4, type: 3}
+  spinClip: {fileID: 8300000, guid: 5d48f284eaab7f4488d640acb0fad5ef, type: 3}
+  punchClip: {fileID: 8300000, guid: 53ef1dc9702038b47bf21b50f28b67aa, type: 3}
+  chargeClip: {fileID: 8300000, guid: 03532780af9176645ac5427e69e74e88, type: 3}
+  landClip: {fileID: 8300000, guid: 1825ad9268c403d47b0873c2edda96d3, type: 3}
   sfxVolume: 2
   bossTimer: 0
   bossScale: 1.8
@@ -6126,6 +6127,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 672243617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &751715077 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 508e0db83df7a2645aaa2b444b3c2a45, type: 3}
+  m_PrefabInstance: {fileID: 1535431486}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &754478944 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1561477657786016408, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -9223,6 +9229,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5471030500579814732, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 449859193}
+    - targetCorrespondingSourceObject: {fileID: 305349573468226664, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1513767521}
     - targetCorrespondingSourceObject: {fileID: 838974720865997422, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1856132141}
@@ -12809,7 +12818,7 @@ MonoBehaviour:
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
   boss3: {fileID: 1790749897}
-  startingBoss: 0
+  startingBoss: 1
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss3Name: Ceaseless Watcher
@@ -13742,6 +13751,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 302271964}
   m_LocalEulerAnglesHint: {x: 66.053, y: -122.76, z: -66.651}
+--- !u!1 &1513767519 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 305349573468226664, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+  m_PrefabInstance: {fileID: 1070997891}
+  m_PrefabAsset: {fileID: 0}
+--- !u!81 &1513767521
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513767519}
+  m_Enabled: 1
 --- !u!1 &1514481018 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8029554375640195518, guid: c03f58dab0efa1649bae9045e2495962, type: 3}
@@ -14978,19 +15000,19 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 142566567}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 508e0db83df7a2645aaa2b444b3c2a45, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.16
+      value: -90.89081
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 508e0db83df7a2645aaa2b444b3c2a45, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.1
+      value: -6.0865593
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 508e0db83df7a2645aaa2b444b3c2a45, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.7005143
+      value: 6.3372765
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 508e0db83df7a2645aaa2b444b3c2a45, type: 3}
       propertyPath: m_LocalRotation.w
@@ -14998,15 +15020,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 508e0db83df7a2645aaa2b444b3c2a45, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 508e0db83df7a2645aaa2b444b3c2a45, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 508e0db83df7a2645aaa2b444b3c2a45, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 508e0db83df7a2645aaa2b444b3c2a45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -25917,5 +25939,4 @@ SceneRoots:
   - {fileID: 142566567}
   - {fileID: 302271964}
   - {fileID: 846294646}
-  - {fileID: 1535431486}
   - {fileID: 1806056435}
