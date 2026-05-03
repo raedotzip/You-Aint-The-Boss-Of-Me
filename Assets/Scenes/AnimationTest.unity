@@ -3999,32 +3999,29 @@ MonoBehaviour:
   lavaFallDepth: -15
   closeWeight_Punch: 3
   closeWeight_JumpSlam: 3
-  closeWeight_Spin: 2
-  closeWeight_Charge: 10
+  closeWeight_Spin: 7
+  closeWeight_Charge: 5
   closeWeight_TargetedBurst: 2
   closeWeight_RingGap: 1
   midWeight_Charge: 10
   midWeight_JumpSlam: 6
-  midWeight_Spin: 2
+  midWeight_Spin: 5
   midWeight_SpiralBurst: 2
   midWeight_TargetedBurst: 2
   midWeight_RingGap: 10
-  farWeight_Charge: 10
+  farWeight_Charge: 5
   farWeight_JumpSlam: 4
   farWeight_SpiralBurst: 3
   farWeight_TargetedBurst: 3
-  farWeight_RingGap: 10
+  farWeight_RingGap: 8
   attacksBeforeTired: 4
   tiredDuration: 4.92
   attacksBeforeTiredEnraged: 14
   tiredDurationEnraged: 0.8
   audioSource: {fileID: 2073485679}
-  jumpSlamImpactClip: {fileID: 8300000, guid: 87988e3a15f5fb54f97205137f9528c4, type: 3}
-  spinClip: {fileID: 8300000, guid: 5d48f284eaab7f4488d640acb0fad5ef, type: 3}
-  punchClip: {fileID: 8300000, guid: 53ef1dc9702038b47bf21b50f28b67aa, type: 3}
-  chargeClip: {fileID: 8300000, guid: 03532780af9176645ac5427e69e74e88, type: 3}
-  landClip: {fileID: 8300000, guid: 1825ad9268c403d47b0873c2edda96d3, type: 3}
-  sfxVolume: 2
+  sfxVolume: 0.6
+  spinStartClip: {fileID: 8300000, guid: c860c8928957e284cb50919d13bac365, type: 3}
+  slamClip: {fileID: 8300000, guid: 6961b7d05ea70d449888ca59486d482c, type: 3}
   bossTimer: 0
   bossScale: 1.8
   lookAtSpeed: 5
