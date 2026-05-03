@@ -247,8 +247,6 @@ public class Boss1StateManager : EnemyStateManager
     public HealthBarUI bossHealthBar;
     public BossTimerUI bossTimerUI;
 
-    [Header("Boss Info")]
-    public string bossDisplayName = "Boss 1";
 
     void OnValidate()
     {
@@ -277,7 +275,6 @@ public class Boss1StateManager : EnemyStateManager
         if (HUDManager.Instance != null)
         {
             HUDManager.Instance.ShowBossBar(true);
-            HUDManager.Instance.SetBossName(bossDisplayName);
             HUDManager.Instance.UpdateBossHealth(health, maxHealth);
         }
 

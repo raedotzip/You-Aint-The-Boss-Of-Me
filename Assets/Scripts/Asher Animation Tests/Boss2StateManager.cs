@@ -152,8 +152,6 @@ public class Boss2StateManager : EnemyStateManager
     public float maxHealth = 300f;
     public HealthBarUI bossHealthBar;
 
-    [Header("Boss Info")]
-    public string bossDisplayName = "Boss 2";
 
     [Header("Sword Hit Detection")]
     public float hitRadius     = 0.6f;
@@ -277,7 +275,6 @@ public class Boss2StateManager : EnemyStateManager
         if (HUDManager.Instance != null)
         {
             HUDManager.Instance.ShowBossBar(true);
-            HUDManager.Instance.SetBossName(bossDisplayName);
             HUDManager.Instance.UpdateBossHealth(health, maxHealth);
         }
 
