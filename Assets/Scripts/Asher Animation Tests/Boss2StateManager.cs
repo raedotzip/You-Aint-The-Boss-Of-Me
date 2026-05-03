@@ -146,9 +146,12 @@ public class Boss2StateManager : EnemyStateManager
     // RUNTIME
     // ===============================
     [HideInInspector] public int   attackCounter = 0;
-    [HideInInspector] public float health        = 1f;
-    [HideInInspector] public float maxHealth     = 1f;
+    [HideInInspector] public float health        = 300f;
+
+    [Header("Health")]
+    public float maxHealth = 300f;
     public HealthBarUI bossHealthBar;
+
 
     [Header("Sword Hit Detection")]
     public float hitRadius     = 0.6f;
@@ -156,6 +159,16 @@ public class Boss2StateManager : EnemyStateManager
 
     private Sword _sword;
     private float _hitCooldown;
+
+    void OnValidate()
+    {
+        health = maxHealth;
+    }
+
+    void OnDisable()
+    {
+        _isActive = false;
+    }
 
     public override void Start()
     {
@@ -265,7 +278,10 @@ public class Boss2StateManager : EnemyStateManager
             bossHealthBar.UpdateHealthPercentage(health, maxHealth);
 
         if (HUDManager.Instance != null)
+        {
             HUDManager.Instance.ShowBossBar(true);
+            HUDManager.Instance.UpdateBossHealth(health, maxHealth);
+        }
 
         Debug.Log($"[Boss2] Vulnerability window {_stage + 1} open — take {maxHealth / 3f:F0} damage to trigger repair.");
     }
@@ -339,6 +355,7 @@ public class Boss2StateManager : EnemyStateManager
 
         if (bossHealthBar != null)
             bossHealthBar.UpdateHealthPercentage(health, maxHealth);
+        HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
 
         if (health <= stageFloor)
         {
@@ -352,6 +369,7 @@ public class Boss2StateManager : EnemyStateManager
                 health = 0f;
                 if (bossHealthBar != null)
                     bossHealthBar.UpdateHealthPercentage(health, maxHealth);
+                HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
                 Debug.Log("[Boss2] Main computer destroyed!");
                 HUDManager.Instance?.StopTimer();
                 MenuController.Instance?.AdvanceToNextBoss(2);

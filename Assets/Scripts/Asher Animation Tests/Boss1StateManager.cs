@@ -122,93 +122,13 @@ public class Boss1StateManager : EnemyStateManager
     [Header("Boss Audio")]
     public AudioSource audioSource;
 
-    [Header("SFX Clips")]
-    public AudioClip jumpSlamImpactClip;
-    public AudioClip spinClip;
-    public AudioClip punchClip;
-    public AudioClip chargeClip;
-    public AudioClip landClip;
-
     [Header("SFX Settings")]
     [Range(0f, 2f)]
     public float sfxVolume = 1f;
 
-    // ===============================
-    // AUDIO PLAYER
-    // ===============================
-    private void PlaySFX(AudioClip clip, string debugName)
-    {
-        if (audioSource == null)
-        {
-            Debug.LogWarning("[Boss Audio] Missing AudioSource!");
-            return;
-        }
-
-        if (clip == null)
-        {
-            Debug.LogWarning($"[Boss Audio] {debugName} clip not assigned!");
-            return;
-        }
-
-        audioSource.Stop();
-
-        audioSource.clip = clip;
-        audioSource.volume = sfxVolume;
-        audioSource.Play();
-
-        Debug.Log($"[Boss Audio] Played {debugName} (Volume: {sfxVolume})");
-    }
-
-    // ===============================
-    // SPECIFIC ATTACK SOUNDS
-    // ===============================
-    public void PlayJumpSlamImpact()
-    {
-        PlaySFX(jumpSlamImpactClip, "Jump Slam Impact");
-    }
-
-    public void PlaySpin()
-    {
-        PlaySFX(spinClip, "Spin Attack");
-    }
-
-    public void PlayPunch()
-    {
-        PlaySFX(punchClip, "Punch Attack");
-    }
-
-    public void PlayCharge()
-    {
-        PlaySFX(chargeClip, "Charge Attack");
-    }
-
-    public void PlayLand()
-    {
-        PlaySFX(landClip, "Landing Impact");
-    }
-
-    // ===============================
-    // MORE AUDIO STUFF
-    // ===============================
-    public void PlayAttackAudioForState(EnemyBaseState state)
-    {
-        if (state == jumpSlamState)
-        {
-            PlayJumpSlamImpact();
-        }
-        else if (state == chargeAttack)
-        {
-            PlayCharge();
-        }
-        else if (state == punchAttack)
-        {
-            PlayPunch();
-        }
-        else if (state == spinAttack)
-        {
-            PlaySpin();
-        }
-    }
+    [Header("SFX")]
+    public AudioClip spinStartClip;
+    public AudioClip slamClip;
 
     // ===============================
     // STOPWATCH
@@ -217,8 +137,6 @@ public class Boss1StateManager : EnemyStateManager
     public float bossTimer = 0f;
     private bool _timerRunning = false;
     private bool _timerStarted = false;
-
-
 
     // ===============================
     // SCALE
@@ -240,10 +158,18 @@ public class Boss1StateManager : EnemyStateManager
     // RUNTIME
     // ===============================
     [HideInInspector] public int   attackCounter = 0;
-    [HideInInspector] public float health        = 200f;
-    [HideInInspector] public float maxHealth     = 200f;
+    [HideInInspector] public float health        = 100f;
+
+    [Header("Health")]
+    public float maxHealth = 100f;
     public HealthBarUI bossHealthBar;
     public BossTimerUI bossTimerUI;
+
+
+    void OnValidate()
+    {
+        health = maxHealth;
+    }
 
     // True once health hits 0 — prevents re-triggering the finisher
     private bool _finisherTriggered = false;
@@ -263,6 +189,13 @@ public class Boss1StateManager : EnemyStateManager
     public override void Start()
     {
         health = maxHealth;
+
+        if (HUDManager.Instance != null)
+        {
+            HUDManager.Instance.ShowBossBar(true);
+            HUDManager.Instance.UpdateBossHealth(health, maxHealth);
+        }
+
         animator = GetComponent<Animator>() ?? GetComponentInChildren<Animator>();
 
         if (animator != null)
@@ -444,6 +377,7 @@ public class Boss1StateManager : EnemyStateManager
         health = Mathf.Max(0f, health - amount);
         if (bossHealthBar != null)
             bossHealthBar.UpdateHealthPercentage(health, maxHealth);
+        HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
 
         if (health <= 0f)
         {
@@ -660,8 +594,6 @@ public class Boss1StateManager : EnemyStateManager
 
         currentState = newState;
         currentState.EnterState(this);
-
-        PlayAttackAudioForState(newState);
     }
 
     public void DisableAnimationBools()
