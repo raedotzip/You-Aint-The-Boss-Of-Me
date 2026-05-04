@@ -19,6 +19,7 @@ public class Boss1StateManager : EnemyStateManager
     public Boss1SpiralBurstAttack              spiralBurstAttack       = new Boss1SpiralBurstAttack();
     public Boss1TargetedBurstAttack            targetedBurstAttack     = new Boss1TargetedBurstAttack();
     public Boss1RingGapAttack                  ringGapAttack           = new Boss1RingGapAttack();
+    public Boss1ApproachState                  approachState           = new Boss1ApproachState();
 
     private Boss1GroundSlamShockwaveAttack     shockwaveState          = new Boss1GroundSlamShockwaveAttack();
     private Boss1TiredState                    tiredState              = new Boss1TiredState();
@@ -508,6 +509,13 @@ public class Boss1StateManager : EnemyStateManager
         if (dist <= retreatRange && Random.value <= retreatChance)
         {
             SwitchState(ChooseRetreatState());
+            return;
+        }
+
+        // Approach if too far to attack effectively
+        if (dist > farRange)
+        {
+            SwitchState(approachState);
             return;
         }
 
