@@ -259,6 +259,7 @@ public class Boss2StateManager : EnemyStateManager
             _isActive       = true;
             _pathBlockTimer = pathBlockIntervals != null && pathBlockIntervals.Length > _stage ? pathBlockIntervals[_stage] : 5f;
             SwitchState(idleState);
+            StartBossMusic();
         }
 
         if (_forceFieldUp && _miniComputersRemaining <= 0)
@@ -373,6 +374,11 @@ public class Boss2StateManager : EnemyStateManager
                 Debug.Log("[Boss2] Main computer destroyed!");
                 HUDManager.Instance?.StopTimer();
                 MenuController.Instance?.AdvanceToNextBoss(2);
+                if (musicSource != null)
+                {
+                    musicSource.Stop();
+                }
+                _musicStarted = false;
             }
         }
     }
@@ -414,6 +420,38 @@ public class Boss2StateManager : EnemyStateManager
         PlayAttackSound(next);
         attackCounter++;
         SwitchState(next);
+    }
+    // ===============================
+    // BOSS MUSIC
+    // ===============================
+    [Header("Boss Music")]
+    public AudioSource musicSource;
+
+    public AudioClip bossMusicNormal;
+
+    [Range(0f, 1f)]
+    public float musicVolume = 0.6f;
+
+    private bool _musicStarted = false;
+
+    public void StartBossMusic()
+    {
+        if (_musicStarted) return;
+
+        if (musicSource == null || bossMusicNormal == null)
+        {
+            Debug.LogWarning("[Boss2 Music] Missing AudioSource or clip!");
+            return;
+        }
+
+        _musicStarted = true;
+
+        musicSource.clip = bossMusicNormal;
+        musicSource.loop = true;
+        musicSource.volume = musicVolume;
+        musicSource.Play();
+
+        Debug.Log("[Boss2 Music] Started");
     }
 
     // ===============================

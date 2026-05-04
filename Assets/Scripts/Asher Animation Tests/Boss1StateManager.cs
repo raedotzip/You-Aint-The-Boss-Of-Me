@@ -13,7 +13,6 @@ public class Boss1StateManager : EnemyStateManager
     public Boss1SpinAttack                     spinAttack              = new Boss1SpinAttack();
     public Boss1PunchAttack                    punchAttack             = new Boss1PunchAttack();
     public Boss1IdleState                      idleState               = new Boss1IdleState();
-    public Boss1PipeAttack                     pipeAttack              = new Boss1PipeAttack();
     public Boss1JumpLeftMovement               jumpLeftState           = new Boss1JumpLeftMovement();
     public Boss1JumpRightMovement              jumpRightState          = new Boss1JumpRightMovement();
     public Boss1SpiralBurstAttack              spiralBurstAttack       = new Boss1SpiralBurstAttack();
@@ -116,19 +115,52 @@ public class Boss1StateManager : EnemyStateManager
     public int   attacksBeforeTiredEnraged = 20;   // barely rests at low health
     public float tiredDurationEnraged      = 0.3f; // gets up much faster at ≤20% health
 
+
+    // ===============================
+    // BOSS MUSIC
+    // ===============================
+    [Header("Boss Music")]
+    public AudioSource musicSource;
+
+    public AudioClip bossMusicNormal;
+
+    [Range(0f, 1f)]
+    public float musicVolume = 0.6f;
+
+    private bool _musicStarted = false;
+
+    public void StartBossMusic()
+    {
+        if (_musicStarted) return;
+
+        if (musicSource == null || bossMusicNormal == null)
+        {
+            Debug.LogWarning("[Boss1 Music] Missing AudioSource or clip!");
+            return;
+        }
+
+        _musicStarted = true;
+
+        musicSource.clip = bossMusicNormal;
+        musicSource.loop = true;
+        musicSource.volume = musicVolume;
+        musicSource.Play();
+
+        Debug.Log("[Boss1 Music] Started");
+    }
+
     // ===============================
     // ATTACK AUDIO
     // ===============================
-    [Header("Boss Audio")]
+    [Header("Boss Attack SFX")]
     public AudioSource audioSource;
-
-    [Header("SFX Settings")]
     [Range(0f, 2f)]
     public float sfxVolume = 1f;
 
     [Header("SFX")]
     public AudioClip spinStartClip;
     public AudioClip slamClip;
+  
 
     // ===============================
     // STOPWATCH
@@ -239,6 +271,7 @@ public class Boss1StateManager : EnemyStateManager
         ObstacleManager.Instance?.PrewarmObstaclePools(obstacleData);
 
         SwitchState(idleState);
+        StartBossMusic();
     }
 
     public override void Update()
@@ -386,6 +419,11 @@ public class Boss1StateManager : EnemyStateManager
             Debug.Log($"[Boss1] Fight completed in {bossTimer:F2} seconds");
 
             bossTimerUI?.SetTime(bossTimer);
+            if (musicSource != null)
+            {
+                musicSource.Stop();
+            }
+            _musicStarted = false;
 
             SwitchState(lavaFinisherState);
         }
