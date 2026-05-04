@@ -80,8 +80,10 @@ public class HUDManager : MonoBehaviour
             StartTimer();
         if (!show)
         {
+            _elapsed  = 0f;
             _running  = false;
             _finished = false;
+            UpdateTimerDisplay();
         }
     }
 

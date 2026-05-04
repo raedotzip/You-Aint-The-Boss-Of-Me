@@ -186,6 +186,7 @@ public class Boss1StateManager : EnemyStateManager
                 animator.transform.localPosition = Vector3.zero;
         }
 
+        bossTimerUI?.StopTimer();
         bossTimerUI?.SetTime(0f);
         if (bossHealthBar != null) bossHealthBar.UpdateHealthPercentage(health, maxHealth);
         HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
