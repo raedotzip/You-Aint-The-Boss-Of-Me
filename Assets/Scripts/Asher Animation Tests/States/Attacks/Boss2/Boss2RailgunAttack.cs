@@ -41,8 +41,9 @@ public class Boss2RailgunAttack : EnemyBaseState
             {
                 _fired     = true;
                 _fireTimer = 0f;
-                // Snapshot player position at the moment of firing
+                // Snapshot flat horizontal direction — TiltTowardPlayer corrects height per spawn point
                 Vector3 toPlayer = state.player.position - state.transform.position;
+                toPlayer.y = 0f;
                 _targetDir = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : state.transform.forward;
             }
             return;
@@ -65,6 +66,14 @@ public class Boss2RailgunAttack : EnemyBaseState
 
     public override float OnBossHurt(EnemyStateManager state) => 0f;
 
+    static Vector3 TiltTowardPlayer(Vector3 dir, Vector3 spawnPos, Vector3 playerPos)
+    {
+        float hDist = new Vector3(playerPos.x - spawnPos.x, 0f, playerPos.z - spawnPos.z).magnitude;
+        if (hDist > 0.01f)
+            dir.y = (playerPos.y - spawnPos.y) / hDist;
+        return dir.normalized;
+    }
+
     private void FireBullet(EnemyStateManager state)
     {
         float rY  = Random.Range(-spreadAngle * 0.5f, spreadAngle * 0.5f);
@@ -73,10 +82,11 @@ public class Boss2RailgunAttack : EnemyBaseState
 
         foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
+            Vector3 spawnDir = TiltTowardPlayer(dir, sp.position, state.player.position + Vector3.up * 1.0f);
             Bullet b = new Bullet
             {
                 position        = sp.position,
-                direction       = dir.normalized,
+                direction       = spawnDir,
                 speed           = bulletSpeed,
                 damage          = bulletDamage,
                 maxLifetime     = bulletLifetime,
@@ -85,7 +95,7 @@ public class Boss2RailgunAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.7f,
+                scale           = 0.4f,
             };
             BulletManager.Instance.SpawnBullet(b);
         }

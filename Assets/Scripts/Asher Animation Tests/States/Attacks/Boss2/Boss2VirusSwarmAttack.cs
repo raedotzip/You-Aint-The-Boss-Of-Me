@@ -7,7 +7,7 @@ public class Boss2VirusSwarmAttack : EnemyBaseState
     private float spawnDelay   = 0.15f;
     private float bulletSpeed  = 2.8f;
     private float bulletDamage = 10f;
-    private float lifetime     = 5f;
+    private float lifetime     = 8f;
 
     private float _timer;
     private int   _spawned;
@@ -52,28 +52,23 @@ public class Boss2VirusSwarmAttack : EnemyBaseState
 
     private void FireVirus(EnemyStateManager state, int index)
     {
-        Vector3 toPlayer = state.player.position - state.transform.position;
-        Vector3 dir = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : state.transform.forward;
-
-        if (index % 2 == 1)
-        {
-            dir = Quaternion.Euler(
-                Random.Range(-8f, 8f),
-                Random.Range(-18f, 18f),
-                0f) * dir;
-        }
-
-        BulletMovementType movement = (index % 3 == 0) ? BulletMovementType.Sine : BulletMovementType.Straight;
+        bool               scattered = (index % 2 == 1);
+        BulletMovementType movement  = (index % 3 == 0) ? BulletMovementType.Sine : BulletMovementType.Straight;
+        Vector3            targetPos = state.player.position + Vector3.up * 1.0f;
 
         foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
-            Vector3 spawnPos  = sp.position;
-            Vector3 spawnDir  = TiltTowardPlayer(dir, spawnPos, state.player.position);
+            Vector3 spawnPos = sp.position;
+            Vector3 toPlayer = targetPos - spawnPos;
+            Vector3 dir      = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : state.transform.forward;
+
+            if (scattered)
+                dir = Quaternion.Euler(Random.Range(-8f, 8f), Random.Range(-18f, 18f), 0f) * dir;
 
             Bullet b = new Bullet
             {
                 position        = spawnPos,
-                direction       = spawnDir,
+                direction       = dir,
                 speed           = bulletSpeed + Random.Range(-1f, 1.5f),
                 damage          = bulletDamage,
                 maxLifetime     = lifetime,
@@ -82,7 +77,7 @@ public class Boss2VirusSwarmAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = movement,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.5f,
+                scale           = 0.4f,
             };
 
             BulletManager.Instance.SpawnBullet(b);

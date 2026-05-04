@@ -15,7 +15,7 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
     private float bulletFireRate   = 0.35f;
     private float bulletSpeed      = 3f;
     private float bulletDamage     = 10f;
-    private float bulletLifetime   = 4f;
+    private float bulletLifetime   = 7f;
 
     private int   _obstaclesSpawned;
     private float _spawnTimer;
@@ -117,23 +117,20 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
 
     private void FireTrackingBullet(EnemyStateManager state)
     {
-        Vector3 toPlayer = state.player.position - state.transform.position;
-        Vector3 dir      = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : state.transform.forward;
-
-        dir = Quaternion.Euler(
-            Random.Range(-6f, 6f),
-            Random.Range(-12f, 12f),
-            0f) * dir;
+        Vector3 targetPos = state.player.position + Vector3.up * 1.0f;
 
         foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
             Vector3 spawnPos = sp.position;
-            Vector3 spawnDir = TiltTowardPlayer(dir, spawnPos, state.player.position);
+            Vector3 toPlayer = targetPos - spawnPos;
+            Vector3 dir      = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : state.transform.forward;
+
+            dir = Quaternion.Euler(Random.Range(-6f, 6f), Random.Range(-12f, 12f), 0f) * dir;
 
             Bullet b = new Bullet
             {
                 position        = spawnPos,
-                direction       = spawnDir,
+                direction       = dir,
                 speed           = bulletSpeed,
                 damage          = bulletDamage,
                 maxLifetime     = bulletLifetime,
@@ -142,7 +139,7 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.5f,
+                scale           = 0.4f,
             };
 
             BulletManager.Instance.SpawnBullet(b);

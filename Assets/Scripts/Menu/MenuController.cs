@@ -3,8 +3,8 @@ using UnityEngine;
 using Valve.VR;
 
 // Single-scene architecture — no scene loads.
-// Call StartBoss(1) / StartBoss(2) from MenuBox.onSliced to teleport the player
-// and activate the right boss.  Call ReturnToMenu() after a boss is defeated.
+// Menu buttons send the player to the lab; arena triggers handle boss activation.
+// Call ReturnToMenu() after all bosses are defeated.
 public class MenuController : MonoBehaviour
 {
     public static MenuController Instance;
@@ -53,10 +53,12 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    // Wire this to MenuBox.onSliced via the Inspector (use int parameter 1 or 2)
+    // Wire this to MenuBox.onSliced via the Inspector — sends the player to the lab
+    // so they can walk to any boss arena. The bossIndex parameter is unused but kept
+    // so existing Inspector UnityEvent wiring doesn't break.
     public void StartBoss(int bossIndex)
     {
-        StartCoroutine(FadeAndStartBoss(bossIndex));
+        StartCoroutine(FadeAndGoToLab());
     }
 
     // Parameterless helpers used by the Editor setup tool for UnityEvent wiring
@@ -78,28 +80,27 @@ public class MenuController : MonoBehaviour
         StartCoroutine(FadeAndReturnToMenu());
     }
 
-    // Called after a boss is defeated — advances to the next boss, or returns to menu
-    // if the next boss's spawn point isn't assigned (arena not yet built).
+    // Called after a boss is defeated — sends the player to the lab to walk to the
+    // next arena, or returns to menu after the final boss.
     public void AdvanceToNextBoss(int completedBossIndex)
     {
         BossManager.Instance?.MarkBossDefeated(completedBossIndex);
-        int nextBoss = completedBossIndex + 1;
-        if (nextBoss <= 2 && BossSpawnPoint(nextBoss) != null)
-            StartCoroutine(FadeAndStartBoss(nextBoss));
+        if (completedBossIndex < 2)
+            StartCoroutine(FadeAndGoToLab());
         else
             ReturnToMenu();
     }
 
     // -----------------------------------------------
-    IEnumerator FadeAndStartBoss(int bossIndex)
+    IEnumerator FadeAndGoToLab()
     {
         SteamVR_Fade.View(Color.black, fadeDuration);
         yield return new WaitForSeconds(fadeDuration);
 
         SetMenuVisible(false);
-        BossManager.Instance?.SetActiveBoss(0);   // deactivate previous boss; next boss starts via arena trigger
-        TeleportPlayer(BossSpawnPoint(bossIndex));
-        HUDManager.Instance?.ShowHUD(true);       // player bar + timer visible; boss bar stays hidden until arena entry
+        BossManager.Instance?.SetActiveBoss(0);
+        TeleportPlayer(labSpawnPoint);
+        HUDManager.Instance?.ShowHUD(true);
 
         SteamVR_Fade.View(Color.clear, fadeDuration);
     }

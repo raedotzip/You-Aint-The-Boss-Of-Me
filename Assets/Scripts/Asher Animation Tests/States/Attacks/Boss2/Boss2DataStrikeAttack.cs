@@ -10,7 +10,7 @@ public class Boss2DataStrikeAttack : EnemyBaseState
     private float inBurstFireRate    = 0.04f;
     private float bulletSpeed        = 4.5f;
     private float bulletDamage       = 12f;
-    private float bulletLifetime     = 3f;
+    private float bulletLifetime     = 6f;
 
     private int   _burstsCompleted;
     private int   _bulletsThisBurst;
@@ -97,7 +97,7 @@ public class Boss2DataStrikeAttack : EnemyBaseState
         foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
             Vector3 spawnPos = sp.position;
-            Vector3 spawnDir = TiltTowardPlayer(dir, spawnPos, state.player.position);
+            Vector3 spawnDir = TiltTowardPlayer(dir, spawnPos, state.player.position + Vector3.up * 1.0f);
 
             Bullet b = new Bullet
             {
@@ -111,7 +111,7 @@ public class Boss2DataStrikeAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.5f,
+                scale           = 0.4f,
             };
 
             BulletManager.Instance.SpawnBullet(b);
