@@ -52,6 +52,13 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnDeath()
     {
-        // Debug.Log("Player died");
+        MenuController.Instance?.HandlePlayerDeath();
+    }
+
+    public void Respawn()
+    {
+        currentHealth = maxHealth;
+        if (playerHealthBar != null)
+            playerHealthBar.UpdateHealthPercentage(currentHealth, maxHealth);
     }
 }

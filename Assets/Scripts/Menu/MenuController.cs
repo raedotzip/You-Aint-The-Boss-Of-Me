@@ -86,12 +86,18 @@ public class MenuController : MonoBehaviour
     {
         BossManager.Instance?.MarkBossDefeated(completedBossIndex);
         if (completedBossIndex < 2)
-            StartCoroutine(FadeAndGoToLab());
+            BossManager.Instance?.SetActiveBoss(0);
         else
-            ReturnToMenu();
+            StartCoroutine(DelayedReturnToMenu(3f));
     }
 
     // -----------------------------------------------
+    IEnumerator DelayedReturnToMenu(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ReturnToMenu();
+    }
+
     IEnumerator FadeAndGoToLab()
     {
         SteamVR_Fade.View(Color.black, fadeDuration);
@@ -136,7 +142,26 @@ public class MenuController : MonoBehaviour
         return menuSpawnPoint;
     }
 
-    void TeleportPlayer(Transform target)
+    public void HandlePlayerDeath()
+    {
+        StartCoroutine(FadeAndRespawn());
+    }
+
+    IEnumerator FadeAndRespawn()
+    {
+        SteamVR_Fade.View(Color.black, fadeDuration);
+        yield return new WaitForSeconds(fadeDuration);
+
+        BossManager.Instance?.SetActiveBoss(0);
+        BossManager.Instance?.ResetArenaTriggers();
+        HUDManager.Instance?.PauseTimer();
+        player.GetComponent<PlayerHealth>()?.Respawn();
+        TeleportPlayer(labSpawnPoint);
+
+        SteamVR_Fade.View(Color.clear, fadeDuration);
+    }
+
+    public void TeleportPlayer(Transform target)
     {
         if (player == null || target == null) return;
 
