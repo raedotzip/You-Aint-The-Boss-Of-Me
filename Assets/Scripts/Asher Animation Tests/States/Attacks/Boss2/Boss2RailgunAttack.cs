@@ -5,12 +5,13 @@ using UnityEngine;
 public class Boss2RailgunAttack : EnemyBaseState
 {
     private float chargeTime      = 0.9f;   // pause before firing
-    private int   bulletCount     = 22;     // bullets in the burst
-    private float spreadAngle     = 10f;    // cone width in degrees
+    private int   bulletCount     = 35;     // bullets in the burst
+    private float spreadAngle     = 15f;    // cone width in degrees
     private float bulletInterval  = 0.035f; // seconds between each bullet
     private float bulletSpeed     = 10f;
     private float bulletDamage    = 16f;
-    private float bulletLifetime  = 3.5f;
+    private float bulletLifetime  = 8f;
+    private float verticalSpread  = 10f;
 
     private float   _elapsed;
     private bool    _fired;
@@ -23,7 +24,7 @@ public class Boss2RailgunAttack : EnemyBaseState
     {
         _elapsed     = 0f;
         _fired       = false;
-        _bulletsLeft = bulletCount;
+        _bulletsLeft = ((Boss2StateManager)state).ScaleBulletCount(bulletCount);
         _fireTimer   = 0f;
         _done        = false;
     }
@@ -83,11 +84,14 @@ public class Boss2RailgunAttack : EnemyBaseState
         foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
             Vector3 spawnDir = TiltTowardPlayer(dir, sp.position, state.player.position + Vector3.up * 1.0f);
+            Vector3 right    = Vector3.Cross(Vector3.up, spawnDir).normalized;
+            if (right.sqrMagnitude < 0.001f) right = Vector3.right;
+            spawnDir = Quaternion.AngleAxis(Random.Range(-verticalSpread, verticalSpread), right) * spawnDir;
             Bullet b = new Bullet
             {
                 position        = sp.position,
                 direction       = spawnDir,
-                speed           = bulletSpeed,
+                speed           = ((Boss2StateManager)state).ScaleBulletSpeed(bulletSpeed),
                 damage          = bulletDamage,
                 maxLifetime     = bulletLifetime,
                 collisionRadius = 0.22f,
@@ -95,7 +99,7 @@ public class Boss2RailgunAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.4f,
+                scale           = 0.6f,
             };
             BulletManager.Instance.SpawnBullet(b);
         }

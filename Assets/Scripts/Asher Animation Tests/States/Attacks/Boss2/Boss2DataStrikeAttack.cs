@@ -4,16 +4,18 @@ using UnityEngine;
 public class Boss2DataStrikeAttack : EnemyBaseState
 {
     private int   burstCount         = 5;
-    private int   bulletsPerBurst    = 7;
-    private float spreadAngle        = 14f;
+    private int   bulletsPerBurst    = 12;
+    private float spreadAngle        = 25f;
     private float pauseBetweenBursts = 0.5f;
     private float inBurstFireRate    = 0.04f;
     private float bulletSpeed        = 4.5f;
     private float bulletDamage       = 12f;
-    private float bulletLifetime     = 6f;
+    private float bulletLifetime     = 12f;
+    private float verticalSpread     = 10f;
 
     private int   _burstsCompleted;
     private int   _bulletsThisBurst;
+    private int   _scaledBulletsPerBurst;
     private float _burstTimer;
     private float _pauseTimer;
     private bool  _inBurst;
@@ -22,12 +24,13 @@ public class Boss2DataStrikeAttack : EnemyBaseState
 
     public override void EnterState(EnemyStateManager state)
     {
-        _burstsCompleted  = 0;
-        _bulletsThisBurst = 0;
-        _burstTimer       = inBurstFireRate;
-        _pauseTimer       = 0f;
-        _done             = false;
-        _inBurst          = true;
+        _burstsCompleted       = 0;
+        _bulletsThisBurst      = 0;
+        _scaledBulletsPerBurst = ((Boss2StateManager)state).ScaleBulletCount(bulletsPerBurst);
+        _burstTimer            = inBurstFireRate;
+        _pauseTimer            = 0f;
+        _done                  = false;
+        _inBurst               = true;
         SnapshotAim(state);
     }
 
@@ -44,7 +47,7 @@ public class Boss2DataStrikeAttack : EnemyBaseState
                 FireBullet(state);
                 _bulletsThisBurst++;
 
-                if (_bulletsThisBurst >= bulletsPerBurst)
+                if (_bulletsThisBurst >= _scaledBulletsPerBurst)
                 {
                     _inBurst          = false;
                     _bulletsThisBurst = 0;
@@ -89,7 +92,7 @@ public class Boss2DataStrikeAttack : EnemyBaseState
 
     private void FireBullet(EnemyStateManager state)
     {
-        float step        = bulletsPerBurst > 1 ? spreadAngle / (bulletsPerBurst - 1) : 0f;
+        float step        = _scaledBulletsPerBurst > 1 ? spreadAngle / (_scaledBulletsPerBurst - 1) : 0f;
         float angleOffset = -spreadAngle * 0.5f + step * _bulletsThisBurst;
         Vector3 dir       = Quaternion.AngleAxis(angleOffset, Vector3.up) * _aimSnapshot;
         dir               = dir.normalized;
@@ -98,12 +101,15 @@ public class Boss2DataStrikeAttack : EnemyBaseState
         {
             Vector3 spawnPos = sp.position;
             Vector3 spawnDir = TiltTowardPlayer(dir, spawnPos, state.player.position + Vector3.up * 1.0f);
+            Vector3 right    = Vector3.Cross(Vector3.up, spawnDir).normalized;
+            if (right.sqrMagnitude < 0.001f) right = Vector3.right;
+            spawnDir = Quaternion.AngleAxis(Random.Range(-verticalSpread, verticalSpread), right) * spawnDir;
 
             Bullet b = new Bullet
             {
                 position        = spawnPos,
                 direction       = spawnDir,
-                speed           = bulletSpeed,
+                speed           = ((Boss2StateManager)state).ScaleBulletSpeed(bulletSpeed),
                 damage          = bulletDamage,
                 maxLifetime     = bulletLifetime,
                 collisionRadius = 0.3f,
@@ -111,7 +117,7 @@ public class Boss2DataStrikeAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.4f,
+                scale           = 0.6f,
             };
 
             BulletManager.Instance.SpawnBullet(b);
