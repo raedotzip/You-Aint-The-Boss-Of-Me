@@ -156,6 +156,32 @@ public class Boss1StateManager : EnemyStateManager
         musicStarted = false;
     }
 
+    public override void ResetBoss()
+    {
+        health            = maxHealth;
+        finisherTriggered = false;
+        attackCounter     = 0;
+        _timerRunning     = false;
+        _timerStarted     = false;
+        bossTimer         = 0f;
+        smoothLookAtEnabled = true;
+        isAirborne        = false;
+
+        transform.SetPositionAndRotation(_startPosition, _startRotation);
+        if (animator != null)
+        {
+            DisableAnimationBools();
+            if (animator.transform != transform)
+                animator.transform.localPosition = Vector3.zero;
+        }
+
+        bossTimerUI?.SetTime(0f);
+        if (bossHealthBar != null) bossHealthBar.UpdateHealthPercentage(health, maxHealth);
+        HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
+
+        SwitchState(idleState);
+    }
+
     // ===============================
     // ATTACK AUDIO
     // ===============================
@@ -216,6 +242,10 @@ public class Boss1StateManager : EnemyStateManager
     // Set by jump states so EnforceBounds skips the wall-overlap check mid-air
     [HideInInspector] public bool isAirborne = false;
 
+    private Vector3    _startPosition;
+    private Quaternion _startRotation;
+    private bool       _started;
+
     // Skips the wall-overlap check for one frame after a state switch so the
     // localPosition reset in SwitchState doesn't cause a false wall detection.
     private bool _skipWallCheckNextFrame = false;
@@ -225,9 +255,17 @@ public class Boss1StateManager : EnemyStateManager
 
     private Vector3 _lastSafePosition;
      
+    void OnEnable()
+    {
+        if (_started) StartBossMusic();
+    }
+
     public override void Start()
     {
-        health = maxHealth;
+        _started       = true;
+        _startPosition = transform.position;
+        _startRotation = transform.rotation;
+        health         = maxHealth;
 
         if (HUDManager.Instance != null)
         {

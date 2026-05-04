@@ -47,6 +47,7 @@ public abstract class EnemyStateManager : MonoBehaviour
     }
 
     public virtual void StopBossMusic() { }
+    public virtual void ResetBoss() { }
 
     public void FireBullet(Vector3 direction, AttackData data)
     {
