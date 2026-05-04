@@ -46,6 +46,8 @@ public abstract class EnemyStateManager : MonoBehaviour
         float damage = currentState.OnBossHurt(this);
     }
 
+    public virtual void StopBossMusic() { }
+
     public void FireBullet(Vector3 direction, AttackData data)
     {
         Bullet b = new Bullet

@@ -12974,7 +12974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
-  startingBoss: 1
+  startingBoss: 0
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss1ShowsBarImmediately: 1
@@ -23172,6 +23172,7 @@ MonoBehaviour:
   nearBulletSpeedMultiplier: 0.5
   farBulletSpeedMultiplier: 3.04
   farBulletCountMultiplier: 2.5
+  phaseCountMultiplier: 1
   musicSource: {fileID: 1875370452}
   bossMusicNormal: {fileID: 8300000, guid: 5a373347df28fe743a020ab8ba3519de, type: 3}
   musicVolume: 0.08
@@ -23364,7 +23365,7 @@ Transform:
   m_GameObject: {fileID: 1882369057}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.77, y: -4.15, z: 5.22}
+  m_LocalPosition: {x: -8.77, y: -4.15, z: 12.38}
   m_LocalScale: {x: 4, y: 4, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []

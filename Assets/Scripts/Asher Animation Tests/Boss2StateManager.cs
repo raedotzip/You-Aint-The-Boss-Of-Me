@@ -497,6 +497,12 @@ public class Boss2StateManager : EnemyStateManager
         Debug.Log("[Boss2 Music] Started");
     }
 
+    public override void StopBossMusic()
+    {
+        if (musicSource != null) musicSource.Stop();
+        _musicStarted = false;
+    }
+
     // ===============================
     // ATTACK SELECTION
     // ===============================
