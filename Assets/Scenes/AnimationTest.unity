@@ -12972,7 +12972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
-  startingBoss: 0
+  startingBoss: 2
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss1ShowsBarImmediately: 1
@@ -23170,15 +23170,6 @@ MonoBehaviour:
   musicSource: {fileID: 1875370452}
   bossMusicNormal: {fileID: 8300000, guid: 5a373347df28fe743a020ab8ba3519de, type: 3}
   musicVolume: 0.08
-  audioSource: {fileID: 1875370452}
-  laserBeamClip: {fileID: 8300000, guid: d742b5037cdde6d418372b1167dd077d, type: 3}
-  virusSwarmClip: {fileID: 8300000, guid: 988ce96a803dea048ae7497f5352ca57, type: 3}
-  empWaveClip: {fileID: 8300000, guid: 4e843667d526c1c4a9a31928e2fa5eb7, type: 3}
-  dataStrikeClip: {fileID: 8300000, guid: 078a82d07fb709347b6d3ebe8dc3ea3d, type: 3}
-  railgunClip: {fileID: 8300000, guid: 03297c76a75011745931890967ffb456, type: 3}
-  mortarClip: {fileID: 8300000, guid: 0ed24bd9550917e45a812abd99e32bb7, type: 3}
-  obstacleBarrageClip: {fileID: 8300000, guid: c1d391f08684fef4db38cd57e850f17a, type: 3}
-  sfxVolume: 0
 --- !u!4 &1875370448 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
