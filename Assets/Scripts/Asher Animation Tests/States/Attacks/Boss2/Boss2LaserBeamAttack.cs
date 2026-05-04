@@ -10,7 +10,7 @@ public class Boss2LaserBeamAttack : EnemyBaseState
     private int   bulletsPerSalvo = 3;
     private float bulletSpeed    = 6f;
     private float bulletDamage   = 9f;
-    private float bulletLifetime = 3.5f;
+    private float bulletLifetime = 5f;
 
     private float _angle;
     private float _swept;
@@ -84,7 +84,7 @@ public class Boss2LaserBeamAttack : EnemyBaseState
         foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
         {
             Vector3 spawnPos = sp.position;
-            Vector3 dir      = TiltTowardPlayer(hDir, spawnPos, state.player.position);
+            Vector3 dir      = TiltTowardPlayer(hDir, spawnPos, state.player.position + Vector3.up * 1.0f);
 
             Bullet b = new Bullet
             {
@@ -98,7 +98,7 @@ public class Boss2LaserBeamAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.8f,
+                scale           = 0.45f,
             };
 
             BulletManager.Instance.SpawnBullet(b);

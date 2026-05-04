@@ -8,7 +8,7 @@ public class Boss2SpiralAttack : EnemyBaseState
     private int   arms           = 2;
     private float bulletSpeed    = 3.5f;
     private float bulletDamage   = 11f;
-    private float bulletLifetime = 4f;
+    private float bulletLifetime = 7f;
     private float duration       = 4.5f;
 
     private float _angle;
@@ -63,34 +63,31 @@ public class Boss2SpiralAttack : EnemyBaseState
 
     private void FireArms(EnemyStateManager state)
     {
-        foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
+        Vector3 origin = state.transform.position + Vector3.up * 1.5f;
+
+        for (int arm = 0; arm < arms; arm++)
         {
-            for (int arm = 0; arm < arms; arm++)
+            float angle = _angle + arm * (360f / arms);
+            float rad   = angle * Mathf.Deg2Rad;
+            Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
+            dir = TiltTowardPlayer(dir, origin, state.player.position + Vector3.up * 1.0f);
+
+            Bullet b = new Bullet
             {
-                float angle = _angle + arm * (360f / arms);
-                float rad   = angle * Mathf.Deg2Rad;
-                Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
+                position        = origin,
+                direction       = dir,
+                speed           = bulletSpeed,
+                damage          = bulletDamage,
+                maxLifetime     = bulletLifetime,
+                collisionRadius = 0.3f,
+                canBeParried    = true,
+                destroyOnParry  = false,
+                movementType    = BulletMovementType.Straight,
+                visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                scale           = 0.5f,
+            };
 
-                Vector3 spawnPos = sp.position;
-                dir = TiltTowardPlayer(dir, spawnPos, state.player.position);
-
-                Bullet b = new Bullet
-                {
-                    position        = spawnPos,
-                    direction       = dir,
-                    speed           = bulletSpeed,
-                    damage          = bulletDamage,
-                    maxLifetime     = bulletLifetime,
-                    collisionRadius = 0.3f,
-                    canBeParried    = true,
-                    destroyOnParry  = false,
-                    movementType    = BulletMovementType.Straight,
-                    visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                    scale           = 0.5f,
-                };
-
-                BulletManager.Instance.SpawnBullet(b);
-            }
+            BulletManager.Instance.SpawnBullet(b);
         }
     }
 }

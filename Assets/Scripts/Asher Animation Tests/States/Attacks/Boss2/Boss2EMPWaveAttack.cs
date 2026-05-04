@@ -10,7 +10,7 @@ public class Boss2EMPWaveAttack : EnemyBaseState
     private float gapRotatePerRing = 90f;
     private float bulletSpeed      = 3f;
     private float bulletDamage     = 12f;
-    private float bulletLifetime   = 3f;
+    private float bulletLifetime   = 8f;
 
     private int   _ringsFired;
     private float _timer;
@@ -63,39 +63,37 @@ public class Boss2EMPWaveAttack : EnemyBaseState
 
     private void FireRing(EnemyStateManager state)
     {
-        float angleStep = 360f / bulletsPerRing;
-        float halfGap   = gapSizeDegrees * 0.5f;
+        float angleStep  = 360f / bulletsPerRing;
+        float halfGap    = gapSizeDegrees * 0.5f;
+        Vector3 origin   = state.transform.position + Vector3.up * 1.5f;
 
-        foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
+        for (int i = 0; i < bulletsPerRing; i++)
         {
-            for (int i = 0; i < bulletsPerRing; i++)
+            float angle = i * angleStep;
+            if (Mathf.Abs(Mathf.DeltaAngle(angle, _gapAngle)) <= halfGap) continue;
+
+            float rad   = angle * Mathf.Deg2Rad;
+            Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
+
+            Vector3 spawnPos = origin + dir * 0.8f;
+            Vector3 spawnDir = TiltTowardPlayer(dir, spawnPos, state.player.position + Vector3.up * 1.0f);
+
+            Bullet b = new Bullet
             {
-                float angle = i * angleStep;
-                if (Mathf.Abs(Mathf.DeltaAngle(angle, _gapAngle)) <= halfGap) continue;
+                position        = spawnPos,
+                direction       = spawnDir,
+                speed           = bulletSpeed,
+                damage          = bulletDamage,
+                maxLifetime     = bulletLifetime,
+                collisionRadius = 0.3f,
+                canBeParried    = true,
+                destroyOnParry  = true,
+                movementType    = BulletMovementType.Straight,
+                visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                scale           = 0.5f,
+            };
 
-                float rad   = angle * Mathf.Deg2Rad;
-                Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
-
-                Vector3 spawnPos  = sp.position + dir * 0.8f;
-                Vector3 spawnDir  = TiltTowardPlayer(dir, spawnPos, state.player.position);
-
-                Bullet b = new Bullet
-                {
-                    position        = spawnPos,
-                    direction       = spawnDir,
-                    speed           = bulletSpeed,
-                    damage          = bulletDamage,
-                    maxLifetime     = bulletLifetime,
-                    collisionRadius = 0.3f,
-                    canBeParried    = true,
-                    destroyOnParry  = true,
-                    movementType    = BulletMovementType.Straight,
-                    visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                    scale           = 0.5f,
-                };
-
-                BulletManager.Instance.SpawnBullet(b);
-            }
+            BulletManager.Instance.SpawnBullet(b);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -62,10 +63,10 @@ public class Boss2StateManager : EnemyStateManager
     public float curtainWidth = 6f;
 
     [Tooltip("Seconds between curtain volleys per phase (phase 0, 1, 2)")]
-    public float[] pathBlockIntervals = { 3f, 2f, 1f };
+    public float[] pathBlockIntervals = { 1.5f, 1f, 0.5f };
 
     [Tooltip("How many ceiling fire points shoot simultaneously per phase")]
-    public int[] pathBlockFirePointsPerSpawn = { 1, 2, 3 };
+    public int[] pathBlockFirePointsPerSpawn = { 2, 3, 4 };
 
     private float _pathBlockTimer;
 
@@ -322,20 +323,36 @@ public class Boss2StateManager : EnemyStateManager
 
         Vector3 toPlayer = player.position - transform.position;
         toPlayer.y = 0f;
-        float dist     = toPlayer.magnitude;
-        float pushTo   = forceFieldPushRadius + 2f;
+        float dist   = toPlayer.magnitude;
+        float pushTo = forceFieldPushRadius + 2f;
 
-        if (dist < pushTo)
+        if (dist >= pushTo) return;
+
+        Vector3 dir    = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : Vector3.forward;
+        Vector3 endPos = transform.position + dir * pushTo;
+        endPos.y       = player.position.y;
+
+        StartCoroutine(PushPlayerCoroutine(endPos, 0.6f));
+    }
+
+    private IEnumerator PushPlayerCoroutine(Vector3 endPos, float duration)
+    {
+        var     cc       = player.GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+
+        float   elapsed  = 0f;
+        Vector3 startPos = player.position;
+
+        while (elapsed < duration)
         {
-            Vector3 dir    = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : Vector3.forward;
-            Vector3 newPos = transform.position + dir * pushTo;
-            newPos.y       = player.position.y;
-
-            var cc = player.GetComponent<CharacterController>();
-            if (cc != null) cc.enabled = false;
-            player.position = newPos;
-            if (cc != null) cc.enabled = true;
+            elapsed        += Time.deltaTime;
+            float t         = Mathf.Clamp01(elapsed / duration);
+            player.position = Vector3.Lerp(startPos, endPos, t);
+            yield return null;
         }
+
+        player.position = endPos;
+        if (cc != null) cc.enabled = true;
     }
 
     // ===============================
@@ -415,10 +432,7 @@ public class Boss2StateManager : EnemyStateManager
         float dist = Vector3.Distance(transform.position, player.position);
         EnemyBaseState next = ChooseAttack(dist);
         attackCounter++;
-        SwitchState(next);
-
         PlayAttackSound(next);
-        attackCounter++;
         SwitchState(next);
     }
     // ===============================

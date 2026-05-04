@@ -53,7 +53,7 @@ public class Boss2MortarBarrageAttack : EnemyBaseState
             0f,
             Random.Range(-aimScatter, aimScatter));
 
-        Vector3 target   = state.player.position + scatter;
+        Vector3 target   = state.player.position + Vector3.up * 1.0f + scatter;
         Vector3 spawnPos = ((Boss2StateManager)state).GetRandomSpawnPoint();
         Vector3 dir      = (target - spawnPos);
 
