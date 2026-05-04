@@ -3,14 +3,15 @@ using UnityEngine;
 // Expanding rings of bullets with a rotating gap — player must dodge or stand in the gap
 public class Boss2EMPWaveAttack : EnemyBaseState
 {
-    private int   ringCount        = 5;
+    private int   ringCount        = 8;
     private float timeBetweenRings = 1.1f;
-    private int   bulletsPerRing   = 22;
+    private int   bulletsPerRing   = 48;
     private float gapSizeDegrees   = 50f;
     private float gapRotatePerRing = 90f;
     private float bulletSpeed      = 3f;
     private float bulletDamage     = 12f;
-    private float bulletLifetime   = 8f;
+    private float bulletLifetime   = 16f;
+    private float verticalSpread   = 10f;
 
     private int   _ringsFired;
     private float _timer;
@@ -63,9 +64,8 @@ public class Boss2EMPWaveAttack : EnemyBaseState
 
     private void FireRing(EnemyStateManager state)
     {
-        float angleStep  = 360f / bulletsPerRing;
-        float halfGap    = gapSizeDegrees * 0.5f;
-        Vector3 origin   = state.transform.position + Vector3.up * 1.5f;
+        float angleStep = 360f / bulletsPerRing;
+        float halfGap   = gapSizeDegrees * 0.5f;
 
         for (int i = 0; i < bulletsPerRing; i++)
         {
@@ -75,25 +75,31 @@ public class Boss2EMPWaveAttack : EnemyBaseState
             float rad   = angle * Mathf.Deg2Rad;
             Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
 
-            Vector3 spawnPos = origin + dir * 0.8f;
-            Vector3 spawnDir = TiltTowardPlayer(dir, spawnPos, state.player.position + Vector3.up * 1.0f);
-
-            Bullet b = new Bullet
+            foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
             {
-                position        = spawnPos,
-                direction       = spawnDir,
-                speed           = bulletSpeed,
-                damage          = bulletDamage,
-                maxLifetime     = bulletLifetime,
-                collisionRadius = 0.3f,
-                canBeParried    = true,
-                destroyOnParry  = true,
-                movementType    = BulletMovementType.Straight,
-                visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.5f,
-            };
+                Vector3 spawnPos = sp.position;
+                Vector3 spawnDir = TiltTowardPlayer(dir, spawnPos, state.player.position + Vector3.up * 1.0f);
+                Vector3 right    = Vector3.Cross(Vector3.up, spawnDir).normalized;
+                if (right.sqrMagnitude < 0.001f) right = Vector3.right;
+                spawnDir = Quaternion.AngleAxis(Random.Range(-verticalSpread, verticalSpread), right) * spawnDir;
 
-            BulletManager.Instance.SpawnBullet(b);
+                Bullet b = new Bullet
+                {
+                    position        = spawnPos,
+                    direction       = spawnDir,
+                    speed           = ((Boss2StateManager)state).ScaleBulletSpeed(bulletSpeed),
+                    damage          = bulletDamage,
+                    maxLifetime     = bulletLifetime,
+                    collisionRadius = 0.3f,
+                    canBeParried    = true,
+                    destroyOnParry  = true,
+                    movementType    = BulletMovementType.Straight,
+                    visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                    scale           = 0.7f,
+                };
+
+                BulletManager.Instance.SpawnBullet(b);
+            }
         }
     }
 }

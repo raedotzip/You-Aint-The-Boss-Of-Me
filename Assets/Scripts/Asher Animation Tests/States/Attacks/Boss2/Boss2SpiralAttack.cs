@@ -5,11 +5,12 @@ public class Boss2SpiralAttack : EnemyBaseState
 {
     private float rotateSpeed    = 200f; // degrees per second
     private float fireRate       = 0.06f;
-    private int   arms           = 2;
+    private int   arms           = 5;
     private float bulletSpeed    = 3.5f;
     private float bulletDamage   = 11f;
-    private float bulletLifetime = 7f;
+    private float bulletLifetime = 16f;
     private float duration       = 4.5f;
+    private float verticalSpread = 12f;
 
     private float _angle;
     private float _fireTimer;
@@ -63,31 +64,37 @@ public class Boss2SpiralAttack : EnemyBaseState
 
     private void FireArms(EnemyStateManager state)
     {
-        Vector3 origin = state.transform.position + Vector3.up * 1.5f;
-
         for (int arm = 0; arm < arms; arm++)
         {
-            float angle = _angle + arm * (360f / arms);
-            float rad   = angle * Mathf.Deg2Rad;
-            Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
-            dir = TiltTowardPlayer(dir, origin, state.player.position + Vector3.up * 1.0f);
+            float angle   = _angle + arm * (360f / arms);
+            float rad     = angle * Mathf.Deg2Rad;
+            Vector3 hDir  = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
 
-            Bullet b = new Bullet
+            foreach (Transform sp in ((Boss2StateManager)state).GetAllSpawnPoints())
             {
-                position        = origin,
-                direction       = dir,
-                speed           = bulletSpeed,
-                damage          = bulletDamage,
-                maxLifetime     = bulletLifetime,
-                collisionRadius = 0.3f,
-                canBeParried    = true,
-                destroyOnParry  = false,
-                movementType    = BulletMovementType.Straight,
-                visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.5f,
-            };
+                Vector3 spawnPos = sp.position;
+                Vector3 dir      = TiltTowardPlayer(hDir, spawnPos, state.player.position + Vector3.up * 1.0f);
+                Vector3 right    = Vector3.Cross(Vector3.up, dir).normalized;
+                if (right.sqrMagnitude < 0.001f) right = Vector3.right;
+                dir = Quaternion.AngleAxis(Random.Range(-verticalSpread, verticalSpread), right) * dir;
 
-            BulletManager.Instance.SpawnBullet(b);
+                Bullet b = new Bullet
+                {
+                    position        = spawnPos,
+                    direction       = dir,
+                    speed           = ((Boss2StateManager)state).ScaleBulletSpeed(bulletSpeed),
+                    damage          = bulletDamage,
+                    maxLifetime     = bulletLifetime,
+                    collisionRadius = 0.3f,
+                    canBeParried    = true,
+                    destroyOnParry  = false,
+                    movementType    = BulletMovementType.Straight,
+                    visualPrefab    = state.bulletData.groundSlamBulletPrefab,
+                    scale           = 0.7f,
+                };
+
+                BulletManager.Instance.SpawnBullet(b);
+            }
         }
     }
 }

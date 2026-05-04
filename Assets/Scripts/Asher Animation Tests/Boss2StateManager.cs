@@ -402,6 +402,35 @@ public class Boss2StateManager : EnemyStateManager
     }
 
     // ===============================
+    // BULLET SPEED SCALING
+    // ===============================
+    [Header("Bullet Speed Scaling")]
+    [Tooltip("Multiplier at distance 0 (right next to boss) — must be above 0")]
+    [Range(0.1f, 2f)] public float nearBulletSpeedMultiplier = 0.5f;
+    [Tooltip("Multiplier at farRange distance and beyond")]
+    [Range(1f, 8f)]   public float farBulletSpeedMultiplier  = 5f;
+
+    public float ScaleBulletSpeed(float baseSpeed)
+    {
+        float dist = Vector3.Distance(transform.position, player.position);
+        float t    = Mathf.Clamp01(dist / farRange);
+        return baseSpeed * Mathf.Lerp(nearBulletSpeedMultiplier, farBulletSpeedMultiplier, t);
+    }
+
+    [Header("Far Range Bullet Density")]
+    [Tooltip("How many times more targeted bullets are fired when at far range")]
+    [Range(1f, 5f)] public float farBulletCountMultiplier = 2.5f;
+
+    [HideInInspector] public float phaseCountMultiplier = 1f;
+
+    public int ScaleBulletCount(int baseCount)
+    {
+        float dist = Vector3.Distance(transform.position, player.position);
+        float t    = Mathf.InverseLerp(closeRange, farRange, dist);
+        return Mathf.RoundToInt(baseCount * Mathf.Lerp(1f, farBulletCountMultiplier, t) * phaseCountMultiplier);
+    }
+
+    // ===============================
     // SPAWN POINTS
     // ===============================
     public Vector3 GetRandomSpawnPoint()
@@ -621,6 +650,7 @@ public class Boss2StateManager : EnemyStateManager
             midWeight_Railgun  = 3; midWeight_MortarBarrage = 3;
             farWeight_LaserBeam = 6; farWeight_ObstacleBarrage = 6; farWeight_Spiral     = 4;
             farWeight_Railgun   = 3; farWeight_MortarBarrage  = 4;
+            phaseCountMultiplier = 1.5f;
         }
         else if (phase == 2)
         {
@@ -631,6 +661,7 @@ public class Boss2StateManager : EnemyStateManager
             midWeight_ObstacleBarrage = 5; midWeight_Railgun = 5; midWeight_MortarBarrage = 5;
             farWeight_LaserBeam    = 7; farWeight_DataStrike  = 6; farWeight_VirusSwarm = 5;
             farWeight_ObstacleBarrage = 5; farWeight_Railgun = 6; farWeight_MortarBarrage = 6;
+            phaseCountMultiplier = 2.5f;
         }
     }
 

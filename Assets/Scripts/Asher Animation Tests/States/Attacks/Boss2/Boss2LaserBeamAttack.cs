@@ -3,14 +3,15 @@ using UnityEngine;
 // Simulates a sweeping laser by firing dense salvos of fast bullets that rotate across the arena
 public class Boss2LaserBeamAttack : EnemyBaseState
 {
-    private float sweepSpeed     = 130f; // degrees per second
-    private float sweepRange     = 200f; // total degrees swept per pass
-    private int   sweepCount     = 2;    // passes left-right
-    private float fireRate       = 0.04f;
-    private int   bulletsPerSalvo = 3;
-    private float bulletSpeed    = 6f;
-    private float bulletDamage   = 9f;
-    private float bulletLifetime = 5f;
+    private float sweepSpeed      = 130f; // degrees per second
+    private float sweepRange      = 200f; // total degrees swept per pass
+    private int   sweepCount      = 2;    // passes left-right
+    private float fireRate        = 0.04f;
+    private int   bulletsPerSalvo = 12;
+    private float bulletSpeed     = 6f;
+    private float bulletDamage    = 9f;
+    private float bulletLifetime  = 10f;
+    private float verticalSpread  = 12f;
 
     private float _angle;
     private float _swept;
@@ -85,12 +86,15 @@ public class Boss2LaserBeamAttack : EnemyBaseState
         {
             Vector3 spawnPos = sp.position;
             Vector3 dir      = TiltTowardPlayer(hDir, spawnPos, state.player.position + Vector3.up * 1.0f);
+            Vector3 right    = Vector3.Cross(Vector3.up, dir).normalized;
+            if (right.sqrMagnitude < 0.001f) right = Vector3.right;
+            dir = Quaternion.AngleAxis(Random.Range(-verticalSpread, verticalSpread), right) * dir;
 
             Bullet b = new Bullet
             {
                 position        = spawnPos,
                 direction       = dir,
-                speed           = bulletSpeed,
+                speed           = ((Boss2StateManager)state).ScaleBulletSpeed(bulletSpeed),
                 damage          = bulletDamage,
                 maxLifetime     = bulletLifetime,
                 collisionRadius = 0.22f,
@@ -98,7 +102,7 @@ public class Boss2LaserBeamAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.45f,
+                scale           = 0.65f,
             };
 
             BulletManager.Instance.SpawnBullet(b);

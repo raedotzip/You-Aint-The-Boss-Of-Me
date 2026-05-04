@@ -12,10 +12,11 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
     private float staggerDelay        = 0.6f; // seconds between each obstacle spawn
 
     // Covering bullet fire between obstacles
-    private float bulletFireRate   = 0.35f;
+    private float bulletFireRate   = 0.1f;
     private float bulletSpeed      = 3f;
     private float bulletDamage     = 10f;
-    private float bulletLifetime   = 7f;
+    private float bulletLifetime   = 16f;
+    private float verticalSpread   = 10f;
 
     private int   _obstaclesSpawned;
     private float _spawnTimer;
@@ -125,13 +126,16 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
             Vector3 toPlayer = targetPos - spawnPos;
             Vector3 dir      = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : state.transform.forward;
 
-            dir = Quaternion.Euler(Random.Range(-6f, 6f), Random.Range(-12f, 12f), 0f) * dir;
+            dir = Quaternion.Euler(0f, Random.Range(-15f, 15f), 0f) * dir;
+            Vector3 right = Vector3.Cross(Vector3.up, dir).normalized;
+            if (right.sqrMagnitude < 0.001f) right = Vector3.right;
+            dir = Quaternion.AngleAxis(Random.Range(-verticalSpread, verticalSpread), right) * dir;
 
             Bullet b = new Bullet
             {
                 position        = spawnPos,
                 direction       = dir,
-                speed           = bulletSpeed,
+                speed           = ((Boss2StateManager)state).ScaleBulletSpeed(bulletSpeed),
                 damage          = bulletDamage,
                 maxLifetime     = bulletLifetime,
                 collisionRadius = 0.3f,
@@ -139,7 +143,7 @@ public class Boss2ObstacleBarrageAttack : EnemyBaseState
                 destroyOnParry  = true,
                 movementType    = BulletMovementType.Straight,
                 visualPrefab    = state.bulletData.groundSlamBulletPrefab,
-                scale           = 0.4f,
+                scale           = 0.6f,
             };
 
             BulletManager.Instance.SpawnBullet(b);

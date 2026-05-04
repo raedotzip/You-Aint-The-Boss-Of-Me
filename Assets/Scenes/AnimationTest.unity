@@ -12972,7 +12972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
-  startingBoss: 0
+  startingBoss: 2
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss1ShowsBarImmediately: 1
@@ -23167,6 +23167,9 @@ MonoBehaviour:
   bossHealthBar: {fileID: 952059220}
   hitRadius: 0.6
   minSwordSpeed: 0.8
+  nearBulletSpeedMultiplier: 0.5
+  farBulletSpeedMultiplier: 3.04
+  farBulletCountMultiplier: 2.5
   musicSource: {fileID: 1875370452}
   bossMusicNormal: {fileID: 8300000, guid: 5a373347df28fe743a020ab8ba3519de, type: 3}
   musicVolume: 0.08
