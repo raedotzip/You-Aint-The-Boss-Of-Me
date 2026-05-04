@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class Boss1StateManager : EnemyStateManager
 {
@@ -642,5 +643,41 @@ public class Boss1StateManager : EnemyStateManager
             if (param.type == AnimatorControllerParameterType.Bool)
                 animator.SetBool(param.name, false);
         }
+    }
+
+    public void LerpDownTired()
+    {
+        StartCoroutine(LerpDownCoroutine());
+    }
+
+    IEnumerator LerpDownCoroutine()
+    {
+        float amountMovedDown = 0f;
+        Vector3 currentPos = transform.position;
+        while (amountMovedDown < 0.5f)
+        {
+            amountMovedDown += Time.deltaTime;
+            transform.position = new Vector3(currentPos.x, currentPos.y - amountMovedDown, currentPos.z);
+            yield return null;
+        }
+        transform.position = new Vector3(currentPos.x, currentPos.y - 0.5f, currentPos.z);
+    }
+
+    public void LerpUpTired()
+    {
+        StartCoroutine(LerpUpCoroutine());
+    }
+
+    IEnumerator LerpUpCoroutine()
+    {
+        float amountMovedUp = 0f;
+        Vector3 currentPos = transform.position;
+        while (amountMovedUp < 0.5f)
+        {
+            amountMovedUp += Time.deltaTime;
+            transform.position = new Vector3(currentPos.x, currentPos.y + amountMovedUp, currentPos.z);
+            yield return null;
+        }
+        transform.position = new Vector3(currentPos.x, currentPos.y + 0.5f, currentPos.z);
     }
 }
