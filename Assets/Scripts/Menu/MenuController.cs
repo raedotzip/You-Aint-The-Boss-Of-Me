@@ -114,6 +114,7 @@ public class MenuController : MonoBehaviour
         BossManager.Instance?.SetActiveBoss(0);
         TeleportPlayer(labSpawnPoint);
         HUDManager.Instance?.ShowHUD(true);
+        HUDManager.Instance?.StartTimer();
 
         SteamVR_Fade.View(Color.clear, fadeDuration);
     }
@@ -177,7 +178,6 @@ public class MenuController : MonoBehaviour
         BossManager.Instance?.SetActiveBoss(0);
         BossManager.Instance?.ResetRun();
 
-        HUDManager.Instance?.PauseTimer();
         player.GetComponent<PlayerHealth>()?.Respawn();
         SetMenuVisible(true);
         TeleportPlayer(menuSpawnPoint);
