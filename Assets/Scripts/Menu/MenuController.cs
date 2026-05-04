@@ -83,11 +83,11 @@ public class MenuController : MonoBehaviour
         StartCoroutine(FadeAndReturnToMenu());
     }
 
-    // Called after a boss is defeated — sends the player to the lab to walk to the
-    // next arena, or returns to menu after the final boss.
+    // Called after a boss is defeated — opens progression walls and advances the run.
     public void AdvanceToNextBoss(int completedBossIndex)
     {
         BossManager.Instance?.MarkBossDefeated(completedBossIndex);
+
         if (completedBossIndex < 2)
             BossManager.Instance?.SetActiveBoss(0);
         else
@@ -131,6 +131,7 @@ public class MenuController : MonoBehaviour
 
         BossManager.Instance?.SetActiveBoss(0);
         BossManager.Instance?.ResetRun();          // clears defeated flags and resets arena triggers
+
         HUDManager.Instance?.ShowHUD(false);
         SetMenuVisible(true);
         youWinBox?.SetActive(_playerWon);
@@ -175,6 +176,7 @@ public class MenuController : MonoBehaviour
 
         BossManager.Instance?.SetActiveBoss(0);
         BossManager.Instance?.ResetRun();
+
         HUDManager.Instance?.PauseTimer();
         player.GetComponent<PlayerHealth>()?.Respawn();
         SetMenuVisible(true);

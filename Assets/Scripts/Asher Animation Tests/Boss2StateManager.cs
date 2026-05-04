@@ -20,6 +20,16 @@ public class Boss2StateManager : EnemyStateManager
     private Boss2TiredState       tiredState        = new Boss2TiredState();
 
     // ===============================
+    // ARENA WALLS
+    // ===============================
+    [Header("Arena Walls")]
+    [Tooltip("Walls that activate when this boss starts and deactivate when it is defeated.")]
+    [SerializeField] private ArenaWall[] arenaWalls;
+
+    private void OpenArenaWalls()  { foreach (var w in arenaWalls) w?.Open();  }
+    private void CloseArenaWalls() { foreach (var w in arenaWalls) w?.Close(); }
+
+    // ===============================
     // PHASE GATE
     // ===============================
     [Header("Phase Gate")]
@@ -229,6 +239,7 @@ public class Boss2StateManager : EnemyStateManager
         if (forceField != null)
             forceField.SetActive(true);
 
+        CloseArenaWalls();
         _sword = FindObjectOfType<Sword>();
         if (_sword == null)
             Debug.LogWarning("[Boss2] Sword not found at Start — will retry in FixedUpdate.");
@@ -429,6 +440,7 @@ public class Boss2StateManager : EnemyStateManager
                 Debug.Log("[Boss2] Main computer destroyed!");
                 HUDManager.Instance?.StopTimer();
                 animator.SetBool("Destroyed", true);
+                OpenArenaWalls();
                 MenuController.Instance?.AdvanceToNextBoss(2);
                 if (musicSource != null)
                 {
@@ -561,6 +573,7 @@ public class Boss2StateManager : EnemyStateManager
 
         if (forceField != null) forceField.SetActive(true);
         if (animator != null) animator.SetBool("Destroyed", false);
+        CloseArenaWalls();
 
         if (bossHealthBar != null) bossHealthBar.UpdateHealthPercentage(health, maxHealth);
         HUDManager.Instance?.UpdateBossHealth(health, maxHealth);

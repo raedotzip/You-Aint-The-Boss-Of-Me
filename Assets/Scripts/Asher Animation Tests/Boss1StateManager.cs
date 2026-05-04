@@ -26,6 +26,16 @@ public class Boss1StateManager : EnemyStateManager
     public  Boss1LavaFinisherState             lavaFinisherState       = new Boss1LavaFinisherState();
 
     // ===============================
+    // ARENA WALLS
+    // ===============================
+    [Header("Arena Walls")]
+    [Tooltip("Walls that activate when this boss starts and deactivate when it is defeated.")]
+    [SerializeField] private ArenaWall[] arenaWalls;
+
+    private void OpenArenaWalls()  { foreach (var w in arenaWalls) w?.Open();  }
+    private void CloseArenaWalls() { foreach (var w in arenaWalls) w?.Close(); }
+
+    // ===============================
     // RANGE SETTINGS
     // ===============================
     [Header("Range Thresholds")]
@@ -180,6 +190,7 @@ public class Boss1StateManager : EnemyStateManager
         if (bossHealthBar != null) bossHealthBar.UpdateHealthPercentage(health, maxHealth);
         HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
 
+        CloseArenaWalls();
         SwitchState(idleState);
     }
 
@@ -316,6 +327,7 @@ public class Boss1StateManager : EnemyStateManager
 
         ObstacleManager.Instance?.PrewarmObstaclePools(obstacleData);
 
+        CloseArenaWalls();
         SwitchState(idleState);
         StartBossMusic();
     }
@@ -461,6 +473,7 @@ public class Boss1StateManager : EnemyStateManager
         if (health <= 0f)
         {
             finisherTriggered = true;
+            OpenArenaWalls();
             SwitchState(lavaFinisherState);
         }
     }
