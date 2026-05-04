@@ -171,6 +171,43 @@ public class Boss2StateManager : EnemyStateManager
         _isActive = false;
     }
 
+    // ===============================
+    // WEIGHT SNAPSHOT (captured at Start so ResetBoss can restore phase-0 values)
+    // ===============================
+    private struct WeightSnapshot
+    {
+        public int cLaser, cVirus, cEMP, cData, cSpiral, cObstacle, cRailgun, cMortar;
+        public int mLaser, mVirus, mEMP, mData, mSpiral, mObstacle, mRailgun, mMortar;
+        public int fLaser, fVirus, fEMP, fData, fSpiral, fObstacle, fRailgun, fMortar;
+    }
+    private WeightSnapshot _weights0;
+
+    private WeightSnapshot CaptureWeights() => new WeightSnapshot
+    {
+        cLaser = closeWeight_LaserBeam,  cVirus = closeWeight_VirusSwarm, cEMP = closeWeight_EMPWave,
+        cData  = closeWeight_DataStrike, cSpiral = closeWeight_Spiral,    cObstacle = closeWeight_ObstacleBarrage,
+        cRailgun = closeWeight_Railgun,  cMortar = closeWeight_MortarBarrage,
+        mLaser = midWeight_LaserBeam,    mVirus = midWeight_VirusSwarm,   mEMP = midWeight_EMPWave,
+        mData  = midWeight_DataStrike,   mSpiral = midWeight_Spiral,      mObstacle = midWeight_ObstacleBarrage,
+        mRailgun = midWeight_Railgun,    mMortar = midWeight_MortarBarrage,
+        fLaser = farWeight_LaserBeam,    fVirus = farWeight_VirusSwarm,   fEMP = farWeight_EMPWave,
+        fData  = farWeight_DataStrike,   fSpiral = farWeight_Spiral,      fObstacle = farWeight_ObstacleBarrage,
+        fRailgun = farWeight_Railgun,    fMortar = farWeight_MortarBarrage,
+    };
+
+    private void RestoreWeights(WeightSnapshot w)
+    {
+        closeWeight_LaserBeam = w.cLaser;   closeWeight_VirusSwarm = w.cVirus;   closeWeight_EMPWave = w.cEMP;
+        closeWeight_DataStrike = w.cData;   closeWeight_Spiral = w.cSpiral;      closeWeight_ObstacleBarrage = w.cObstacle;
+        closeWeight_Railgun = w.cRailgun;   closeWeight_MortarBarrage = w.cMortar;
+        midWeight_LaserBeam = w.mLaser;     midWeight_VirusSwarm = w.mVirus;     midWeight_EMPWave = w.mEMP;
+        midWeight_DataStrike = w.mData;     midWeight_Spiral = w.mSpiral;        midWeight_ObstacleBarrage = w.mObstacle;
+        midWeight_Railgun = w.mRailgun;     midWeight_MortarBarrage = w.mMortar;
+        farWeight_LaserBeam = w.fLaser;     farWeight_VirusSwarm = w.fVirus;     farWeight_EMPWave = w.fEMP;
+        farWeight_DataStrike = w.fData;     farWeight_Spiral = w.fSpiral;        farWeight_ObstacleBarrage = w.fObstacle;
+        farWeight_Railgun = w.fRailgun;     farWeight_MortarBarrage = w.fMortar;
+    }
+
     public override void Start()
     {
         _miniComputersRemaining = miniComputersTotal;
@@ -180,6 +217,7 @@ public class Boss2StateManager : EnemyStateManager
         tiredDuration      = PhasesTiredDuration[0];
         attacksBeforeTired = PhasesAttacksBeforeTired[0];
         _pathBlockTimer    = pathBlockIntervals != null && pathBlockIntervals.Length > 0 ? pathBlockIntervals[0] : 5f;
+        _weights0          = CaptureWeights();
         rb       = GetComponent<Rigidbody>();
 
         if (rb != null)
@@ -501,6 +539,34 @@ public class Boss2StateManager : EnemyStateManager
     {
         if (musicSource != null) musicSource.Stop();
         _musicStarted = false;
+    }
+
+    public override void ResetBoss()
+    {
+        health            = maxHealth;
+        _stage            = 0;
+        _isActive         = false;
+        _forceFieldUp     = true;
+        attackCounter     = 0;
+        phaseCountMultiplier = 1f;
+
+        tiredDuration      = PhasesTiredDuration[0];
+        attacksBeforeTired = PhasesAttacksBeforeTired[0];
+        _pathBlockTimer    = pathBlockIntervals != null && pathBlockIntervals.Length > 0 ? pathBlockIntervals[0] : 5f;
+        _musicStarted      = false;
+
+        _miniComputersRemaining = _miniComputerRefs.Count > 0 ? _miniComputerRefs.Count : miniComputersTotal;
+        foreach (var mini in _miniComputerRefs)
+            if (mini != null) mini.Revive();
+
+        if (forceField != null) forceField.SetActive(true);
+        if (animator != null) animator.SetBool("Destroyed", false);
+
+        if (bossHealthBar != null) bossHealthBar.UpdateHealthPercentage(health, maxHealth);
+        HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
+        HUDManager.Instance?.ShowBossBar(false);
+
+        RestoreWeights(_weights0);
     }
 
     // ===============================

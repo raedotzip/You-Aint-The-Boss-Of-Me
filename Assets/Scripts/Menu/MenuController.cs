@@ -116,6 +116,12 @@ public class MenuController : MonoBehaviour
         SteamVR_Fade.View(Color.black, fadeDuration);
         yield return new WaitForSeconds(fadeDuration);
 
+        foreach (var boss in FindObjectsOfType<EnemyStateManager>())
+        {
+            boss.StopBossMusic();
+            boss.ResetBoss();
+        }
+
         BossManager.Instance?.SetActiveBoss(0);
         BossManager.Instance?.ResetRun();          // clears defeated flags and resets arena triggers
         HUDManager.Instance?.ShowHUD(false);
@@ -153,13 +159,21 @@ public class MenuController : MonoBehaviour
         yield return new WaitForSeconds(fadeDuration);
 
         foreach (var boss in FindObjectsOfType<EnemyStateManager>())
+        {
             boss.StopBossMusic();
+            boss.ResetBoss();
+        }
 
         BossManager.Instance?.SetActiveBoss(0);
-        BossManager.Instance?.ResetArenaTriggers();
+        BossManager.Instance?.ResetRun();
         HUDManager.Instance?.PauseTimer();
         player.GetComponent<PlayerHealth>()?.Respawn();
-        TeleportPlayer(labSpawnPoint);
+        SetMenuVisible(true);
+        TeleportPlayer(menuSpawnPoint);
+        HUDManager.Instance?.ShowHUD(false);
+
+        foreach (var box in menuBoxes)
+            if (box != null) box.GetComponent<MenuBox>()?.ResetSlice();
 
         SteamVR_Fade.View(Color.clear, fadeDuration);
     }

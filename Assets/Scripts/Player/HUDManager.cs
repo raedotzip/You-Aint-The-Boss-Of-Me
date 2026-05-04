@@ -24,6 +24,9 @@ public class HUDManager : MonoBehaviour
     [Header("Lore")]
     public LoreTyper loreTyper;
 
+    [Header("Boss Portrait")]
+    public BossPortraitHUD bossPortrait;
+
     [Header("Testing")]
     [Tooltip("Keep the HUD visible on load — useful when testing directly in-scene without going through the menu flow")]
     public bool showHUDOnStart = false;
@@ -100,6 +103,11 @@ public class HUDManager : MonoBehaviour
     public void ShowBossBar(bool show)
     {
         if (bossBarContainer != null) bossBarContainer.SetActive(show);
+    }
+
+    public void SetBossPortrait(int bossIndex)
+    {
+        bossPortrait?.SetActiveBoss(bossIndex);
     }
 
     public void SetBossName(string bossName)
