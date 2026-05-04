@@ -21,24 +21,30 @@ Menu (menuSphere visible, HUD hidden)
 Fade to black
     │
     ▼
-Boss 1 Arena (player teleported, Boss 1 activated, HUD shown)
+Lab (player teleported to labSpawnPoint, HUD shown, timer starts)
+    │
+    │  Player walks into Boss 1 arena entrance
+    │  BossArenaTrigger fires → BossManager.SetActiveBoss(1)
+    ▼
+Boss 1 Arena (Boss 1 activated)
     │
     │  Boss 1 health reaches 0
     ▼
-Fade to black
-    │
-    ▼
-Boss 2 Arena (player teleported, Boss 2 activated)
+Boss 2 Arena (player walks through arena trigger → Boss 2 activated)
     │
     │  Boss 2 health reaches 0
     ▼
-Fade to black
+Fade to black (3s delay)
     │
     ▼
-Menu (menu shown, boxes reset, HUD hidden)
+Menu (menu shown, You Win box visible, boxes reset, HUD hidden)
+    │
+    │  Player dies at any point
+    ▼
+Fade to black → Menu (boxes reset, no You Win box)
 ```
 
-The transition logic lives in `MenuController`. Boss defeat logic lives in each boss's `TakeDamage()` method, which calls `MenuController.Instance.AdvanceToNextBoss()`.
+The transition logic lives in `MenuController`. Boss arenas are entered by walking through a `BossArenaTrigger` volume — not directly from menu box slices. Boss defeat logic lives in each boss's `TakeDamage()` method, which calls `MenuController.Instance.AdvanceToNextBoss()`.
 
 ---
 
@@ -75,10 +81,16 @@ The spherical menu area. Contains child `MenuBox` GameObjects (the interactive o
 ### Spawn Points
 Empty GameObjects marking where the player is placed:
 - `menuSpawnPoint` — Inside the menu sphere
-- `boss1SpawnPoint` — Boss 1 arena start position
-- `boss2SpawnPoint` — Boss 2 arena start position
+- `labSpawnPoint` — Where the player lands after slicing a menu box (the lab connecting area)
+- `boss1SpawnPoint` — Boss 1 arena start position (used when `startingBoss = 1` in the Inspector, bypasses menu)
+- `boss2SpawnPoint` — Boss 2 arena start position (used when `startingBoss = 2`)
 
 All referenced by `MenuController`.
+
+### Boss Arena Triggers
+**File:** `Assets/Scripts/Enemies/BossArenaTrigger.cs`
+
+Each boss arena entrance has a `BossArenaTrigger` component on a trigger `BoxCollider`. When the player walks (or dashes) through it, the trigger calls `BossManager.SetActiveBoss(bossIndex)` to start the fight. A polling fallback runs every frame so fast dashes that skip `OnTriggerEnter` are still caught. Triggers reset when `BossManager.ResetRun()` is called (on menu return).
 
 ---
 
@@ -100,14 +112,25 @@ Assets/Scripts/
 ├── Enemies/
 │   ├── EnemyStateManager/   Abstract base classes for all bosses
 │   ├── BossManager.cs
-│   └── BossHitbox.cs
+│   ├── BossHitbox.cs
+│   ├── BossHitFlash.cs      Visual flash on boss damage
+│   ├── BossArenaTrigger.cs  Activates a boss when the player enters the arena
+│   ├── Boss2MiniComputer.cs Mini computer entities for Boss 2's phase gate
+│   └── Boss2Obstacle.cs     Boss 2 walkway obstacle behaviour
+├── MapHighlights/           Mini-map highlight system (MapHighlightManager, MapShape, etc.)
 ├── Menu/
 │   ├── MenuController.cs
-│   └── MenuBox.cs
+│   ├── MenuBox.cs
+│   └── MenuManager.cs
 └── Player/
     ├── PlayerMovement.cs
     ├── PlayerHealth.cs
-    └── HUDManager.cs
+    ├── HUDManager.cs
+    ├── BossPortraitHUD.cs   Shows boss portrait art during fights
+    ├── LoreTyper.cs         Typewriter-style lore text on the HUD
+    ├── LoreTrigger.cs       Trigger volume that fires lore messages
+    ├── VRHudFollow.cs       Keeps HUD anchored to the VR camera
+    └── Teleport.cs          Trigger-based player teleport volume
 ```
 
 ---

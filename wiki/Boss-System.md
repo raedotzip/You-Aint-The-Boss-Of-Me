@@ -66,9 +66,11 @@ public abstract class EnemyBaseState
 |------|---------|
 | Health | 100 |
 | Arena radius | 28m |
-| Attacks before tired | 5 |
-| Tired duration | 2s |
-| Retreat distance | 5m (25% chance) |
+| Attacks before tired | 12 (normal) / 20 (enraged) |
+| Tired duration | 0.6s (normal) / 0.3s (enraged) |
+| Retreat distance | 5m (50% chance) |
+
+**Enraged phase:** Triggers at ≤ 20% health. The boss rests far less (`attacksBeforeTired` jumps to 20, `tiredDuration` drops to 0.3s), making the final phase significantly more aggressive.
 
 ### Attack States
 
@@ -102,7 +104,7 @@ Boss 1 has over 20 states. Attack selection is range-based with weighted randomi
 
 **Rotation:** The boss smoothly rotates toward the player at 5°/frame (slerp). Look-at is disabled during attacks that have their own movement.
 
-**Fatigue system:** After 5 attacks (`attacksBeforeTired`), the boss enters the Tired state for 2 seconds before selecting the next attack. This creates a predictable recovery window.
+**Fatigue system:** After 12 attacks (`attacksBeforeTired`), the boss enters the Tired state for 0.6 seconds before selecting the next attack. This creates a predictable recovery window. In the enraged phase the boss rests for only 0.3s and attacks 20 times between rests.
 
 **Retreat logic:** If the player is within 5m at the start of a new state selection, there's a 25% chance the boss jumps away. It prefers jumping sideways (left or right) over jumping straight back.
 
@@ -131,10 +133,25 @@ Health is clamped per-stage so a single hit cannot skip a stage.
 
 | Stat | Default |
 |------|---------|
-| Health | 100 |
+| Health | 300 |
 | Mini computers | 5 |
 | Stages | 3 |
-| Attacks before tired | 4 |
+| Attacks before tired (phase 0/1/2) | 3 / 4 / 6 |
+| Tired duration (phase 0/1/2) | 2.5s / 1.5s / 0.4s |
+
+### Phase Escalation
+
+Each time the player destroys the mini computers and deals a third of the boss's health, the stage advances. Later stages attack more frequently, rest less, and the ceiling curtain (bullet wall across walkways) fires faster and denser.
+
+| Stage | Attacks before tired | Tired duration | Curtain interval | Curtain cols |
+|-------|---------------------|----------------|-----------------|--------------|
+| 0 | 3 | 2.5s | 1.5s | 12 |
+| 1 | 4 | 1.5s | 1.0s | 16 |
+| 2 | 6 | 0.4s | 0.5s | 22 |
+
+### Ceiling Curtain
+
+A separate passive system fires bullet walls across the walkways leading to the mini computers. Configured via `ceilingFirePoints` (empty GameObjects on the ceiling above each walkway). Bullet columns, gap size, speed, and damage all scale per stage.
 
 ### Attack States
 
@@ -146,6 +163,8 @@ Health is clamped per-stage so a single hit cannot skip a stage.
 | Data Strike | 5 aimed bursts × 7 bullets, 14° spread |
 | Spiral | Two interleaved spiral arms, 200°/s rotation, 4.5s duration |
 | Obstacle Barrage | 4 staggered physical obstacles + tracking bullet harassment |
+| Railgun | 0.9s charge pause, then 35 bullets in a tight 15° cone at high speed. Telegraphed but punishing if not dodged. |
+| Mortar Barrage | 14 arcing shots fired one-by-one with scatter — forces continuous movement to avoid. |
 
 ---
 
