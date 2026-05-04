@@ -129,6 +129,12 @@ public class HUDManager : MonoBehaviour
         SaveBestTime();
     }
 
+    public void PauseTimer()
+    {
+        _running = false;
+        UpdateTimerDisplay();
+    }
+
     private void SaveBestTime()
     {
         const string key = "BestRunTime";

@@ -144,6 +144,12 @@ public class BossManager : MonoBehaviour
         _boss1Defeated = false;
         _boss2Defeated = false;
 
+        ResetArenaTriggers();
+    }
+
+    // Resets arena triggers without clearing defeated flags — call on player death.
+    public void ResetArenaTriggers()
+    {
         foreach (var trigger in FindObjectsOfType<BossArenaTrigger>())
             trigger.ResetTrigger();
     }
