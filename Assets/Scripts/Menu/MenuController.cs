@@ -86,12 +86,18 @@ public class MenuController : MonoBehaviour
     {
         BossManager.Instance?.MarkBossDefeated(completedBossIndex);
         if (completedBossIndex < 2)
-            StartCoroutine(FadeAndGoToLab());
+            BossManager.Instance?.SetActiveBoss(0);
         else
-            ReturnToMenu();
+            StartCoroutine(DelayedReturnToMenu(3f));
     }
 
     // -----------------------------------------------
+    IEnumerator DelayedReturnToMenu(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ReturnToMenu();
+    }
+
     IEnumerator FadeAndGoToLab()
     {
         SteamVR_Fade.View(Color.black, fadeDuration);
