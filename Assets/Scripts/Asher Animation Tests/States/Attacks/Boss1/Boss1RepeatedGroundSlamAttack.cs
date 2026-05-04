@@ -60,6 +60,7 @@ public class Boss1RepeatedGroundSlamBulletAttack : EnemyBaseState
     private void DoSlam(EnemyStateManager state)
     {
         slamsCompleted++;
+        state.animator.SetTrigger("GroundSlam");
         waitingForNext = true;
 
         //state.animator.SetTrigger("GroundSlam");

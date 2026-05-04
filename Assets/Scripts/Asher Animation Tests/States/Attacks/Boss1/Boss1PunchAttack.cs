@@ -63,7 +63,6 @@ public class Boss1PunchAttack : EnemyBaseState
         Vector3 toPlayer = (state.player.position - state.transform.position).normalized;
         targetPos        = state.player.position - toPlayer * stopDistance;
         targetPos.y      = 0f;
-
         state.animator.SetBool("Running", true);
     }
 
@@ -133,6 +132,7 @@ public class Boss1PunchAttack : EnemyBaseState
             hasLunged   = true;
             punchActive = true;
             punchTimer  = 0f;
+            state.animator.SetBool("Punch1Hand", true);
         }
     }
 

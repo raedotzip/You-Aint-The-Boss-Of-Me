@@ -14,6 +14,8 @@ public class Boss1SpiralBurstAttack : EnemyBaseState
     private int   armCount       = 4;      // Number of spiral arms
     private float rotateSpeed    = 120f;   // Degrees per second the pattern rotates
     private float duration       = 4f;     // How long the spiral lasts
+    private float spinSpeed = 200f;
+    private float spinAccelerate = 100f;
 
     // ===============================
     // BULLET SETTINGS
@@ -30,6 +32,8 @@ public class Boss1SpiralBurstAttack : EnemyBaseState
     private float currentAngle   = 0f;
     private float durationTimer  = 0f;
     private float fireTimer      = 0f;
+    private float currentSpinSpeed = 0f;
+    private float spinTimer = 0f;
     private bool  attackDone     = false;
 
     public override void EnterState(EnemyStateManager state)
@@ -52,6 +56,15 @@ public class Boss1SpiralBurstAttack : EnemyBaseState
         durationTimer += Time.deltaTime;
         fireTimer     += Time.deltaTime;
         currentAngle  += rotateSpeed * Time.deltaTime;
+
+        spinTimer += Time.deltaTime;
+        currentSpinSpeed += spinAccelerate * Time.deltaTime;
+
+        // Rotate boss — Rotate() avoids Euler gimbal issues and can't be
+        // silently overridden by an absolute assignment elsewhere in the frame
+        float delta = currentSpinSpeed * Time.deltaTime;
+        currentAngle += delta;
+        state.transform.Rotate(Vector3.up, delta, Space.World);
 
         if (fireTimer >= fireRate)
         {
