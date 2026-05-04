@@ -4050,24 +4050,25 @@ MonoBehaviour:
   closeWeight_Charge: 5
   closeWeight_TargetedBurst: 2
   closeWeight_RingGap: 1
-  midWeight_Charge: 7
-  midWeight_JumpSlam: 6
+  midWeight_Charge: 8
+  midWeight_JumpSlam: 7
   midWeight_Spin: 5
   midWeight_SpiralBurst: 2
   midWeight_TargetedBurst: 2
   midWeight_RingGap: 7
-  farWeight_Charge: 5
+  farWeight_Charge: 7
   farWeight_JumpSlam: 4
   farWeight_SpiralBurst: 3
   farWeight_TargetedBurst: 3
   farWeight_RingGap: 8
-  attacksBeforeTired: 4
-  tiredDuration: 4.92
+  attacksBeforeTired: 6
+  tiredDuration: 3
   attacksBeforeTiredEnraged: 14
   tiredDurationEnraged: 0.8
   musicSource: {fileID: 2073485679}
   bossMusicNormal: {fileID: 8300000, guid: 6ab131ef12c46c54caa8672f74e27f7b, type: 3}
   musicVolume: 0.08
+  musicStarted: 0
   audioSource: {fileID: 2073485679}
   sfxVolume: 2
   spinStartClip: {fileID: 8300000, guid: c860c8928957e284cb50919d13bac365, type: 3}
@@ -4081,6 +4082,7 @@ MonoBehaviour:
   maxHealth: 200
   bossHealthBar: {fileID: 952059220}
   bossTimerUI: {fileID: 0}
+  finisherTriggered: 0
   isAirborne: 0
 --- !u!1 &397862654
 GameObject:
@@ -9173,7 +9175,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4884577168612163704, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: moveSpeed
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4884577168612163704, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: inputSource
@@ -25576,7 +25578,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1500, y: 900}
+  m_SizeDelta: {x: 1000, y: 700}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2037185650
 MonoBehaviour:

@@ -64,7 +64,7 @@ public class Boss1PunchAttack : EnemyBaseState
         targetPos        = state.player.position - toPlayer * stopDistance;
         targetPos.y      = 0f;
 
-        state.animator.SetBool("Continuous Punching", true);
+        state.animator.SetBool("Running", true);
     }
 
     public override void UpdateState(EnemyStateManager state)

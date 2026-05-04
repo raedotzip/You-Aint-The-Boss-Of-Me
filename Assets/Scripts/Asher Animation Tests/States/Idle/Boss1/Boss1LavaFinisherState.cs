@@ -99,14 +99,13 @@ public class Boss1LavaFinisherState : EnemyBaseState
             case Phase.WobbleAtEdge:
                 // Unstable wobble at the edge — keep Y fixed to ground
                 state.transform.position = _edgePos + new Vector3(
-                    Mathf.Sin(Time.time * 9f) * 0.06f, 0f,
+                    Mathf.Sin(Time.time * 9f) * 0.06f, state.transform.position.y - _edgePos.y,
                     Mathf.Sin(Time.time * 7f) * 0.03f);
 
                 // Prevent the animator child from drifting upward during the Tired animation
                 if (state.animator != null && state.animator.transform != state.transform)
                 {
                     Vector3 localPos = state.animator.transform.localPosition;
-                    localPos.y = 0f;
                     state.animator.transform.localPosition = localPos;
                 }
 
@@ -164,6 +163,15 @@ public class Boss1LavaFinisherState : EnemyBaseState
         boss.smoothLookAtEnabled = false;
         boss.DisableAnimationBools();
         Debug.Log($"[Boss1] Knocked into lava! Sinking from {_sinkStart} to depth {_lavaFallDepth}");
+
+        Debug.Log($"[Boss1] Fight completed in {boss.bossTimer:F2} seconds");
+
+        boss.bossTimerUI?.SetTime(boss.bossTimer);
+        if (boss.musicSource != null)
+        {
+            boss.musicSource.Stop();
+        }
+        boss.musicStarted = false;
     }
 
     public override float OnBossHurt(EnemyStateManager state) => 0f;

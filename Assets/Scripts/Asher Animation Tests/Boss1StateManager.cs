@@ -128,11 +128,11 @@ public class Boss1StateManager : EnemyStateManager
     [Range(0f, 1f)]
     public float musicVolume = 0.6f;
 
-    private bool _musicStarted = false;
+    public bool musicStarted = false;
 
     public void StartBossMusic()
     {
-        if (_musicStarted) return;
+        if (musicStarted) return;
 
         if (musicSource == null || bossMusicNormal == null)
         {
@@ -140,7 +140,7 @@ public class Boss1StateManager : EnemyStateManager
             return;
         }
 
-        _musicStarted = true;
+        musicStarted = true;
 
         musicSource.clip = bossMusicNormal;
         musicSource.loop = true;
@@ -205,7 +205,7 @@ public class Boss1StateManager : EnemyStateManager
     }
 
     // True once health hits 0 — prevents re-triggering the finisher
-    private bool _finisherTriggered = false;
+    public bool finisherTriggered = false;
 
     // Set by jump states so EnforceBounds skips the wall-overlap check mid-air
     [HideInInspector] public bool isAirborne = false;
@@ -315,7 +315,7 @@ public class Boss1StateManager : EnemyStateManager
     // Snaps boss back to last safe position if it falls off the map or clips into a wall
     public void EnforceBounds()
     {
-        if (_finisherTriggered) return;
+        if (finisherTriggered) return;
 
         Vector3 pos = transform.position;
 
@@ -402,7 +402,7 @@ public class Boss1StateManager : EnemyStateManager
         TriggerHitFlash(amount);
 
         // After the finisher triggers, hits push the boss into the lava instead
-        if (_finisherTriggered)
+        if (finisherTriggered)
         {
             lavaFinisherState.PushBoss(this);
             return;
@@ -415,17 +415,7 @@ public class Boss1StateManager : EnemyStateManager
 
         if (health <= 0f)
         {
-            _finisherTriggered = true;
-
-            Debug.Log($"[Boss1] Fight completed in {bossTimer:F2} seconds");
-
-            bossTimerUI?.SetTime(bossTimer);
-            if (musicSource != null)
-            {
-                musicSource.Stop();
-            }
-            _musicStarted = false;
-
+            finisherTriggered = true;
             SwitchState(lavaFinisherState);
         }
     }
