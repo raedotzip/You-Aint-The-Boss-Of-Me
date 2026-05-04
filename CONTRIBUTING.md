@@ -12,6 +12,19 @@ Check the [Wiki](../../wiki) for guides on how bosses are structured before maki
 - Bug fixes
 - Balance tweaks (with reasoning)
 
+## Building from Source
+
+**Requirements:**
+- [Unity Hub](https://unity.com/download) with Unity **2022.3.62f2** installed
+- A SteamVR-compatible VR headset
+- [Steam](https://store.steampowered.com/) with SteamVR installed
+
+**Steps:**
+1. Clone the repository
+2. Open the project in Unity Hub
+3. Open `Assets/Scenes/AnimationTest.unity`
+4. Press **Play** to run in editor, or File → Build Settings → StandaloneWindows64 → **Build** to produce an `.exe`
+
 ## How to Submit
 
 1. Fork the repository

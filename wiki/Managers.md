@@ -70,22 +70,27 @@ Manages the entire single-scene flow: showing/hiding the menu, teleporting the p
 |-------|-------------|
 | `menuSphere` | The menu area GameObject — shown in menu, hidden during fights |
 | `menuBoxes[]` | All MenuBox GameObjects — shown in menu, hidden during fights |
+| `youWinBox` | A special menu box shown only after the player beats both bosses |
 | `menuSpawnPoint` | Where the player stands in the menu |
-| `boss1SpawnPoint` | Where the player appears for Boss 1 |
-| `boss2SpawnPoint` | Where the player appears for Boss 2 |
+| `labSpawnPoint` | Where the player spawns after slicing a menu box (the lab connecting area) |
+| `boss1SpawnPoint` | Where the player appears for Boss 1 (only used when `startingBoss = 1`) |
+| `boss2SpawnPoint` | Where the player appears for Boss 2 (only used when `startingBoss = 2`) |
 | `player` | The player's root GameObject (needs `CharacterController`) |
 | `fadeDuration` | How long the black screen fade takes in seconds (default: 0.4) |
 
 ### Key Methods
 
 **`StartBoss(int bossIndex)`**  
-Starts a boss fight with a screen fade. Hides the menu, teleports the player, shows the HUD, and activates the boss. Wire this to a `MenuBox.onSliced` UnityEvent in the Inspector. Use `StartBoss1()` or `StartBoss2()` as the parameterless versions for UnityEvent wiring.
+Triggered by a `MenuBox.onSliced` UnityEvent. Fades to black, hides the menu, shows the HUD, starts the run timer, and teleports the player to the **lab** (`labSpawnPoint`). The player then walks to a boss arena, and the `BossArenaTrigger` volume starts the actual fight. The `bossIndex` parameter is accepted but unused — all boxes send the player to the same lab. Use `StartBoss1()` or `StartBoss2()` as the parameterless helpers for UnityEvent wiring.
 
 **`AdvanceToNextBoss(int completedBossIndex)`**  
-Called by a boss when it dies. If there's a next boss (`completedBossIndex + 1 <= 2`), transitions to it. Otherwise returns to the menu.
+Called by a boss's `TakeDamage()` when health reaches 0. Notifies `BossManager` the boss is defeated. After boss 2, waits 3 seconds then calls `ReturnToMenu()` with the You Win box shown.
 
 **`ReturnToMenu()`**  
-Fades to black, deactivates all bosses, shows the menu, teleports the player back, and resets all menu boxes so they can be sliced again.
+Fades to black, resets all bosses, deactivates all bosses, shows the menu, teleports the player back, and resets all menu boxes.
+
+**`HandlePlayerDeath()`**  
+Called by `PlayerHealth` on death. Fades to black, resets all bosses and the run, respawns the player health, and returns to the menu without showing the You Win box.
 
 **`QuitGame()`**  
 Exits the application (uses `EditorApplication.isPlaying = false` in the editor).
@@ -102,10 +107,11 @@ Sequence for every transition:
 
 ### Wiring Menu Boxes
 
-Each `MenuBox` in the scene has an `onSliced` UnityEvent. Wire it in the Inspector:
+Each `MenuBox` in the scene has an `onSliced` UnityEvent. All boxes send the player to the lab — wire them to `MenuController.StartBoss1()` (or `StartBoss2()`, they behave identically):
 
-- "Play Boss 1" box → `MenuController.StartBoss1()`
-- "Play Boss 2" box → `MenuController.StartBoss2()`
+- "Play" box → `MenuController.StartBoss1()`
+
+Boss fights are activated separately by `BossArenaTrigger` volumes at each arena entrance.
 
 ---
 
@@ -125,15 +131,24 @@ Controls all player-visible UI. Hides everything during the menu and shows it du
 | `bossNameText` | TextMeshPro text showing the boss name |
 | `hudRoot` | Root of the entire HUD — hidden while in the menu |
 | `timerText` | TextMeshPro text at the top of the HUD showing elapsed run time |
+| `loreTyper` | Reference to the `LoreTyper` component for typewriter text display |
+| `bossPortrait` | Reference to `BossPortraitHUD` — displays boss portrait art during fights |
+| `showHUDOnStart` | Keep HUD visible on load — useful for testing without going through the menu |
 
 ### Key Methods
 
-**`ShowHUD(bool show)`** — Toggles the entire HUD on/off. Starting a boss fight also starts the run timer.  
+**`ShowHUD(bool show)`** — Toggles the entire HUD on/off. Also starts/resets the run timer.  
 **`ShowBossBar(bool show)`** — Toggles just the boss health bar.  
 **`SetBossName(string name)`** — Updates the boss name text.  
+**`SetBossPortrait(int bossIndex)`** — Switches the boss portrait art to match the active boss.  
+**`ShowLore(string message)`** — Displays a single lore message via the `LoreTyper`.  
+**`ShowLoreSequence(string[] messages)`** — Displays a chain of lore messages in order.  
+**`CancelLore()`** — Immediately clears any in-progress lore text.  
+**`StartTimer()`** — Starts the run timer from zero.  
+**`PauseTimer()`** — Pauses the timer without resetting it.  
 **`StopTimer()`** — Stops the run timer and saves the best time to `PlayerPrefs`.
 
-`BossManager` calls `SetBossName` and `ShowBossBar` whenever a boss is activated.
+`BossManager` calls `SetBossName`, `SetBossPortrait`, and `ShowBossBar` whenever a boss is activated.
 
 ---
 

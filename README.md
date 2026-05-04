@@ -34,22 +34,18 @@ TBD
 
 ---
 
-## Requirements
+## Download & Play
 
-- Unity 2022.3.62f2
-- SteamVR plugin (included under `Assets/Plugins/Core/SteamVR`)
-- A SteamVR-compatible VR headset (Valve Index, HTC Vive, Meta Quest via Air Link / Link, etc.)
+> **Requires:** Windows PC + SteamVR-compatible headset (Valve Index, HTC Vive, Meta Quest via Air Link/Link, etc.) + [Steam](https://store.steampowered.com/) with SteamVR installed.
 
----
-
-## Getting Started
-
-1. Clone the repository
-2. Open the project in Unity
-3. Open `Assets/Scenes/AnimationTest.unity`
-4. Press **Play**
+1. Go to the [Releases page](../../releases/latest)
+2. Download `YouAintTheBossOfMe-Windows.zip`
+3. Extract the zip
+4. Launch `YouAintTheBossOfMe.exe` with your headset connected and SteamVR running
 5. Slice one of the menu boxes with your sword to start a boss fight
-6. Defeat both bosses to complete the run
+6. Defeat both bosses to win
+
+Want to build from source? See [CONTRIBUTING.md](Contributing.md).
 
 ---
 

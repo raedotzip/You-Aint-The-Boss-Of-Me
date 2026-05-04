@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ed96bc7e8fb754e8cf1b1eb0b4096e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayBeforeStart: 2
+  delayBeforeStart: 4
   timeBtwChars: 0.05
   deleteSpeedMultiplier: 0.5
   cursor: '|'
@@ -1200,6 +1200,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 1980867974}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 7b63a56392126f140845c76ecd2f3a1c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7b63a56392126f140845c76ecd2f3a1c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7b63a56392126f140845c76ecd2f3a1c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1209,7 +1217,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7b63a56392126f140845c76ecd2f3a1c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.384
+      value: 0.964
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7b63a56392126f140845c76ecd2f3a1c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1246,6 +1254,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7b63a56392126f140845c76ecd2f3a1c, type: 3}
       propertyPath: m_Name
       value: YouWinText
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7b63a56392126f140845c76ecd2f3a1c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21960,7 +21972,7 @@ Transform:
   m_GameObject: {fileID: 1787315578}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.052, z: 0}
+  m_LocalPosition: {x: 0, y: 0.052, z: -0.133}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24001,8 +24013,8 @@ MonoBehaviour:
   closeWeight_MortarBarrage: 1
   midWeight_Railgun: 2
   midWeight_MortarBarrage: 2
-  attacksBeforeTired: 4
-  tiredDuration: 2.5
+  attacksBeforeTired: 3
+  tiredDuration: 4.5
   attackCounter: 0
   health: 100
   maxHealth: 100
@@ -24010,8 +24022,8 @@ MonoBehaviour:
   hitRadius: 0.6
   minSwordSpeed: 0.8
   nearBulletSpeedMultiplier: 0.5
-  farBulletSpeedMultiplier: 3.04
-  farBulletCountMultiplier: 2.5
+  farBulletSpeedMultiplier: 2
+  farBulletCountMultiplier: 1
   phaseCountMultiplier: 1
   musicSource: {fileID: 1875370452}
   bossMusicNormal: {fileID: 8300000, guid: 5a373347df28fe743a020ab8ba3519de, type: 3}

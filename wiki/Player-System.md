@@ -137,4 +137,42 @@ The `MenuController` teleport sequence:
 4. Call `Physics.SyncTransforms()` — forces the physics engine to update before re-enabling the CharacterController
 5. Re-enable `CharacterController`
 
+---
+
+## Lore System
+
+**LoreTyper:** `Assets/Scripts/Player/LoreTyper.cs`  
+**LoreTrigger:** `Assets/Scripts/Player/LoreTrigger.cs`
+
+Displays typewriter-style text on the HUD. Used for ambient world-building as the player moves through the lab and arenas.
+
+### LoreTyper
+
+Attached to a HUD GameObject with a `TMP_Text` element. Types a message in character by character, holds it, then deletes it. Can play a chain of messages in sequence.
+
+| Inspector field | Default | Description |
+|----------------|---------|-------------|
+| `typeSpeed` | 0.05s | Seconds per character typed |
+| `deleteSpeed` | 0.025s | Seconds per character deleted (faster than type) |
+| `holdDuration` | 3s | How long the full text shows before deleting |
+| `gapBetween` | 0.4s | Silence between messages in a sequence |
+| `cursor` | `_` | Blinking cursor appended while typing |
+
+**API** (called via `HUDManager`):
+- `HUDManager.Instance.ShowLore("message")` — single message
+- `HUDManager.Instance.ShowLoreSequence(new string[]{"a","b"})` — sequence
+- `HUDManager.Instance.CancelLore()` — clears immediately
+
+### LoreTrigger
+
+Place a `LoreTrigger` on any trigger collider in the scene to fire lore automatically when the player walks through.
+
+| Inspector field | Description |
+|----------------|-------------|
+| `loreTyper` | Reference to the HUD's `LoreTyper` |
+| `messages[]` | One entry = single message. Multiple = sequence. |
+| `playerTag` | Tag on the player root (default: `"Player"`) |
+
+Triggers fire once and reset when `ResetTrigger()` is called.
+
 Skipping step 4 causes the CharacterController to snap back to its last known physics position on the first frame, which looks like a teleport failure.

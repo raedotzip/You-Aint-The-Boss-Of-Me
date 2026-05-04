@@ -32,9 +32,9 @@ The sword tracks the arc distance the blade tip travels during a swing. This is 
 
 | Swing type | Tip distance | Multiplier |
 |------------|-------------|-----------|
-| Flick / wrist snap | ≤ 0.08m | 0.25× |
-| Medium swing | (interpolated) | 0.25–1.5× |
-| Full arm swing | ≥ 0.55m | 1.5× |
+| Flick / wrist snap | ≤ 0.06m | 0.1× |
+| Medium swing | (interpolated) | 0.1–2.0× |
+| Full arm swing | ≥ 0.50m | 2.0× |
 
 `Mathf.InverseLerp(minSwingDistance, maxSwingDistance, swingTipDistance)` gives a 0–1 value, then `Mathf.Lerp(minMultiplier, maxMultiplier, t)` converts it to the multiplier.
 
@@ -75,10 +75,10 @@ On every boss hit, the game briefly freezes at 85% time scale for 0.05 seconds. 
 | `sphereRadius` | 0.025m | Hit detection sphere size |
 | `hitCooldown` | 0.2s | Min time between hits on same object |
 | `damageAmount` | 10 | Base damage per hit |
-| `minSwingDistance` | 0.08m | Tip distance for min damage |
-| `maxSwingDistance` | 0.55m | Tip distance for max damage |
-| `minDamageMultiplier` | 0.25 | Multiplier at min swing |
-| `maxDamageMultiplier` | 1.5 | Multiplier at max swing |
+| `minSwingDistance` | 0.06m | Tip distance for min damage |
+| `maxSwingDistance` | 0.50m | Tip distance for max damage |
+| `minDamageMultiplier` | 0.1 | Multiplier at min swing |
+| `maxDamageMultiplier` | 2.0 | Multiplier at max swing |
 | `healSwingThreshold` | 0.35m | Min swing distance to trigger life steal |
 | `healAmount` | 5 | HP restored on qualifying hit |
 | `parryAngle` | 70° | Sword angle for successful parry |

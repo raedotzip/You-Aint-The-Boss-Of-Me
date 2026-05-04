@@ -18,7 +18,6 @@ public class Boss3StateManager : EnemyStateManager
     [Header("Health")]
     public float maxHealth = 100f;
     public float health;
-    public BossHealthBar bossHealthBar;
 
     [Header("States")]
     private Boss3IdleState    idleState    = new Boss3IdleState();
@@ -39,8 +38,7 @@ public class Boss3StateManager : EnemyStateManager
     public void TakeDamage(float amount)
     {
         health = Mathf.Max(0f, health - amount);
-        if (bossHealthBar != null)
-            bossHealthBar.UpdateHealthPercentage(health, maxHealth);
+        HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
 
         if (health <= 0f)
         {
@@ -140,8 +138,21 @@ Assign these assets to your Boss3StateManager in the Inspector.
 1. Add your boss's FBX / prefab to the scene
 2. Add `Boss3StateManager` to the root GameObject
 3. Assign `Animator`, `Rigidbody`, `bulletData`, `obstacleData` in the Inspector
-4. Add and position a `boss3SpawnPoint` empty GameObject somewhere in the scene
-5. Set a spawn point for the player when this boss fight starts
+4. Add and position a `boss3SpawnPoint` empty GameObject (used only when `startingBoss = 3` for direct testing)
+
+---
+
+## Step 4b — Add a Boss Arena Trigger
+
+Boss fights start when the player **walks into the arena**, not when a menu box is sliced. You need a `BossArenaTrigger` volume at the arena entrance.
+
+1. Create an empty GameObject at the arena entrance, sized to cover the doorway
+2. Add a `BoxCollider` (mark it as trigger — the script does this automatically)
+3. Add the `BossArenaTrigger` component
+4. Set `bossIndex = 3`
+5. The trigger fires `BossManager.SetActiveBoss(3)` when the player enters
+
+The trigger resets automatically when the player returns to the menu.
 
 ---
 
@@ -166,13 +177,9 @@ In `SetActiveBoss()`, add a block for index 3 following the same pattern as Boss
 ```csharp
 if (bossIndex == 3 && boss3 != null)
 {
-    if (HUDManager.Instance != null)
-    {
-        boss3.bossHealthBar = HUDManager.Instance.bossBar;
-        boss3.bossHealthBar?.UpdateHealthPercentage(boss3.health, boss3.maxHealth);
-        HUDManager.Instance.SetBossName(boss3Name);
-    }
-
+    HUDManager.Instance?.SetBossName(boss3Name);
+    HUDManager.Instance?.SetBossPortrait(3);
+    HUDManager.Instance?.UpdateBossHealth(boss3.health, boss3.maxHealth);
     SetBossActive(boss3, true);
     HUDManager.Instance?.ShowBossBar(true);
 }
@@ -251,10 +258,11 @@ If you want a direct "Play Boss 3" menu option:
 
 - [ ] `Boss3StateManager.cs` created and inherits `EnemyStateManager`
 - [ ] At least one attack state created
-- [ ] `TakeDamage()` calls `MenuController.Instance.AdvanceToNextBoss(3)`
+- [ ] `TakeDamage()` calls `HUDManager.Instance.UpdateBossHealth()` and `MenuController.Instance.AdvanceToNextBoss(3)`
 - [ ] ScriptableObject data assets created and assigned
 - [ ] Boss GameObject in scene with all components wired
-- [ ] `boss3SpawnPoint` placed in scene
+- [ ] `boss3SpawnPoint` placed in scene (for direct-test bypass)
+- [ ] `BossArenaTrigger` volume placed at arena entrance with `bossIndex = 3`
 - [ ] `BossManager` updated: field, `SetActiveBoss`, `GetActiveBoss`, `TakeDamageOnActive`
 - [ ] `MenuController` updated: spawn point field and `BossSpawnPoint()`
 - [ ] Inspector references all assigned

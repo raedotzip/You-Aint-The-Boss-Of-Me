@@ -1,8 +1,8 @@
-### Boss Rush VR
+### You Ain't The Boss Of Me
 
 - [Home](Home)
-- [GitHub ↗](https://github.com/raedotzip/VRGame)
-- [Issues ↗](https://github.com/raedotzip/VRGame/issues)
+- [GitHub ↗](https://github.com/raedotzip/You-Aint-The-Boss-Of-Me)
+- [Issues ↗](https://github.com/raedotzip/You-Aint-The-Boss-Of-Me/issues)
 
 ### Getting Oriented
 
