@@ -429,7 +429,7 @@ public class Boss2StateManager : EnemyStateManager
                 Debug.Log("[Boss2] Main computer destroyed!");
                 HUDManager.Instance?.StopTimer();
                 animator.SetBool("Destroyed", true);
-                //MenuController.Instance?.AdvanceToNextBoss(2);
+                MenuController.Instance?.AdvanceToNextBoss(2);
                 if (musicSource != null)
                 {
                     musicSource.Stop();

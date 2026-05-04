@@ -12,6 +12,7 @@ public class MenuController : MonoBehaviour
     [Header("Menu Objects")]
     public GameObject   menuSphere;
     public GameObject[] menuBoxes;
+    public GameObject   youWinBox;
 
     [Header("Spawn Points")]
     [Tooltip("Where the player stands inside the menu sphere")]
@@ -29,6 +30,8 @@ public class MenuController : MonoBehaviour
     [Header("Fade")]
     [Tooltip("Duration in seconds for the fade-to-black and fade-in during teleport")]
     public float fadeDuration = 0.4f;
+
+    private bool _playerWon;
 
     void Awake()
     {
@@ -88,7 +91,10 @@ public class MenuController : MonoBehaviour
         if (completedBossIndex < 2)
             BossManager.Instance?.SetActiveBoss(0);
         else
+        {
+            _playerWon = true;
             StartCoroutine(DelayedReturnToMenu(3f));
+        }
     }
 
     // -----------------------------------------------
@@ -103,6 +109,7 @@ public class MenuController : MonoBehaviour
         SteamVR_Fade.View(Color.black, fadeDuration);
         yield return new WaitForSeconds(fadeDuration);
 
+        youWinBox?.SetActive(false);
         SetMenuVisible(false);
         BossManager.Instance?.SetActiveBoss(0);
         TeleportPlayer(labSpawnPoint);
@@ -126,6 +133,8 @@ public class MenuController : MonoBehaviour
         BossManager.Instance?.ResetRun();          // clears defeated flags and resets arena triggers
         HUDManager.Instance?.ShowHUD(false);
         SetMenuVisible(true);
+        youWinBox?.SetActive(_playerWon);
+        _playerWon = false;
         TeleportPlayer(menuSpawnPoint);
 
         foreach (var box in menuBoxes)
