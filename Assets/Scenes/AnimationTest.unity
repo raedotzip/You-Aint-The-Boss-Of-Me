@@ -3998,7 +3998,6 @@ MonoBehaviour:
   player: {fileID: 1070997892}
   obstacleData: {fileID: 11400000, guid: 3a722761aaa950a48bd525a588234dc0, type: 2}
   bulletData: {fileID: 11400000, guid: 4cc0bbf13a8f19f438c4468255c48470, type: 2}
-  pipeAttack: {fileID: 0}
   closeRange: 8
   farRange: 18
   tooCloseRange: 3
@@ -4024,12 +4023,12 @@ MonoBehaviour:
   closeWeight_Charge: 5
   closeWeight_TargetedBurst: 2
   closeWeight_RingGap: 1
-  midWeight_Charge: 10
+  midWeight_Charge: 7
   midWeight_JumpSlam: 6
   midWeight_Spin: 5
   midWeight_SpiralBurst: 2
   midWeight_TargetedBurst: 2
-  midWeight_RingGap: 10
+  midWeight_RingGap: 7
   farWeight_Charge: 5
   farWeight_JumpSlam: 4
   farWeight_SpiralBurst: 3
@@ -4039,8 +4038,11 @@ MonoBehaviour:
   tiredDuration: 4.92
   attacksBeforeTiredEnraged: 14
   tiredDurationEnraged: 0.8
+  musicSource: {fileID: 2073485679}
+  bossMusicNormal: {fileID: 8300000, guid: 6ab131ef12c46c54caa8672f74e27f7b, type: 3}
+  musicVolume: 0.08
   audioSource: {fileID: 2073485679}
-  sfxVolume: 0.6
+  sfxVolume: 2
   spinStartClip: {fileID: 8300000, guid: c860c8928957e284cb50919d13bac365, type: 3}
   slamClip: {fileID: 8300000, guid: 6961b7d05ea70d449888ca59486d482c, type: 3}
   bossTimer: 0
@@ -12943,7 +12945,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
-  boss3: {fileID: 1790749897}
   startingBoss: 1
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
@@ -23100,6 +23101,9 @@ MonoBehaviour:
   bossHealthBar: {fileID: 952059220}
   hitRadius: 0.6
   minSwordSpeed: 0.8
+  musicSource: {fileID: 1875370452}
+  bossMusicNormal: {fileID: 8300000, guid: 5a373347df28fe743a020ab8ba3519de, type: 3}
+  musicVolume: 0.08
   audioSource: {fileID: 1875370452}
   laserBeamClip: {fileID: 8300000, guid: d742b5037cdde6d418372b1167dd077d, type: 3}
   virusSwarmClip: {fileID: 8300000, guid: 988ce96a803dea048ae7497f5352ca57, type: 3}
