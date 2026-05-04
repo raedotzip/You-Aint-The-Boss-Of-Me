@@ -132,6 +132,8 @@ public class Boss1PunchAttack : EnemyBaseState
             hasLunged   = true;
             punchActive = true;
             punchTimer  = 0f;
+            Boss1StateManager boss = (Boss1StateManager)state;
+            boss.DisableAnimationBools();
             state.animator.SetBool("Punch1Hand", true);
         }
     }

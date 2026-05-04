@@ -33,7 +33,7 @@ Material:
     - _PulseSpeed: 0.45
     - _PulseWidth: 0.07
     m_Colors:
-    - _BgColor: {r: 0.01, g: 0.01, b: 0.07, a: 1}
-    - _GlowColor: {r: 0, g: 0.4, b: 1, a: 1}
-    - _GridColor: {r: 0, g: 0.85, b: 0.9, a: 1}
+    - _BgColor: {r: 0.7890707, g: 0.83560365, b: 0.899371, a: 1}
+    - _GlowColor: {r: 0.60806525, g: 0.7337266, b: 0.899371, a: 1}
+    - _GridColor: {r: 0.77775794, g: 0.83856446, b: 0.899371, a: 1}
   m_BuildTextureStacks: []

@@ -8,11 +8,6 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Rigidbody))]
 public class MenuBox : MonoBehaviour
 {
-    [Header("Label")]
-    [Tooltip("Text shown on the front face — auto-created as a child TextMesh")]
-    public string label = "Option";
-    public Color  labelColor = Color.white;
-    public float  labelSize  = 0.02f; // world-space character height
 
     [Header("Slice Settings")]
     [Tooltip("Sphere radius around box center that counts as hovering")]
@@ -59,50 +54,6 @@ public class MenuBox : MonoBehaviour
 
         EnsureMaterial();
         ApplyColor(normalColor, 0f);
-        BuildLabel();
-    }
-
-    void BuildLabel()
-    {
-        if (string.IsNullOrEmpty(label)) return;
-
-        // Reuse existing label child if already created
-        Transform existing = transform.Find("_Label");
-        GameObject go = existing != null ? existing.gameObject : new GameObject("_Label");
-        go.transform.SetParent(transform, worldPositionStays: false);
-
-        // Sit just in front of the front face (local Z = -0.5 for a unit cube, nudge out slightly)
-        go.transform.localPosition = new Vector3(0f, 0f, -0.6f);
-        go.transform.localRotation = Quaternion.identity;
-
-        // TextMesh renders at worldspace units when localScale = (1,1,1) on a unit-scale object.
-        // Undo the parent's lossyScale so 1 TextMesh unit == 1 world meter, then we
-        // set characterSize below to hit the desired world-space height.
-        Vector3 ws = transform.lossyScale;
-        go.transform.localScale = Vector3.one;
-
-        TextMesh tm = go.GetComponent<TextMesh>();
-        if (tm == null) tm = go.AddComponent<TextMesh>();
-        tm.text          = label;
-        tm.color         = labelColor;
-        tm.fontSize      = 64;
-        tm.alignment     = TextAlignment.Center;
-        tm.anchor        = TextAnchor.MiddleCenter;
-
-        // characterSize controls the world-space height of a font unit.
-        // Target: fill ~70% of the box's world height so text fits with padding.
-        float worldHeight = ws.y;            // box face height in world space
-        float worldWidth  = ws.x;            // box face width in world space
-        float charCount   = Mathf.Max(1, label.Length);
-
-        // Estimate character aspect ~0.6 wide per unit tall for the default font
-        float heightFit = worldHeight * 0.65f;
-        float widthFit  = worldWidth  * 0.85f / (charCount * 0.55f);
-        tm.characterSize = Mathf.Clamp(
-        Mathf.Min(heightFit, widthFit),
-        0.01f,
-        0.05f
-        );
     }
 
     void Update()

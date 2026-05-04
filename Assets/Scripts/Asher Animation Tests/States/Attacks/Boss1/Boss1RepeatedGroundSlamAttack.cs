@@ -25,7 +25,8 @@ public class Boss1RepeatedGroundSlamBulletAttack : EnemyBaseState
         slamsCompleted = 0;
         slamTimer      = 0f;
         waitingForNext = false;
-
+        Boss1StateManager boss = (Boss1StateManager)state;
+        boss.DisableAnimationBools();
         DoSlam(state);
     }
 

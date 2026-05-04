@@ -118,10 +118,10 @@ public static class MenuSphereSetup
         // -----------------------------------------------
         // Create boxes
         // -----------------------------------------------
-        GameObject startBox = CreateBox("MenuBox_StartGame", "START GAME",
+        GameObject startBox = CreateBox("MenuBox_StartGame",
             new Vector3(-1.1f, 1.5f, 2.5f), menuLayer, boxMat, sphere.transform);
 
-        GameObject exitBox  = CreateBox("MenuBox_ExitGame",  "EXIT GAME",
+        GameObject exitBox  = CreateBox("MenuBox_ExitGame",
             new Vector3( 1.1f, 1.5f, 2.5f), menuLayer, boxMat, sphere.transform);
 
         // -----------------------------------------------
@@ -148,7 +148,7 @@ public static class MenuSphereSetup
     // -----------------------------------------------
     // Helper
     // -----------------------------------------------
-    static GameObject CreateBox(string name, string label, Vector3 worldPos,
+    static GameObject CreateBox(string name, Vector3 worldPos,
                                 int layer, Material mat, Transform parent)
     {
         GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -164,7 +164,6 @@ public static class MenuSphereSetup
 
         // MenuBox auto-adds a kinematic Rigidbody via RequireComponent
         MenuBox mb  = go.AddComponent<MenuBox>();
-        mb.label    = label;
 
         return go;
     }
