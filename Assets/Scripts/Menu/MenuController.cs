@@ -152,6 +152,9 @@ public class MenuController : MonoBehaviour
         SteamVR_Fade.View(Color.black, fadeDuration);
         yield return new WaitForSeconds(fadeDuration);
 
+        foreach (var boss in FindObjectsOfType<EnemyStateManager>())
+            boss.StopBossMusic();
+
         BossManager.Instance?.SetActiveBoss(0);
         BossManager.Instance?.ResetArenaTriggers();
         HUDManager.Instance?.PauseTimer();
