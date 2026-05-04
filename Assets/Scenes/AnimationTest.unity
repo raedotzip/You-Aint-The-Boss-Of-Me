@@ -316,15 +316,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2ffeeb68fc2856e44a6852c5700e4d71, type: 2}
+  m_sharedMaterial: {fileID: 8423557569632186965, guid: 2ffeeb68fc2856e44a6852c5700e4d71, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.9308176, g: 0.49467972, b: 0.6941381, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -16094,13 +16094,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1568420984}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0.72, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1059193719}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1001 &1572786452
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17790,7 +17790,7 @@ PrefabInstance:
     - target: {fileID: 8350487945832918306, guid: 98b7bb4a17c201f4192d9e2c1bf452db, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 19261c51b98b1574c92fd2363b0999b3, type: 2}
+      objectReference: {fileID: 2100000, guid: 81fa1397c0178aa4d90e1c06419354b7, type: 2}
     - target: {fileID: 8350487945832918306, guid: 98b7bb4a17c201f4192d9e2c1bf452db, type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
