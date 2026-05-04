@@ -16,6 +16,8 @@ public class boss2ScreenAnimator : MonoBehaviour
     private float yOffsetUnit;
     private int col;
     private int row;
+    public int CurrentCol => col;
+    public int CurrentRow => row;
     Coroutine cycleRoutine;
     private bool isHurt = false;
     private float maxHealth;

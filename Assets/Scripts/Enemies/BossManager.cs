@@ -78,7 +78,10 @@ public class BossManager : MonoBehaviour
         if (_activeBossIndex == 2 && boss2 != null) SetBossActive(boss2, false);
 
         if (HUDManager.Instance != null)
+        {
             HUDManager.Instance.ShowBossBar(false);
+            HUDManager.Instance.SetBossPortrait(0);
+        }
 
         _activeBossIndex = bossIndex;
 
@@ -95,6 +98,7 @@ public class BossManager : MonoBehaviour
             }
 
             SetBossActive(boss1, true);
+            HUDManager.Instance?.SetBossPortrait(1);
 
             if (boss1ShowsBarImmediately && HUDManager.Instance != null)
                 HUDManager.Instance.ShowBossBar(true);
@@ -110,6 +114,7 @@ public class BossManager : MonoBehaviour
             }
 
             SetBossActive(boss2, true);
+            HUDManager.Instance?.SetBossPortrait(2);
 
             if (boss2ShowsBarImmediately && HUDManager.Instance != null)
                 HUDManager.Instance.ShowBossBar(true);
