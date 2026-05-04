@@ -122,13 +122,13 @@ public class Boss1LavaFinisherState : EnemyBaseState
                 Vector3 cur = state.transform.position;
 
                 // Drift toward lava center XZ while falling
-                float xzStep = _sinkSpeed * 0.5f * Time.deltaTime;
+                float xzStep = _sinkSpeed * 5f * Time.deltaTime;
                 cur.x = Mathf.MoveTowards(cur.x, _sinkTarget.x, xzStep);
                 cur.z = Mathf.MoveTowards(cur.z, _sinkTarget.z, xzStep);
 
                 // Accelerate downward (gravity-like)
                 cur.y -= _sinkSpeed * Time.deltaTime;
-                _sinkSpeed += 6f * Time.deltaTime; // accelerate as he sinks
+                _sinkSpeed += 3f * Time.deltaTime; // accelerate as he sinks
 
                 state.transform.position = cur;
 

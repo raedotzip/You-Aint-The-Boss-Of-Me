@@ -36,8 +36,8 @@ public class Boss1TiredState : EnemyBaseState
             if (timer <= 0.5)
             {
 
-                Vector3 tiredTransitionPos = Vector3.Lerp(tiredStartPos, tiredDownPos, timer / 0.5f);
-                state.transform.position = tiredTransitionPos;
+                //Vector3 tiredTransitionPos = Vector3.Lerp(tiredStartPos, tiredDownPos, timer / 0.5f);
+                //state.transform.position = tiredTransitionPos;
             }
 
             if (timer >= tiredDuration)
@@ -45,6 +45,8 @@ public class Boss1TiredState : EnemyBaseState
                 gettingUp = true;
                 getUpTimer = 0f;
                 // Clear tired so the stand-up animation plays
+                Boss1StateManager boss = (Boss1StateManager)state;
+                boss.DisableAnimationBools();
                 state.animator.SetBool("Tired", false);
             }
         }
@@ -52,7 +54,7 @@ public class Boss1TiredState : EnemyBaseState
         {
             getUpTimer += Time.deltaTime;
             //SnapToGround(state);
-            state.transform.position = Vector3.Lerp(tiredDownPos, tiredStartPos, getUpTimer / getUpDelay);
+            //state.transform.position = Vector3.Lerp(tiredDownPos, tiredStartPos, getUpTimer / getUpDelay);
             
             if (getUpTimer >= getUpDelay)
             {
