@@ -155,9 +155,14 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 origin = transform.position + cc.center;
 
-        // Stop before any wall in the dash direction — ignore triggers (e.g. lava pit barrier)
+        // Stop before walls — ignore triggers and walkable terrain (slopes/steps)
         if (Physics.SphereCast(origin, cc.radius, dir, out RaycastHit hit, dashDistance, collisionLayers, QueryTriggerInteraction.Ignore))
+        {
+            float angle = Vector3.Angle(hit.normal, Vector3.up);
+            if (angle < cc.slopeLimit)
+                return dashDistance; // walkable terrain, not a wall
             return Mathf.Max(0f, hit.distance - 0.05f);
+        }
 
         return dashDistance;
     }
@@ -180,14 +185,6 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.SphereCast(origin, cc.radius * 0.8f, Vector3.down, out RaycastHit groundHit, castDist, collisionLayers))
         {
             moveDir = Vector3.ProjectOnPlane(_dashDir, groundHit.normal).normalized;
-
-            // Never dash upward when grounded — zero any upward component so the
-            // dash stays flat regardless of minor floor normal variation.
-            if (moveDir.y > 0f)
-            {
-                moveDir.y = 0f;
-                if (moveDir.sqrMagnitude > 0.001f) moveDir.Normalize();
-            }
         }
         else
         {
