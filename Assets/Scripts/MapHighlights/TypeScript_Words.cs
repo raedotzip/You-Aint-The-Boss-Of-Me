@@ -7,13 +7,13 @@ public class TypeScript_Words : MonoBehaviour
 
     void Start()
     {
-        writer.SetText("Good Morning!");
+        writer.SetText("");
         StartCoroutine(NextLine());
     }
 
     private IEnumerator NextLine()
     {
         yield return new WaitForSeconds(2f);
-        writer.ReplaceText("To begine your battle please go through the pipe. Good Luck!");
+        writer.ReplaceText("Seems like you finally woke up. Follow the line on the floor and DEFEAT THEM ALL!!!");
     }
 }

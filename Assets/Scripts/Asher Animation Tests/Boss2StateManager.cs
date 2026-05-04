@@ -433,7 +433,6 @@ public class Boss2StateManager : EnemyStateManager
         float dist = Vector3.Distance(transform.position, player.position);
         EnemyBaseState next = ChooseAttack(dist);
         attackCounter++;
-        PlayAttackSound(next);
         SwitchState(next);
     }
     // ===============================
@@ -468,80 +467,6 @@ public class Boss2StateManager : EnemyStateManager
 
         Debug.Log("[Boss2 Music] Started");
     }
-
-    // ===============================
-    // BOSS AUDIO
-    // ===============================
-    [Header("Boss Audio")]
-    public AudioSource audioSource;
-
-    [Header("SFX Clips")]
-    public AudioClip laserBeamClip;
-    public AudioClip virusSwarmClip;
-    public AudioClip empWaveClip;
-    public AudioClip dataStrikeClip;
-    public AudioClip railgunClip;
-    public AudioClip mortarClip;
-    public AudioClip obstacleBarrageClip;
-
-    [Header("SFX Settings")]
-    [Range(0f, 2f)]
-    public float sfxVolume = 1f;
-
-
-    // ===============================
-    // AUDIO PLAYER
-    // ===============================
-    private void PlaySFX(AudioClip clip, string debugName)
-    {
-        if (audioSource == null)
-        {
-            Debug.LogWarning("[Boss2 Audio] Missing AudioSource!");
-            return;
-        }
-
-        if (clip == null)
-        {
-            Debug.LogWarning($"[Boss2 Audio] {debugName} clip not assigned!");
-            return;
-        }
-
-        audioSource.Stop();
-
-        audioSource.clip = clip;
-        audioSource.volume = sfxVolume;
-        audioSource.Play();
-
-        Debug.Log($"[Boss2 Audio] Played {debugName} (Volume: {sfxVolume})");
-    }
-
-    // ===============================
-    // ACTUAL AUDIO
-    // ===============================
-    private void PlayAttackSound(EnemyBaseState state)
-    {
-        if (state == laserBeamAttack)
-            PlaySFX(laserBeamClip, "Laser Beam");
-
-        else if (state == virusSwarmAttack)
-            PlaySFX(virusSwarmClip, "Virus Swarm");
-
-        else if (state == empWaveAttack)
-            PlaySFX(empWaveClip, "EMP Wave");
-
-        else if (state == dataStrikeAttack)
-            PlaySFX(dataStrikeClip, "Data Strike");
-
-        else if (state == railgunAttack)
-            PlaySFX(railgunClip, "Railgun");
-
-        else if (state == mortarBarrageAttack)
-            PlaySFX(mortarClip, "Mortar Barrage");
-
-        else if (state == obstacleBarrageAttack)
-            PlaySFX(obstacleBarrageClip, "Obstacle Barrage");
-    }
-
 
     // ===============================
     // ATTACK SELECTION

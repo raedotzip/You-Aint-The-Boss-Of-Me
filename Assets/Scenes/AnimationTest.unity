@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 38166275}
   - component: {fileID: 38166274}
   m_Layer: 5
-  m_Name: Text1
+  m_Name: Welcome Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -265,17 +265,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 38166272}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0.9999824, z: -0, w: -0.0059303176}
+  m_LocalPosition: {x: 0, y: 0, z: -42.33}
+  m_LocalScale: {x: 1, y: 1.0085, z: 0.7441799}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1753431623}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -180.68, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.9, y: -2.1}
-  m_SizeDelta: {x: 18.9485, y: 8.9905}
+  m_AnchoredPosition: {x: 3.05, y: -23}
+  m_SizeDelta: {x: 327.61, y: 208.72}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &38166274
 MonoBehaviour:
@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ed96bc7e8fb754e8cf1b1eb0b4096e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayBeforeStart: 0
+  delayBeforeStart: 2
   timeBtwChars: 0.05
   deleteSpeedMultiplier: 0.5
   cursor: '|'
@@ -341,8 +341,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -377,7 +377,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 5.5508623, y: 1.131854, z: 9.40215, w: 5.319282}
+  m_margin: {x: -0.22465038, y: 0.053056955, z: -1.0471306, w: -0.34355974}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -12972,7 +12972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boss1: {fileID: 396362660}
   boss2: {fileID: 1875370447}
-  startingBoss: 2
+  startingBoss: 0
   boss1Name: Roe Jogan
   boss2Name: The Mainframe
   boss1ShowsBarImmediately: 1
@@ -20828,18 +20828,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1753431622}
-  m_LocalRotation: {x: -0, y: -0.26455426, z: -0, w: 0.9643708}
-  m_LocalPosition: {x: 0, y: 0, z: 0.324}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0.21707559, z: -0, w: 0.97615486}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5359}
+  m_LocalScale: {x: 0.009999998, y: 0.01, z: 0.009999999}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 38166273}
   m_Father: {fileID: 1616064200}
-  m_LocalEulerAnglesHint: {x: 0, y: -30.681, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.236, y: 0.058}
-  m_SizeDelta: {x: 3.6656, y: 2.4987}
+  m_LocalEulerAnglesHint: {x: 0, y: -25.075, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.2916, y: 0.15}
+  m_SizeDelta: {x: 293.9012, y: 189.6057}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1753431624
 MonoBehaviour:
@@ -23170,15 +23170,6 @@ MonoBehaviour:
   musicSource: {fileID: 1875370452}
   bossMusicNormal: {fileID: 8300000, guid: 5a373347df28fe743a020ab8ba3519de, type: 3}
   musicVolume: 0.08
-  audioSource: {fileID: 1875370452}
-  laserBeamClip: {fileID: 8300000, guid: d742b5037cdde6d418372b1167dd077d, type: 3}
-  virusSwarmClip: {fileID: 8300000, guid: 988ce96a803dea048ae7497f5352ca57, type: 3}
-  empWaveClip: {fileID: 8300000, guid: 4e843667d526c1c4a9a31928e2fa5eb7, type: 3}
-  dataStrikeClip: {fileID: 8300000, guid: 078a82d07fb709347b6d3ebe8dc3ea3d, type: 3}
-  railgunClip: {fileID: 8300000, guid: 03297c76a75011745931890967ffb456, type: 3}
-  mortarClip: {fileID: 8300000, guid: 0ed24bd9550917e45a812abd99e32bb7, type: 3}
-  obstacleBarrageClip: {fileID: 8300000, guid: c1d391f08684fef4db38cd57e850f17a, type: 3}
-  sfxVolume: 1
 --- !u!4 &1875370448 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 86ca89f84e0abe44abb548a441aa08aa, type: 3}
