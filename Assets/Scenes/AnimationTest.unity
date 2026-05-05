@@ -24010,7 +24010,7 @@ MonoBehaviour:
   midWeight_Railgun: 2
   midWeight_MortarBarrage: 2
   attacksBeforeTired: 3
-  tiredDuration: 4.5
+  tiredDuration: 2.5
   attackCounter: 0
   health: 300
   maxHealth: 300
