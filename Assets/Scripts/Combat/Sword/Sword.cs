@@ -251,6 +251,10 @@ public class Sword : MonoBehaviour
                 EnemyStateManager hitBoss = col.GetComponentInParent<EnemyStateManager>();
                 if (hitBoss == null || hitBoss == bossHitThisScan) continue;
 
+                // Boss 1 is invulnerable while airborne — prevents free hits during jump-away
+                Boss1StateManager boss1 = hitBoss as Boss1StateManager;
+                if (boss1 != null && boss1.isAirborne) continue;
+
                 int id = hitBoss.GetInstanceID();
                 if (_bossHitCooldowns.TryGetValue(id, out float last) && Time.time - last < hitCooldown) continue;
 

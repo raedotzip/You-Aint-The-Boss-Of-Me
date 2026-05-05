@@ -10,13 +10,15 @@ public class Boss1TiredState : EnemyBaseState
     private Vector3 tiredDownPos;
     private bool  hasBeenHit     = false;
     private bool  gettingUp      = false;
+    private float _damageTaken   = 0f;
 
     public override void EnterState(EnemyStateManager state)
     {
         timer      = 0f;
         getUpTimer = 0f;
-        hasBeenHit = false;
-        gettingUp  = false;
+        hasBeenHit   = false;
+        gettingUp    = false;
+        _damageTaken = 0f;
 
         Boss1StateManager boss = (Boss1StateManager)state;
         tiredDuration = boss.IsEnraged ? boss.tiredDurationEnraged : boss.tiredDuration;
@@ -78,6 +80,20 @@ public class Boss1TiredState : EnemyBaseState
             // Added a -0.5 here just as a bit of a janky way to make him look like he rests on the ground.
             pos.y = hit.point.y - 0.5f;
             state.transform.position = pos;
+        }
+    }
+
+    public void AccumulateDamage(float amount, Boss1StateManager boss)
+    {
+        if (gettingUp) return;
+
+        _damageTaken += amount;
+        if (_damageTaken >= boss.tiredEarlyGetUpDamage)
+        {
+            gettingUp  = true;
+            getUpTimer = 0f;
+            boss.DisableAnimationBools();
+            boss.animator.SetBool("Tired", false);
         }
     }
 

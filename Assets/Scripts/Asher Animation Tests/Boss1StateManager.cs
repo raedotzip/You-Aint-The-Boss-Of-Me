@@ -126,6 +126,8 @@ public class Boss1StateManager : EnemyStateManager
     public float tiredDuration             = 0.6f; // vulnerable window (normal)
     public int   attacksBeforeTiredEnraged = 20;   // barely rests at low health
     public float tiredDurationEnraged      = 0.3f; // gets up much faster at ≤20% health
+    [Tooltip("Total sword damage in one tired window that forces the boss to get back up early")]
+    public float tiredEarlyGetUpDamage     = 50f;
 
 
     // ===============================
@@ -457,6 +459,9 @@ public class Boss1StateManager : EnemyStateManager
         if (bossHealthBar != null)
             bossHealthBar.UpdateHealthPercentage(health, maxHealth);
         HUDManager.Instance?.UpdateBossHealth(health, maxHealth);
+
+        if (currentState == tiredState)
+            tiredState.AccumulateDamage(amount, this);
 
         if (health <= 0f)
         {
