@@ -1,6 +1,6 @@
 # You Ain't The Boss Of Me!
 
-A fast-paced VR boss rush game built in Unity with SteamVR. Fight two bosses back-to-back as fast as possible — dodge projectiles, parry bullets with your sword, and take down each boss to save the world.
+"You Ain’t the Boss of Me" is a fast-paced VR hack-and-slash bullet hell where you take on relentless, back-to-back boss fights in a desperate attempt to take revenge against your captors. Each boss throws you into an intense bullet hell challenge where you must dodge and parry incoming attacks, strike at the right moment, and fight your way to victory. Grab your swords and prove you’re that they're not the boss of you!
 
 <table>
   <tr><td><b>Course</b></td><td>University of Nebraska-Lincoln — CSCE352 / EMAR440 — Exploring Virtual Reality</td></tr>
