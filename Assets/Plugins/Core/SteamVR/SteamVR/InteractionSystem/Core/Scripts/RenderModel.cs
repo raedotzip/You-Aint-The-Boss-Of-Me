@@ -64,9 +64,19 @@ namespace Valve.VR.InteractionSystem
 
                 if (handSkeleton.skeletonAction.activeBinding == false && handSkeleton.fallbackPoser == null)
                 {
-                    Debug.LogWarning("Skeleton action: " + handSkeleton.skeletonAction.GetPath() + " is not bound. Your controller may not support SteamVR Skeleton Input. " +
-                        "Please add a fallback skeleton poser to your skeleton if you want hands to be visible");
-                    DestroyHand();
+                    var openHandPose = Resources.Load<SteamVR_Skeleton_Pose>("ReferencePose_OpenHand");
+                    if (openHandPose != null)
+                    {
+                        var poser = handInstance.AddComponent<SteamVR_Skeleton_Poser>();
+                        poser.skeletonMainPose = openHandPose;
+                        handSkeleton.fallbackPoser = poser;
+                        Debug.Log("Skeleton action not bound. Using OpenHand fallback pose.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Skeleton action: " + handSkeleton.skeletonAction.GetPath() + " is not bound and no fallback pose found.");
+                        DestroyHand();
+                    }
                 }
             }
         }

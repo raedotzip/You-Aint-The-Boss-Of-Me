@@ -11,7 +11,7 @@ public class Boss1RepeatedGroundSlamBulletAttack : EnemyBaseState
     private float timeBetweenSlams = 1.0f;
 
     private int   bulletsPerSlam   = 100;
-    private float bulletDamage     = 10f;
+    private float bulletDamage     = 11f;
     private float landingRadius    = 5f;   // How far from player bullets can land
     private float landingRadiusMin = 1f;   // Minimum distance from player so they aren't instant hits
     private float arcDuration      = 1.2f; // How long each bullet takes to travel

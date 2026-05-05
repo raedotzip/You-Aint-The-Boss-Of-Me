@@ -11,7 +11,7 @@ public class Boss1SpiralBurstAttack : EnemyBaseState
     // ===============================
     // SPIRAL SETTINGS
     // ===============================
-    private int   armCount       = 4;      // Number of spiral arms
+    private int   armCount       = 8;      // Number of spiral arms
     private float rotateSpeed    = 120f;   // Degrees per second the pattern rotates
     private float duration       = 4f;     // How long the spiral lasts
     private float spinSpeed = 200f;
@@ -22,7 +22,7 @@ public class Boss1SpiralBurstAttack : EnemyBaseState
     // ===============================
     private float fireRate       = 0.06f;  // Seconds between bullet volleys
     private float bulletSpeed    = 9f;
-    private float bulletDamage   = 10f;
+    private float bulletDamage   = 11f;
     private float bulletLifetime = 2.5f;
     private float downwardAngle  = -2f;    // Slight downward tilt so bullets stay near ground
 
@@ -60,7 +60,7 @@ public class Boss1SpiralBurstAttack : EnemyBaseState
         spinTimer += Time.deltaTime;
         currentSpinSpeed += spinAccelerate * Time.deltaTime;
 
-        // Rotate boss — Rotate() avoids Euler gimbal issues and can't be
+        // Rotate boss ï¿½ Rotate() avoids Euler gimbal issues and can't be
         // silently overridden by an absolute assignment elsewhere in the frame
         float delta = currentSpinSpeed * Time.deltaTime;
         currentAngle += delta;

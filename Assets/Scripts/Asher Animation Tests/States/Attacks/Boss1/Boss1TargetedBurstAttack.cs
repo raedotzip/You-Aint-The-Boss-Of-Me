@@ -12,8 +12,8 @@ public class Boss1TargetedBurstAttack : EnemyBaseState
     // ===============================
     // BURST SETTINGS
     // ===============================
-    private int   burstCount       = 5;    // How many burst volleys to fire
-    private int   bulletsPerBurst  = 5;    // Bullets per volley
+    private int   burstCount       = 8;    // How many burst volleys to fire
+    private int   bulletsPerBurst  = 10;   // Bullets per volley
     private float spreadAngle      = 12f;  // Degrees of spread within a burst
     private float pauseBetweenBursts = 0.7f; // Gap between volleys (player can dodge)
 
@@ -21,7 +21,7 @@ public class Boss1TargetedBurstAttack : EnemyBaseState
     // BULLET SETTINGS
     // ===============================
     private float bulletSpeed      = 14f;
-    private float bulletDamage     = 12f;
+    private float bulletDamage     = 13f;
     private float bulletLifetime   = 6f;
     private float inBurstFireRate  = 0.06f; // Time between bullets within one burst
 

@@ -228,7 +228,7 @@ public class Boss1StateManager : EnemyStateManager
     [HideInInspector] public float health        = 100f;
 
     [Header("Health")]
-    public float maxHealth = 100f;
+    public float maxHealth = 400f;
     public HealthBarUI bossHealthBar;
     public BossTimerUI bossTimerUI;
 

@@ -14,6 +14,7 @@ public class Sword : MonoBehaviour
     public LayerMask meleeParryLayer;
     public LayerMask menuLayer;
     public float hitCooldown = 0.2f;
+    public float boss1HitCooldown = 0.5f;
     public float damageAmount = 10f; // <-- Damage to boss
 
     [Header("Swing")]
@@ -256,7 +257,8 @@ public class Sword : MonoBehaviour
                 if (boss1 != null && boss1.isAirborne) continue;
 
                 int id = hitBoss.GetInstanceID();
-                if (_bossHitCooldowns.TryGetValue(id, out float last) && Time.time - last < hitCooldown) continue;
+                float cooldown = boss1 != null ? boss1HitCooldown : hitCooldown;
+                if (_bossHitCooldowns.TryGetValue(id, out float last) && Time.time - last < cooldown) continue;
 
                 bossHitThisScan = hitBoss;
                 _bossHitCooldowns[id] = Time.time;

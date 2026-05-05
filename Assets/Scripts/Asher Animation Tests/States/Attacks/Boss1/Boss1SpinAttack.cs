@@ -19,7 +19,7 @@ public class Boss1SpinAttack : EnemyBaseState
     // ===============================
     private float bulletFireRate = 0.01f;
     private float bulletSpeed    = 12f;
-    private float bulletDamage   = 10f;
+    private float bulletDamage   = 11f;
     private float bulletLifetime = 1.5f;
     private float downwardAngle  = -3.0f;  // Degrees below horizontal — gentle downward slope
 

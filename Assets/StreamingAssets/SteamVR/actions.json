@@ -152,9 +152,9 @@
   ],
   "localization": [
     {
-      "language_tag": "Dash",
-      "/actions/default/in/Move": "/actions/default/in/Move",
-      "/actions/default/in/Dash": "/actions/default/in/Dash"
+      "language_tag": "en_US",
+      "/actions/default/in/Move": "Move",
+      "/actions/default/in/Dash": "Dash"
     }
   ]
 }
