@@ -2,9 +2,13 @@
 
 A fast-paced VR boss rush game built in Unity with SteamVR. Fight two bosses back-to-back as fast as possible — dodge projectiles, parry bullets with your sword, and take down each boss to save the world.
 
-**Course:** University of Nebraska-Lincoln — CSCE352 / EMAR440 — Exploring Virtual Reality  
-**Authors:** Raegan Scheet, Asher Lahm, Kenny Kouete  
-**License:** Apache 2.0
+<table>
+  <tr><td><b>Course</b></td><td>University of Nebraska-Lincoln — CSCE352 / EMAR440 — Exploring Virtual Reality</td></tr>
+  <tr><td><b>Developers</b></td><td>Raegan Scheet, Asher Lahm, Kenny Kouete</td></tr>
+  <tr><td><b>Music</b></td><td><a href="https://soundcloud.com/ferretdot">Ferretdot</a></td></tr>
+  <tr><td><b>Instructors</b></td><td>Chris Bourke, Steven Kolbe</td></tr>
+  <tr><td><b>License</b></td><td><a href="./LICENSE.md">Apache 2.0</a></td></tr>
+</table>
 
 <p align="center">
 <img src="./Assets/Textures/YATBOM%20Logo.png" alt="Project Logo" width="500" loading="lazy">
@@ -20,17 +24,21 @@ TBD
 
 ## Gameplay
 
-- **Sword combat** — Swing your motion-tracked sword to deal melee damage. Swing wider for more damage; flick attacks deal less.
-- **Bullet parrying** — Deflect incoming projectiles back at the boss with your sword blade.
-- **Dashing** — Press the right trigger to dash in your movement direction. Use it to dodge attacks and reposition.
-- **Life steal** — Land a full-arm wide swing and heal on hit.
+A fast-paced VR bullet hell boss rush with physical sword fighting. Dodge waves of projectiles, parry bullets back at bosses, and cut them down with your motion-tracked blade — all in full virtual reality.
+
+<table>
+  <tr><td><b>Sword combat</b></td><td>Swing your motion-tracked sword to deal melee damage. Swing wider for more damage; flick attacks deal less.</td></tr>
+  <tr><td><b>Bullet parrying</b></td><td>Deflect incoming projectiles back at the boss with your sword blade.</td></tr>
+  <tr><td><b>Dashing</b></td><td>Press the right trigger to dash in your movement direction. Use it to dodge attacks and reposition.</td></tr>
+  <tr><td><b>Life steal</b></td><td>Land a full-arm wide swing and heal on hit.</td></tr>
+</table>
 
 ### Bosses
 
 | # | Name | Style |
 |---|------|-------|
-| 1 | Roe Jogan | Physical melee boss. Charges, punches, slams, and fires spiral projectile bursts. Tires out after several attacks. |
-| 2 | The Mainframe | Tech boss. Destroy the 5 mini computers to drop its force field, then attack the core with projectiles and obstacles. |
+| 1 | **Roe Jogan** | Physical melee boss. Charges, punches, slams, and fires spiral projectile bursts. Tires out after several attacks. |
+| 2 | **The Mainframe** | Tech boss. Destroy the 5 mini computers to drop its force field, then attack the core with projectiles and obstacles. |
 
 ---
 
