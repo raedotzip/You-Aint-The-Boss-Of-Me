@@ -225,7 +225,7 @@ public class Boss1StateManager : EnemyStateManager
     // RUNTIME
     // ===============================
     [HideInInspector] public int   attackCounter = 0;
-    [HideInInspector] public float health        = 100f;
+    [HideInInspector] public float health        = 400f;
 
     [Header("Health")]
     public float maxHealth = 400f;

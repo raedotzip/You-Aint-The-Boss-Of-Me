@@ -4495,8 +4495,8 @@ MonoBehaviour:
   lookAtSpeed: 5
   smoothLookAtEnabled: 1
   attackCounter: 0
-  health: 500
-  maxHealth: 500
+  health: 400
+  maxHealth: 400
   bossHealthBar: {fileID: 952059220}
   bossTimerUI: {fileID: 0}
   finisherTriggered: 0
@@ -6179,7 +6179,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   hitCooldown: 0.2
-  boss1HitCooldown: 0.5
+  boss1HitCooldown: 0.2
   damageAmount: 10
   swingStartThreshold: 1.5
   swingStopThreshold: 0.4
@@ -9689,6 +9689,10 @@ PrefabInstance:
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 1221207827}
+    - target: {fileID: 4668896057812067226, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+      propertyPath: boss1HitCooldown
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4668896057812067226, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: menuLayer.m_Bits
       value: 512
