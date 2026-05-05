@@ -572,7 +572,12 @@ public class Boss2StateManager : EnemyStateManager
             if (mini != null) mini.Revive();
 
         if (forceField != null) forceField.SetActive(true);
-        if (animator != null) animator.SetBool("Destroyed", false);
+        if (animator != null)
+        {
+            animator.SetBool("Destroyed", false);
+            animator.Rebind();
+            animator.Update(0f);
+        }
         CloseArenaWalls();
 
         if (bossHealthBar != null) bossHealthBar.UpdateHealthPercentage(health, maxHealth);
