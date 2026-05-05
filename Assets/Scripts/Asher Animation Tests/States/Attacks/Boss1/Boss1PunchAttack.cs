@@ -16,7 +16,7 @@ public class Boss1PunchAttack : EnemyBaseState
     // ===============================
     // PUNCH SETTINGS
     // ===============================
-    private float punchDamage   = 26f;
+    private float punchDamage   = 10f;
     private float punchRange    = 2.5f;  // Hitbox range of the punch
     private float punchDuration = 0.3f;  // How long the punch hitbox is active
 

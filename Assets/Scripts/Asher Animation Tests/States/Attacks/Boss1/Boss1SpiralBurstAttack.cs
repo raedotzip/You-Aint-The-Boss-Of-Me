@@ -22,7 +22,7 @@ public class Boss1SpiralBurstAttack : EnemyBaseState
     // ===============================
     private float fireRate       = 0.06f;  // Seconds between bullet volleys
     private float bulletSpeed    = 9f;
-    private float bulletDamage   = 11f;
+    private float bulletDamage   = 7f;
     private float bulletLifetime = 2.5f;
     private float downwardAngle  = -2f;    // Slight downward tilt so bullets stay near ground
 

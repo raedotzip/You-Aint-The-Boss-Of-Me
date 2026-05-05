@@ -1257,7 +1257,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7b63a56392126f140845c76ecd2f3a1c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4495,8 +4495,8 @@ MonoBehaviour:
   lookAtSpeed: 5
   smoothLookAtEnabled: 1
   attackCounter: 0
-  health: 400
-  maxHealth: 400
+  health: 200
+  maxHealth: 200
   bossHealthBar: {fileID: 952059220}
   bossTimerUI: {fileID: 0}
   finisherTriggered: 0
@@ -6180,7 +6180,7 @@ MonoBehaviour:
     m_Bits: 512
   hitCooldown: 0.2
   boss1HitCooldown: 0.2
-  damageAmount: 10
+  damageAmount: 17
   swingStartThreshold: 1.5
   swingStopThreshold: 0.4
   perfectWindow: 0.15
@@ -6188,7 +6188,7 @@ MonoBehaviour:
   maxSwingDistance: 0.55
   minDamageMultiplier: 0.25
   maxDamageMultiplier: 1.5
-  healSwingThreshold: 0.35
+  healSwingThreshold: 0.3
   healAmount: 5
   playerHealth: {fileID: 1221207827}
   parryAngle: 70
@@ -9537,6 +9537,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 207428937885489263, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+      propertyPath: m_Radius
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 305349573468226664, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -9686,16 +9690,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4668896057812067226, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+      propertyPath: damageAmount
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4668896057812067226, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 1221207827}
     - target: {fileID: 4668896057812067226, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: boss1HitCooldown
-      value: 0.5
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4668896057812067226, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: menuLayer.m_Bits
       value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 4668896057812067226, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
+      propertyPath: healSwingThreshold
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4884577168612163704, guid: 70a632166d1f411469befbb23461f2cd, type: 3}
       propertyPath: moveSpeed
@@ -25380,7 +25392,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1980867974
 Transform:
   m_ObjectHideFlags: 0

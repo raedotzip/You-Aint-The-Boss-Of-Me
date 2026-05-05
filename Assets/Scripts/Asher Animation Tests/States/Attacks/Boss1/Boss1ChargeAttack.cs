@@ -157,7 +157,7 @@ public class Boss1ChargeAttack : EnemyBaseState
                 position = slamPosition,
                 direction = dir,
                 speed = 10f,
-                damage = 16f,
+                damage = 12f,
                 maxLifetime = 4f,
                 collisionRadius = 0.3f,
                 movementType = BulletMovementType.Straight,

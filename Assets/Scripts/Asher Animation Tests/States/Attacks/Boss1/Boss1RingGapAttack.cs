@@ -21,7 +21,7 @@ public class Boss1RingGapAttack : EnemyBaseState
     // BULLET SETTINGS
     // ===============================
     private float bulletSpeed        = 8f;
-    private float bulletDamage       = 16f;
+    private float bulletDamage       = 7f;
     private float bulletLifetime     = 3f;
 
     // ===============================

@@ -21,7 +21,7 @@ public class Boss1TargetedBurstAttack : EnemyBaseState
     // BULLET SETTINGS
     // ===============================
     private float bulletSpeed      = 14f;
-    private float bulletDamage     = 13f;
+    private float bulletDamage     = 7f;
     private float bulletLifetime   = 6f;
     private float inBurstFireRate  = 0.06f; // Time between bullets within one burst
 
