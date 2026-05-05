@@ -24012,8 +24012,8 @@ MonoBehaviour:
   attacksBeforeTired: 3
   tiredDuration: 4.5
   attackCounter: 0
-  health: 100
-  maxHealth: 100
+  health: 300
+  maxHealth: 300
   bossHealthBar: {fileID: 952059220}
   hitRadius: 0.6
   minSwordSpeed: 0.8
