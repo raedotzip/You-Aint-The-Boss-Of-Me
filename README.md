@@ -53,7 +53,7 @@ A fast-paced VR bullet hell boss rush with physical sword fighting. Dodge waves 
 5. Slice one of the menu boxes with your sword to start a boss fight
 6. Defeat both bosses to win
 
-Want to build from source? See [CONTRIBUTING.md](Contributing.md).
+Want to build from source? See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
