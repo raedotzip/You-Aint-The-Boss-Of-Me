@@ -31,12 +31,6 @@ public class Boss1GroundSlamShockwaveAttack : EnemyBaseState
 
         SpawnShockwave(state, ringsSpawned);
         ringsSpawned++;
-        Boss1StateManager boss = (Boss1StateManager)state;
-
-        if (boss.slamClip != null && boss.audioSource != null)
-        {
-            boss.audioSource.PlayOneShot(boss.slamClip, boss.sfxVolume);
-        }
     }
 
     public override void UpdateState(EnemyStateManager state)

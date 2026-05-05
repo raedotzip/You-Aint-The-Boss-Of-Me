@@ -48,11 +48,6 @@ public class Boss1SpinAttack : EnemyBaseState
         state.animator.SetBool("Spin", true);
 
         Boss1StateManager boss = (Boss1StateManager)state;
-
-        if (boss.spinStartClip != null && boss.audioSource != null)
-        {
-            boss.audioSource.PlayOneShot(boss.spinStartClip, boss.sfxVolume);
-        }
     }
 
     public override void UpdateState(EnemyStateManager state)

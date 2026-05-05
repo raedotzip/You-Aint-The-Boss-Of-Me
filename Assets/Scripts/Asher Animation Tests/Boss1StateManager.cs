@@ -196,19 +196,6 @@ public class Boss1StateManager : EnemyStateManager
     }
 
     // ===============================
-    // ATTACK AUDIO
-    // ===============================
-    [Header("Boss Attack SFX")]
-    public AudioSource audioSource;
-    [Range(0f, 2f)]
-    public float sfxVolume = 1f;
-
-    [Header("SFX")]
-    public AudioClip spinStartClip;
-    public AudioClip slamClip;
-  
-
-    // ===============================
     // STOPWATCH
     // ===============================
     [Header("Boss Timer")]

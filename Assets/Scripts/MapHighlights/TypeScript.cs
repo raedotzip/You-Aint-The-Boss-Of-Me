@@ -13,7 +13,7 @@ public class TypeScript : MonoBehaviour
 
     [Header("Typewriter Settings")]
     [SerializeField] private float delayBeforeStart = 0f;
-    [SerializeField] private float timeBtwChars = 0.05f;
+    [SerializeField] private float timeBtwChars = 0.005f;
     [SerializeField] private float deleteSpeedMultiplier = 0.5f;
 
     [Header("Cursor (Optional)")]
