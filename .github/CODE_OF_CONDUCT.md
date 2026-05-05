@@ -19,7 +19,7 @@ Project maintainers are responsible for clarifying and enforcing standards and m
 
 ## Reporting
 If you experience or witness unacceptable behavior, please report it by contacting:
-- Email: camscheet@gmail.com
+- Email: raescheet@gmail.com
 
 ## Enforcement
 Project maintainers may take any action they deem appropriate, including warnings, temporary bans, or permanent bans.
